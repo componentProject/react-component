@@ -13,9 +13,9 @@ const meta = {
 				}
 			},
     },
-    tags: ['!autodocs'],
-    argTypes: {
-    },
+    tags: ['autodocs'],
+		argTypes: {
+		},
     args: {},
 } satisfies Meta<typeof Calendar>;
 
@@ -23,6 +23,5 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-    args: {
-    },
+    args: {},
 };

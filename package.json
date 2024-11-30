@@ -8,10 +8,11 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "storybook": "storybook dev -p 6006",
+    "storybook": "storybook dev -p 6007",
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@storybook/addon-storysource": "^8.4.4",
     "ahooks": "^3.8.1",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.13",

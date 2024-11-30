@@ -1,0 +1,11 @@
+@import './base.css';
+@import './custom.scss';
+
+#app {
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+  background: #f1f2f4;
+  height: 100vh;
+  overflow-y: auto;
+}

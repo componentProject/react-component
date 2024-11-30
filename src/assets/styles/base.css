@@ -1,0 +1,67 @@
+:root {
+  --primary-color: #3a77ff; /* 主色调 */
+  --primary-gradient-right: linear-gradient(0 100%, #3f61ff, #2b8dff); /* 渐变色（顶部） */
+  --primary-color-1: #3a81ff; /* 辅助色1 */
+  --primary-color-2: #518fff; /* 辅助色2 */
+  --primary-color-3: #53a0fd; /* 辅助色3 */
+  --primary-color-4: #f7faff; /* 辅助色4 */
+  --success-color: #0eb67f; /* 辅助色5 */
+  --success-color-1: #f6fffc; /* 辅助色6 */
+  --warning-color: #f5ab01; /* 提醒色 */
+  --danger-color: #ef6b53; /* 警告色 */
+
+  /* 文字颜色 */
+  --text-color: #2a3651;
+  --text-color-1: #29354f;
+  --text-color-disable: #a9aeb9;
+  --text-color-choose: #3a77ff;
+  --text-color-white: white;
+
+  /* 边框色 */
+  --border-color-1: #dcdfe6;
+  --border-color-2: #b1b6bd;
+  --border-color-3: #e3e6e9;
+  --border-color-4: #e0e4e8;
+  --border-color-5: #0317C4BF;
+  --border-color-6: #7BA4FF;
+
+  /* 背景色 */
+  --bg-color-1: #f1f2f4;
+  --bg-color-2: #fafbfc;
+  --bg-color-3: #29354f;
+  --bg-color-4: #F5F7FA;
+  --bg-color-5: #F6F9FF;
+  --bg-color-6: #EBF2FF;
+
+  --el-border-radius-base: 8px;
+  --el-table-border-color: #dcdfe6;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  font-weight: normal;
+}
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+
+::-webkit-scrollbar-thumb {
+  background-color: #dddee0; /* 设置滑块的颜色 */
+  border-radius: 5px; /* 设置滑块的圆角 */
+}
+
+body {
+  height: 100vh;
+  color: var(--text-color);
+  /*background: var(--bg-color-1);*/
+  transition:
+    color 0.5s,
+    background-color 0.5s;
+  font-size: 14px;
+  font-family: PingFangSC-Regular;
+}
