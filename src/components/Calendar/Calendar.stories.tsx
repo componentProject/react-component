@@ -1,4 +1,3 @@
-import type {Meta, StoryObj} from '@storybook/react';
 // import {fn} from '@storybook/test';
 
 import Calendar from './index.tsx';
@@ -8,20 +7,16 @@ const meta = {
     component: Calendar,
     parameters: {
 			docs: {
-				description: {
-					defaultValue: '测试',
-				}
 			},
     },
     tags: ['autodocs'],
-		argTypes: {
-		},
-    args: {},
-} satisfies Meta<typeof Calendar>;
-
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
     args: {},
 };
+
+export default meta;
+
+const Template = (props) => {
+		return <Calendar {...props} />;
+};
+export const calendar = Template.bind({});
+calendar.args = {};
