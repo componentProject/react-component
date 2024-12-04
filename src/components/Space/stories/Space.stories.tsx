@@ -24,7 +24,7 @@ const meta = {
 export default meta;
 
 const Template = (props) => {
-	return <ConfigProvider space={{size: 20}}>
+	return <ConfigProvider space={20}>
 		<Space {...props}>
 			<div className="box"></div>
 			<div className="box"></div>

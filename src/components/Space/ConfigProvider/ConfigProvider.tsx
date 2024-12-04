@@ -1,10 +1,8 @@
 import React, { PropsWithChildren } from "react";
-import { SizeType } from "../index.tsx";
+import { SizeType } from "../Space.ts";
 
 export interface ConfigContextType {
-  space?: {
-    size?: SizeType
-  }
+  space?: SizeType| [SizeType, SizeType]
 }
 export const ConfigContext = React.createContext<ConfigContextType>({});
 
