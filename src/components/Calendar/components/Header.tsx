@@ -1,7 +1,7 @@
 import { Dayjs } from "dayjs";
 import { useContext } from "react";
-import LocaleContext from "./LocaleContext";
-import allLocales from "./locale";
+import LocaleContext from "../locale/LocaleContext.tsx";
+import allLocales from "../locale";
 interface HeaderProps {
     curMonth: Dayjs;
     prevMonthHandler: () => void;

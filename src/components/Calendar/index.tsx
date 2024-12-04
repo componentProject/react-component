@@ -1,10 +1,10 @@
-import dayjs, {Dayjs} from 'dayjs';
-import MonthCalendar from './MonthCalendar';
 import './index.scss';
-import Header from './Header';
+import dayjs, {Dayjs} from 'dayjs';
+import MonthCalendar from './components/MonthCalendar.tsx';
+import Header from './components/Header.tsx';
 import {CSSProperties, ReactNode, useState} from 'react';
 import cs from 'classnames';
-import LocaleContext from './LocaleContext';
+import LocaleContext from './locale/LocaleContext.tsx';
 import {useControllableValue} from 'ahooks';
 
 export interface CalendarProps {

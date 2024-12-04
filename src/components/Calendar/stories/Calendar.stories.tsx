@@ -1,6 +1,6 @@
 // import {fn} from '@storybook/test';
 
-import Calendar from './index.tsx';
+import Calendar from '../index.tsx';
 
 const meta = {
     title: '日历',

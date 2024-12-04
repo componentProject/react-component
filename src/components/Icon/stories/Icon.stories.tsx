@@ -1,6 +1,6 @@
 // import {fn} from '@storybook/test';
 
-import Icon from './index.tsx';
+import Icon from '../index.tsx';
 
 const meta = {
 	title: 'Icon',
