@@ -8,6 +8,8 @@ export interface PortalProps {
 
 
 /**
+ * 通过createPortal将子元素挂载到指定容器/body上,并通过useImperativeHandle返回容器dom,也就是通过ref获取该组件时返回的是容器dom
+ *
  * 如果传入的是 string，就作为选择器来找到对应的 dom 作为挂载点，
  *
  * 如果是 HTMLElement，则直接作为挂载节点，

@@ -14,7 +14,7 @@ const preview = {
 export const decorators = [
 	(Story) => (
 		<div className="flex-col" style={{
-			'max-height': '100%',
+			maxHeight: '100%',
 			overflow: 'hidden'
 		}}>
 			{Story()}
