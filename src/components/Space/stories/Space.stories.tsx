@@ -2,23 +2,16 @@ import Space from '../index.tsx';
 import {ConfigProvider} from "../ConfigProvider/ConfigProvider.tsx";
 import './Space.css'
 
+/**
+ * flex布局组件
+ */
 const meta = {
 	title: 'Space',
 	component: Space,
-	args: {
-		// className: '',
-		// style: {},
-		// size: 'small' as SizeType | [SizeType, SizeType],
-		direction: 'horizontal',
-		// align: 'start',
-		// wrap: false
+	args: {},
+	argTypes: {
+		split: {control: undefined},
 	},
-	parameters: {
-		docs: {
-			description: {},
-		},
-	},
-	argTypes: {},
 	tags: ['autodocs'],
 };
 export default meta;

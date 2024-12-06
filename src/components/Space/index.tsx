@@ -48,7 +48,7 @@ const Space: React.FC<SpaceProps> = ({
 				{child}
 			</div>
 			{i < childNodes.length && split && (
-				<span className={`${className}-split`} style={style}>
+				<span className={`${className}-split`} style={{height: '100%',...style}}>
                 {split}
             </span>
 			)}

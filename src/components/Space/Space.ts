@@ -3,6 +3,10 @@ import React from "react";
 export type SizeType = 'small' | 'middle' | 'large' | number  | undefined;
 
 export interface SpaceProps extends React.HTMLAttributes<HTMLDivElement> {
+	/**
+	 * 用于分割每个子元素的元素
+	 */
+	split?: React.ReactNode;
 	className?: string;
 	style?: React.CSSProperties;
 	/**
@@ -25,7 +29,6 @@ export interface SpaceProps extends React.HTMLAttributes<HTMLDivElement> {
 	 * flex副轴方向: start | end | center | baseline
 	 */
 	align?: 'start' | 'end' | 'center' | 'baseline';
-	split?: React.ReactNode;
 	/**
 	 * 是否换行,默认否
 	 */
