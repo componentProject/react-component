@@ -9,7 +9,7 @@ interface MutationObserverProps {
 }
 
 /**
- * 监视布局变化,并重新监听子元素dom变化,
+ * 监视子元素dom结构变化,并使用useLayoutEffect在视图更新时重新监听
  *
  * 通过onMutate回调获取变化列表(等同于mutationObserver接收的回调),
  * 通过options配置监听器,等同于mutationObserver的options

@@ -1,11 +1,9 @@
 import {forwardRef, useEffect, useMemo, useImperativeHandle} from 'react';
 import {createPortal} from 'react-dom';
 
-export interface PortalProps {
-	attach?: HTMLElement | string;
-	children: React.ReactNode;
-}
+import type {PortalProps} from './types'
 
+import {getAttach} from './utils';
 
 /**
  * 通过createPortal将子元素挂载到指定容器/body上,并通过useImperativeHandle返回容器dom,也就是通过ref获取该组件时返回的是容器dom
@@ -44,13 +42,4 @@ const Portal = forwardRef((props: PortalProps, ref) => {
 
 export default Portal;
 
-export function getAttach(attach: PortalProps['attach']) {
-	if (typeof attach === 'string') {
-		return document.querySelector(attach);
-	}
-	if (typeof attach === 'object' && attach instanceof window.HTMLElement) {
-		return attach;
-	}
 
-	return document.body;
-}

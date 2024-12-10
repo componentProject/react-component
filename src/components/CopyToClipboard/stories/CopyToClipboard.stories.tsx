@@ -22,7 +22,9 @@ const Template = (props) => {
 	</>
 
 }
-export const portal = Template.bind({});
-portal.args = {
+export const copy = Template.bind({});
+copy.args = {
 	text: 'hello world',
+	debug: true,
+	message: '复制成功'
 }
