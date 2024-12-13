@@ -1,5 +1,6 @@
 @import './base.css';
-@import './custom.scss';
+/*@import './custom.scss';*/
+@import "tailwind.scss";
 
 #app {
   margin: 0;
