@@ -1,33 +1,48 @@
 //TODO: 需要将样式拆分到各自的style .scss文件中
 
 .width-100 {
-  width: 100%;
+	width: 100%;
 }
 
 .height-100 {
-  height: 100%;
+	height: 100%;
+}
+
+.cursor {
+	&-pointer {
+		cursor: pointer;
+	}
+}
+
+$user-select: none, text;
+.user-select {
+	@each $item in $user-select {
+		&-#{$item} {
+			user-select: $item;
+		}
+	}
 }
 
 //获取非空选择器
 @function getSelector($item) {
-  @if $item == '' {
-    @return '';
-  } @else {
-    @return -#{$item};
-  }
+	@if $item == '' {
+		@return '';
+	} @else {
+		@return -#{$item};
+	}
 }
 
 //#region text-align
 $align: (
-        left: left,
-        center: center,
-        right: right
+	left: left,
+	center: center,
+	right: right
 );
 
 @each $key, $value in $align {
-  .text-#{$key} {
-    text-align: $value;
-  }
+	.text-#{$key} {
+		text-align: $value;
+	}
 }
 
 //#endregion
@@ -35,31 +50,31 @@ $align: (
 //#region text-color
 
 $color: (
-        primary-color: #3a77ff, /* 主色调 */
-        primary-gradient-right: linear-gradient (0 100%, #3f61ff, #2b8dff), /* 渐变色（顶部） */
-        primary-color-1: #3a81ff, /* 辅助色1 */
-        primary-color-2: #518fff, /* 辅助色2 */
-        primary-color-3: #53a0fd, /* 辅助色3 */
-        primary-color-4: #f7faff, /* 辅助色4 */
-        success-color: #0eb67f, /* 辅助色5 */
-        success-color-1: #f6fffc, /* 辅助色6 */
-        warning-color: #f5ab01, /* 提醒色 */
-        danger-color: #ef6b53, /* 警告色 */
-  /* 文字颜色 */
-        text-color: #2a3651,
-        text-color-1: #29354f,
-        text-color-disable: #a9aeb9,
-        text-color-choose: #3a77ff,
-        text-color-white: white,
-        price-color: #E7492D,
-        black-color: black,
-        gray-color: #8B919E
+	primary-color: #3a77ff, /* 主色调 */
+	primary-gradient-right: linear-gradient (0 100%, #3f61ff, #2b8dff), /* 渐变色（顶部） */
+	primary-color-1: #3a81ff, /* 辅助色1 */
+	primary-color-2: #518fff, /* 辅助色2 */
+	primary-color-3: #53a0fd, /* 辅助色3 */
+	primary-color-4: #f7faff, /* 辅助色4 */
+	success-color: #0eb67f, /* 辅助色5 */
+	success-color-1: #f6fffc, /* 辅助色6 */
+	warning-color: #f5ab01, /* 提醒色 */
+	danger-color: #ef6b53, /* 警告色 */
+	/* 文字颜色 */
+	text-color: #2a3651,
+	text-color-1: #29354f,
+	text-color-disable: #a9aeb9,
+	text-color-choose: #3a77ff,
+	text-color-white: white,
+	price-color: #E7492D,
+	black-color: black,
+	gray-color: #8B919E
 );
 
 @each $key, $value in $color {
-  .#{$key} {
-    color: $value;
-  }
+	.#{$key} {
+		color: $value;
+	}
 }
 
 //#endregion
@@ -67,11 +82,11 @@ $color: (
 //#region boxsizing
 $boxsizing: (border-box, content-box);
 .boxsizing {
-  @each $item in $boxsizing {
-    &-#{$item} {
-      box-sizing: $item;
-    }
-  }
+	@each $item in $boxsizing {
+		&-#{$item} {
+			box-sizing: $item;
+		}
+	}
 }
 
 //#endregion
@@ -81,32 +96,32 @@ $boxsizing: (border-box, content-box);
 
 $border: '', right, bottom, left, top;
 $border-color: (
-        color-1: #dcdfe6,
-        color-2: #b1b6bd,
-        color-3: #e3e6e9,
-        color-4: #e0e4e8,
-        color-5: #0317C4BF,
-        color-6: #F4F6F7,
-        color-7: #CED3DB,
+	color-1: #dcdfe6,
+	color-2: #b1b6bd,
+	color-3: #e3e6e9,
+	color-4: #e0e4e8,
+	color-5: #0317C4BF,
+	color-6: #F4F6F7,
+	color-7: #CED3DB,
 );
 .border {
-  @each $item in $border {
-    &#{getSelector($item)} {
-      @each $name, $color in $border-color {
-        &-#{$name} {
-          border#{getSelector($item)}: 1px solid $color;
-        }
-      }
+	@each $item in $border {
+		&#{getSelector($item)} {
+			@each $name, $color in $border-color {
+				&-#{$name} {
+					border#{getSelector($item)}: 1px solid $color;
+				}
+			}
 
-      &-none {
-        border-#{$item}: none;
-      }
-    }
-  }
+			&-none {
+				border-#{$item}: none;
+			}
+		}
+	}
 
-  &-radius8 {
-    border-radius: 8px;
-  }
+	&-radius8 {
+		border-radius: 8px;
+	}
 }
 
 
@@ -114,218 +129,218 @@ $border-color: (
 
 //#region text-style
 .bold {
-  font-weight: bold;
+	font-weight: bold;
 }
 
 .overflow-hidden {
-  overflow: hidden;
+	overflow: hidden;
 }
 
 .overflow-auto {
-  overflow: auto;
+	overflow: auto;
 }
 
 .white-space-nowrap, .whitespace-nowrap {
-  white-space: nowrap;
+	white-space: nowrap;
 }
 
 //#endregion
 
 //#region background-color
 $bg: (
-        'white': white,
-        'gray': var(--bg-color-4),
-        'primary': var(--bg-color-choose),
-  /* 背景色 */
-        color-1: #f1f2f4,
-        color-2: #fafbfc,
-        color-3: #29354f,
-        color-4: #F5F7FA,
-        color-5: #EDF4FF,
-        color-6: #3A77FF,
-        color-7: #f0f1f2,
-        color-8: #F8F8F8
+	'white': white,
+	'gray': var(--bg-color-4),
+	'primary': var(--bg-color-choose),
+	/* 背景色 */
+	color-1: #f1f2f4,
+	color-2: #fafbfc,
+	color-3: #29354f,
+	color-4: #F5F7FA,
+	color-5: #EDF4FF,
+	color-6: #3A77FF,
+	color-7: #f0f1f2,
+	color-8: #F8F8F8
 );
 
 @each $name, $color in $bg {
-  .bg-#{$name} {
-    background-color: $color;
-  }
+	.bg-#{$name} {
+		background-color: $color;
+	}
 }
 
 //#endregion
 
 //#region margin
 $margin: (
-        0: 0,
-        4: 4px,
-        8: 8px,
-        12: 12px,
-        16: 16px,
-        24: 24px
+	0: 0,
+	4: 4px,
+	8: 8px,
+	12: 12px,
+	16: 16px,
+	24: 24px
 );
 
 @each $key, $value in $margin {
-  .mrg#{$key} {
-    margin: $value;
-  }
+	.mrg#{$key} {
+		margin: $value;
+	}
 
-  .mrgt#{$key}, .mt#{$key} {
-    margin-top: $value;
-  }
+	.mrgt#{$key}, .mt#{$key} {
+		margin-top: $value;
+	}
 
-  .mrgb#{$key}, .mb#{$key} {
-    margin-bottom: $value;
-  }
+	.mrgb#{$key}, .mb#{$key} {
+		margin-bottom: $value;
+	}
 
-  .mrgl#{$key}, .ml#{$key} {
-    margin-left: $value;
-  }
+	.mrgl#{$key}, .ml#{$key} {
+		margin-left: $value;
+	}
 
-  .mrgr#{$key}, .mr#{$key} {
-    margin-right: $value;
-  }
+	.mrgr#{$key}, .mr#{$key} {
+		margin-right: $value;
+	}
 }
 
 //#endregion
 
 //#region padding
 $padding: (
-        '0-8': 0 8px,
-        '0-16': 0 16px,
-        '0-24': 0 24px,
-        '4-16': 4px 16px,
-        '8-16': 8px 16px,
-        '16-8': 16px 8px,
-        '16-24': 16px 24px,
+	'0-8': 0 8px,
+	'0-16': 0 16px,
+	'0-24': 0 24px,
+	'4-16': 4px 16px,
+	'8-16': 8px 16px,
+	'16-8': 16px 8px,
+	'16-24': 16px 24px,
 );
 
 @each $key, $value in $padding {
-  .p#{$key} {
-    padding: $value;
-  }
+	.p#{$key} {
+		padding: $value;
+	}
 }
 
 $padding-all: (
-        0: 0,
-        4: 4px,
-        8: 8px,
-        16: 16px,
-        24: 24px,
+	0: 0,
+	4: 4px,
+	8: 8px,
+	16: 16px,
+	24: 24px,
 );
 
 @each $key, $value in $padding-all {
-  .p#{$key} {
-    padding: $value;
-  }
+	.p#{$key} {
+		padding: $value;
+	}
 
-  .padt#{$key}, .pt#{$key} {
-    padding-top: $value;
-  }
+	.padt#{$key}, .pt#{$key} {
+		padding-top: $value;
+	}
 
-  .padb#{$key}, .pb#{$key} {
-    padding-bottom: $value;
-  }
+	.padb#{$key}, .pb#{$key} {
+		padding-bottom: $value;
+	}
 
-  .padl#{$key}, .pl#{$key} {
-    padding-left: $value;
-  }
+	.padl#{$key}, .pl#{$key} {
+		padding-left: $value;
+	}
 
-  .padr#{$key}, .pr#{$key} {
-    padding-right: $value;
-  }
+	.padr#{$key}, .pr#{$key} {
+		padding-right: $value;
+	}
 }
 
 //#endregion
 
 //#region font-size
 $font-size: (
-        14: 14px,
-        16: 16px,
-        20: 20px,
-        24: 24px
+	14: 14px,
+	16: 16px,
+	20: 20px,
+	24: 24px
 );
 
 @each $key, $value in $font-size {
-  .font-#{$key} {
-    font-size: $value;
-  }
+	.font-#{$key} {
+		font-size: $value;
+	}
 }
 
 //#endregion
 
 //#region flex
 $flex-direction: (
-        row: row,
-        col: column,
-        column: column
+	row: row,
+	col: column,
+	column: column
 );
 $justify-content: (
-        start: flex-start,
-        end: flex-end,
-  //center: center,
-        c: center,
-        between: space-between
+	start: flex-start,
+	end: flex-end,
+	//center: center,
+	c: center,
+	between: space-between
 );
 $align-items: (
-        ac: center,
-        center: center,
-        start: flex-start,
-        end: flex-end,
+	ac: center,
+	center: center,
+	start: flex-start,
+	end: flex-end,
 );
 .flex {
-  display: flex;
+	display: flex;
 
-  &-warp {
-    flex-wrap: wrap;
-  }
+	&-warp {
+		flex-wrap: wrap;
+	}
 
-  &-nowarp {
-    flex-wrap: nowrap;
-  }
+	&-nowarp {
+		flex-wrap: nowrap;
+	}
 
-  &-1 {
-    flex: 1
-  }
+	&-1 {
+		flex: 1
+	}
 
-  &-ac {
-    @extend .flex;
-    align-items: center;
-  }
+	&-ac {
+		@extend .flex;
+		align-items: center;
+	}
 
-  @each $key, $value in $flex-direction {
-    &-#{$key} {
-      @extend .flex;
-      flex-direction: $value;
-    }
-  }
+	@each $key, $value in $flex-direction {
+		&-#{$key} {
+			@extend .flex;
+			flex-direction: $value;
+		}
+	}
 
-  @each $justify-key, $justify-value in $justify-content {
-    &-#{$justify-key} {
-      @extend .flex;
-      justify-content: $justify-value;
+	@each $justify-key, $justify-value in $justify-content {
+		&-#{$justify-key} {
+			@extend .flex;
+			justify-content: $justify-value;
 
-      &-wrap {
-        @extend .flex-#{$justify-key};
-      }
+			&-wrap {
+				@extend .flex-#{$justify-key};
+			}
 
-      @each $align-key, $align-value in $align-items {
-        &-#{$align-key} {
-          @extend .flex-#{$justify-key};
-          align-items: $align-value;
+			@each $align-key, $align-value in $align-items {
+				&-#{$align-key} {
+					@extend .flex-#{$justify-key};
+					align-items: $align-value;
 
-          &-wrap {
-            @extend .flex-#{$justify-key}-#{$align-key};
-            flex-wrap: wrap;
-          }
-        }
-      }
-    }
-  }
+					&-wrap {
+						@extend .flex-#{$justify-key}-#{$align-key};
+						flex-wrap: wrap;
+					}
+				}
+			}
+		}
+	}
 }
 
 .align-center {
-  align-items: center;
+	align-items: center;
 }
 
 //#endregion
@@ -333,148 +348,74 @@ $align-items: (
 //#region grid
 $grid-cols: (1, 2, 3, 4);
 $grid-gap: (
-        8: 8px,
-        16: 16px,
-        20: 20px,
-        24: 24px,
+	8: 8px,
+	16: 16px,
+	20: 20px,
+	24: 24px,
 );
 .grid {
-  display: grid;
+	display: grid;
 
-  @each $gap-key, $gap-value in $grid-gap {
-    &-gap-#{$gap-key} {
-      grid-gap: $gap-value;
-    }
-    &-gap-column-#{$gap-key} {
-      grid-column-gap: $gap-value;
-    }
-    &-gap-row-#{$gap-key} {
-      grid-row-gap: $gap-value;
-    }
-  }
+	@each $gap-key, $gap-value in $grid-gap {
+		&-gap-#{$gap-key} {
+			grid-gap: $gap-value;
+		}
+		&-gap-column-#{$gap-key} {
+			grid-column-gap: $gap-value;
+		}
+		&-gap-row-#{$gap-key} {
+			grid-row-gap: $gap-value;
+		}
+	}
 
-  @each $item in $grid-cols {
-    &-cols-#{$item} {
-      @extend .grid;
-      grid-template-columns: repeat($item, 1fr);
+	@each $item in $grid-cols {
+		&-cols-#{$item} {
+			@extend .grid;
+			grid-template-columns: repeat($item, 1fr);
 
-      &-auto {
-        @extend .grid;
-        grid-template-columns: repeat($item, auto);
-      }
-    }
-  }
-}
-
-//#endregion
-
-//#region title
-
-.blue-title {
-  margin-top: 8px;
-  margin-bottom: 8px;
-  font-weight: 600;
-  font-size: 16px;
-  padding: 4px 0;
-  display: flex;
-  align-items: center;
-  color: black;
-
-  &:before {
-    content: '';
-    display: inline-block;
-    width: 4px;
-    height: 16px;
-    background-color: var(--primary-color-2);
-    border-radius: 2px;
-    margin-right: 8px;
-    vertical-align: middle;
-  }
-}
-
-.radio-title {
-  display: flex;
-  align-items: center;
-
-  .content {
-    font-weight: 600;
-  }
-
-  .radio {
-    line-height: 20px;
-    font-size: 40px;
-  }
+			&-auto {
+				@extend .grid;
+				grid-template-columns: repeat($item, auto);
+			}
+		}
+	}
 }
 
 //#endregion
 
 //#region position
 $position: (
-        relative: relative,
-        absolute: absolute
+	relative: relative,
+	absolute: absolute
 );
 
 @each $key, $value in $position {
-  .position-#{$key} {
-    position: $value;
-  }
+	.position-#{$key} {
+		position: $value;
+	}
 }
 
 //#endregion
 
 //#region active+hover
 $active: (
-        primary: (
-                color: var(--primary-color),
-                bg: var(--bg-color-6),
-        )
+	primary: (
+		color: var(--primary-color),
+		bg: var(--bg-color-6),
+	)
 );
 @each $key, $value in $active {
-  .active-#{$key} {
-    color: map-get($value, color);
-    background-color: map-get($value, bg);
-  }
-  .hover-#{$key} {
-    &:hover {
-      color: map-get($value, color);
-      background-color: map-get($value, bg);
-      opacity: 0.8;
-    }
-  }
+	.active-#{$key} {
+		color: map-get($value, color);
+		background-color: map-get($value, bg);
+	}
+	.hover-#{$key} {
+		&:hover {
+			color: map-get($value, color);
+			background-color: map-get($value, bg);
+			opacity: 0.8;
+		}
+	}
 }
 
 //#endregion
-
-//#region custom style
-.cursor {
-  &-pointer {
-    cursor: pointer;
-  }
-}
-
-$user-select: none, text;
-.user-select {
-  @each $item in $user-select {
-    &-#{$item} {
-      user-select: $item;
-    }
-  }
-}
-
-//.hover{
-//}
-
-
-.submit-btn {
-  min-width: 80px;
-  height: 28px;
-}
-
-.dialog-footer {
-  display: flex;
-  justify-content: center;
-  padding-bottom: 20px;
-}
-
-//#endregion
-
