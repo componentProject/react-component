@@ -1,5 +1,4 @@
 import Space from '../index.tsx';
-import {ConfigProvider} from "../ConfigProvider/ConfigProvider.tsx";
 import './Space.css'
 
 /**
@@ -10,20 +9,18 @@ const meta = {
 	component: Space,
 	args: {},
 	argTypes: {
-		split: {control: undefined},
+		split: {control: 'dom'},
+		size: {control: 'radio', options: ['small', 'middle', 'large', 32]},
 	},
-	tags: ['autodocs'],
 };
 export default meta;
 
 const Template = (props) => {
-	return <ConfigProvider space={20}>
-		<Space {...props}>
-			<div className="box"></div>
-			<div className="box"></div>
-			<div className="box"></div>
-		</Space>
-	</ConfigProvider>
+	return <Space {...props}>
+		<div className="box"></div>
+		<div className="box"></div>
+		<div className="box"></div>
+	</Space>
 }
 
 export const horizontal = Template.bind({});

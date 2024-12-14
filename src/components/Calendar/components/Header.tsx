@@ -1,33 +1,32 @@
-import { Dayjs } from "dayjs";
-import { useContext } from "react";
-import LocaleContext from "../locale/LocaleContext.tsx";
+import {Dayjs} from "dayjs";
 import allLocales from "../locale";
+
 interface HeaderProps {
-    curMonth: Dayjs;
-    prevMonthHandler: () => void;
-    nextMonthHandler: () => void;
-    todayHandler: () => void;
+	curMonth: Dayjs;
+	prevMonthHandler: () => void;
+	nextMonthHandler: () => void;
+	todayHandler: () => void;
 }
+
 function Header(props: HeaderProps) {
 
-    const {
-        curMonth,
-        prevMonthHandler,
-        nextMonthHandler,
-        todayHandler
-    } = props;
+	const {
+		curMonth,
+		prevMonthHandler,
+		nextMonthHandler,
+		todayHandler,
+		locale
+	} = props;
+	const CalendarContext = allLocales[locale];
 
-    const localeContext = useContext(LocaleContext);
-    const CalendarContext = allLocales[localeContext.locale];
-
-    return <div className="calendar-header">
-        <div className="calendar-header-left">
-            <div className="calendar-header-icon" onClick={prevMonthHandler}>&lt;</div>
-            <div className="calendar-header-value">{curMonth.format(CalendarContext.formatMonth)}</div>
-            <div className="calendar-header-icon" onClick={nextMonthHandler}>&gt;</div>
-            <button className="calendar-header-btn" onClick={todayHandler}>{CalendarContext.today}</button>
-        </div>
-    </div>
+	return <div className="calendar-header">
+		<div className="calendar-header-left">
+			<div className="calendar-header-icon" onClick={prevMonthHandler}>&lt;</div>
+			<div className="calendar-header-value">{curMonth.format(CalendarContext.formatMonth)}</div>
+			<div className="calendar-header-icon" onClick={nextMonthHandler}>&gt;</div>
+			<button className="calendar-header-btn" onClick={todayHandler}>{CalendarContext.today}</button>
+		</div>
+	</div>
 }
 
 export default Header;

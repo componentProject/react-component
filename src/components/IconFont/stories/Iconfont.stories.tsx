@@ -43,7 +43,6 @@ const meta = {
 			description: '类名',
 		},
 	},
-	tags: ['autodocs'],
 };
 export default meta;
 

@@ -4,7 +4,6 @@ import {useState, useEffect} from 'react'
 const meta = {
 	title: 'MutateObserver',
 	component: MutateObserver,
-	tags: ['autodocs'],
 	args: {},
 	argTypes: {
 		children: {

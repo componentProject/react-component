@@ -3,7 +3,6 @@ import CopyToClipboard from '../index.tsx';
 const meta = {
 	title: 'CopyToClipboard',
 	component: CopyToClipboard,
-	tags: ['autodocs'],
 	args: {},
 	argTypes: {
 		children: {

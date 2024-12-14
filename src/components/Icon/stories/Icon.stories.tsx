@@ -6,7 +6,6 @@ const meta = {
 	title: 'Icon',
 	component: Icon,
 	args: {},
-	tags: ['autodocs'],
 	argTypes: {
 		color: {control: 'color'},
 		size: {control: 'text'},

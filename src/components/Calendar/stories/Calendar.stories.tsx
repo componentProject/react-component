@@ -3,20 +3,24 @@
 import Calendar from '../index.tsx';
 
 const meta = {
-    title: '日历',
-    component: Calendar,
-    parameters: {
-			docs: {
-			},
-    },
-    tags: ['autodocs'],
-    args: {},
+	title: '日历',
+	component: Calendar,
+	parameters: {
+		docs: {},
+	},
+	args: {},
+	argTypes: {
+		locale: {
+			control: 'radio',
+			options: ['zh-CN', 'en-US']
+		}
+	}
 };
 
 export default meta;
 
 const Template = (props) => {
-		return <Calendar {...props} />;
+	return <Calendar {...props} />;
 };
 export const calendar = Template.bind({});
 calendar.args = {};

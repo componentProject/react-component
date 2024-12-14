@@ -3,7 +3,6 @@ import Portal from '../index.tsx';
 const meta = {
 	title: 'Portal',
 	component: Portal,
-	tags: ['autodocs'],
 	args: {},
 	argTypes: {
 		attach: {
