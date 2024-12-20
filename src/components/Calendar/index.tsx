@@ -19,7 +19,7 @@ function Calendar(props: CalendarProps) {
 	let {locale} = props;
 	const configProvider = useContext(ConfigContext);
 	console.log('configProvider', configProvider)
-	locale = locale || configProvider?.locale;
+	locale = locale || configProvider?.locale||'zh-CN';
 
 	const [curValue, setCurValue] = useControllableValue<Dayjs>(props, {
 		defaultValue: dayjs()
