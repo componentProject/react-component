@@ -3,7 +3,7 @@
 		"eslint --fix",
 		"prettier --write"
 	],
-	"*.{css,scss,less,jsx,tsx,vue}": [
+	"*.{css,scss,less,vue}": [
 		"stylelint --cache --fix --cache-location node_modules/.cache/stylelint/"
 	]
 }

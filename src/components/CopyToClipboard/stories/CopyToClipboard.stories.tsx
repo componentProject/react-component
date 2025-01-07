@@ -1,29 +1,30 @@
-import CopyToClipboard from '../index.tsx';
+import CopyToClipboard from "../index.tsx";
 
 const meta = {
-	title: 'CopyToClipboard',
+	title: "CopyToClipboard",
 	component: CopyToClipboard,
 	args: {},
 	argTypes: {
 		children: {
-			control: 'disabled'
-		}
+			control: "disabled",
+		},
 	},
-}
+};
 
 export default meta;
 
 const Template = (props) => {
-	return <>
-		<CopyToClipboard {...props}>
-			<div>复制</div>
-		</CopyToClipboard>
-	</>
-
-}
+	return (
+		<>
+			<CopyToClipboard {...props}>
+				<div>复制</div>
+			</CopyToClipboard>
+		</>
+	);
+};
 export const copy = Template.bind({});
 copy.args = {
-	text: 'hello world',
+	text: "hello world",
 	debug: true,
-	message: '复制成功'
-}
+	message: "复制成功",
+};

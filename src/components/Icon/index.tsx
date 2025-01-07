@@ -1,8 +1,8 @@
-import React, {forwardRef} from 'react';
-import {createFromIconfont} from "../IconFont";
-import cs from 'classnames';
+import React, { forwardRef } from "react";
+import { createFromIconfont } from "../IconFont";
+import cs from "classnames";
 
-import './index.scss';
+import "./index.scss";
 
 type BaseIconProps = {
 	className?: string;
@@ -13,19 +13,16 @@ type BaseIconProps = {
 
 export type IconProps = BaseIconProps & Omit<React.SVGAttributes<SVGElement>, keyof BaseIconProps>;
 
-export const getSize = (size: IconProps['size']) => {
+export const getSize = (size: IconProps["size"]) => {
 	if (Array.isArray(size) && size.length === 2) {
 		return size as string[];
 	}
 
-	const width = (size as string) || '1em';
-	const height = (size as string) || '1em';
+	const width = (size as string) || "1em";
+	const height = (size as string) || "1em";
 
 	return [width, height];
 };
-
-
-
 
 export interface IconFontProps {
 	style?: React.CSSProperties;
@@ -34,44 +31,34 @@ export interface IconFontProps {
 	className?: string;
 	size?: string | string[];
 	spin?: boolean;
-	color?: string,
-	children?: React.ReactNode
+	color?: string;
+	children?: React.ReactNode;
 }
 
 /** Icon组件,传递scriptUrl可以使用iconfont */
 const Icon = forwardRef((props: IconFontProps, ref) => {
-	const {
-		style,
-		className,
-		spin = false,
-		size = '1em',
-		color = 'currentColor',
-		children,
-		scriptUrl,
-		...rest
-	} = props;
-
+	const { style, className, spin = false, size = "1em", color = "currentColor", children, scriptUrl, ...rest } = props;
 
 	const [width, height] = getSize(size);
 
 	const cn = cs(
-		'icon',
+		"icon",
 		{
-			'icon-spin': spin
+			"icon-spin": spin,
 		},
-		className
-	)
+		className,
+	);
 
 	let IconComponent = children;
 	if (scriptUrl) {
 		const IconFont = createFromIconfont(scriptUrl);
-		IconComponent = <IconFont {...props} />
+		IconComponent = <IconFont {...props} />;
 	}
 	return (
-		<i ref={ref} className={cn} style={{...style, width, height, color}} {...rest}>
+		<i ref={ref} className={cn} style={{ ...style, width, height, color }} {...rest}>
 			{IconComponent}
 		</i>
-	)
-})
+	);
+});
 
-export default Icon
+export default Icon;

@@ -1,9 +1,9 @@
 // import {fn} from '@storybook/test';
 
-import Calendar from '../index.tsx';
+import Calendar from "../index.tsx";
 
 const meta = {
-	title: '日历',
+	title: "日历",
 	component: Calendar,
 	parameters: {
 		docs: {},
@@ -11,10 +11,10 @@ const meta = {
 	args: {},
 	argTypes: {
 		locale: {
-			control: 'radio',
-			options: ['zh-CN', 'en-US']
-		}
-	}
+			control: "radio",
+			options: ["zh-CN", "en-US"],
+		},
+	},
 };
 
 export default meta;

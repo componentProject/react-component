@@ -1,9 +1,9 @@
-import {forwardRef, useEffect, useMemo, useImperativeHandle} from 'react';
-import {createPortal} from 'react-dom';
+import { forwardRef, useEffect, useMemo, useImperativeHandle } from "react";
+import { createPortal } from "react-dom";
 
-import type {PortalProps} from './types'
+import type { PortalProps } from "./types";
 
-import {getAttach} from './utils';
+import { getAttach } from "./utils";
 
 /**
  * 通过createPortal将子元素挂载到指定容器/body上,并通过useImperativeHandle返回容器dom,也就是通过ref获取该组件时返回的是容器dom
@@ -15,13 +15,10 @@ import {getAttach} from './utils';
  * 否则，默认挂载到 document.body：
  */
 const Portal = forwardRef((props: PortalProps, ref) => {
-	const {
-		attach = document.body,
-		children
-	} = props;
+	const { attach = document.body, children } = props;
 
 	const container = useMemo(() => {
-		const el = document.createElement('div');
+		const el = document.createElement("div");
 		el.className = `portal-wrapper`;
 		return el;
 	}, []);
@@ -41,5 +38,3 @@ const Portal = forwardRef((props: PortalProps, ref) => {
 });
 
 export default Portal;
-
-
