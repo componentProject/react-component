@@ -3,6 +3,6 @@
 		"prettier --write"
 	],
 	"*.{css,scss,less}": [
-		"stylelint src/**/*.{css,scss,less} --cache --fix"
+		"stylelint --fix"
 	]
 }
