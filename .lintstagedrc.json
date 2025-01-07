@@ -1,0 +1,9 @@
+{
+	"*.{js,jsx,ts,tsx,vue,md}": [
+		"eslint --fix",
+		"prettier --write"
+	],
+	"*.{css,scss,less,jsx,tsx,vue}": [
+		"stylelint --cache --fix --cache-location node_modules/.cache/stylelint/"
+	]
+}
