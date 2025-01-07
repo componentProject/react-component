@@ -6,6 +6,7 @@ export interface ConfigContextType {
 	locale?: "zh-CN" | "en-US";
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const ConfigContext = React.createContext<ConfigContextType>({});
 
 type ConfigProviderProps = PropsWithChildren<ConfigContextType>;

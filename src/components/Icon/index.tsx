@@ -13,6 +13,7 @@ type BaseIconProps = {
 
 export type IconProps = BaseIconProps & Omit<React.SVGAttributes<SVGElement>, keyof BaseIconProps>;
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const getSize = (size: IconProps["size"]) => {
 	if (Array.isArray(size) && size.length === 2) {
 		return size as string[];
