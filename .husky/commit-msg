@@ -1,4 +1,4 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
-#调用commitlint校验提交格式
+#!调用commitlint校验提交格式
 npx commitlint --edit

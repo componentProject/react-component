@@ -1,4 +1,3 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
-#调用lint-staged校验代码格式
 npx lint-staged
