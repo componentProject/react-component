@@ -1,14 +1,13 @@
-import {defineConfig, loadEnv,ConfigEnv,UserConfig} from "vite";
+import { defineConfig, loadEnv, ConfigEnv, UserConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import {wrapperEnv} from './src/utils/getEnv.js';
-import {visualizer} from "rollup-plugin-visualizer";
-import {createHtmlPlugin} from "vite-plugin-html";
+import { wrapperEnv } from "./src/utils/getEnv.js";
+import { visualizer } from "rollup-plugin-visualizer";
+import { createHtmlPlugin } from "vite-plugin-html";
 import viteCompression from "vite-plugin-compression";
-import {fileURLToPath, URL} from "node:url";
-import eslintPlugin from 'vite-plugin-eslint';
-import autoprefixer from 'autoprefixer'
-import tailwindcss from 'tailwindcss'
-import type {Plugin} from "postcss";
+import { fileURLToPath, URL } from "node:url";
+import eslintPlugin from "vite-plugin-eslint";
+import * as autoprefixer from "autoprefixer";
+import * as tailwindcss from "tailwindcss";
 // @see: https://vitejs.dev/config/
 export default defineConfig((mode: ConfigEnv): UserConfig => {
 	const env = loadEnv(mode.mode, process.cwd());
@@ -29,9 +28,9 @@ export default defineConfig((mode: ConfigEnv): UserConfig => {
 					// target: "https://mock.mengxuegu.com/mock/62abda3212c1416424630a45", // easymock
 					target: "http://192.168.211.180/ts-system", // easymock
 					changeOrigin: true,
-					rewrite: path => path.replace(/^\/api/, "")
-				}
-			}
+					rewrite: (path) => path.replace(/^\/api/, ""),
+				},
+			},
 		},
 		// 插件
 		plugins: [
@@ -39,9 +38,9 @@ export default defineConfig((mode: ConfigEnv): UserConfig => {
 			createHtmlPlugin({
 				inject: {
 					data: {
-						title: viteEnv.VITE_GLOB_APP_TITLE
-					}
-				}
+						title: viteEnv.VITE_GLOB_APP_TITLE,
+					},
+				},
 			}),
 			// * EsLint 报错信息显示在浏览器界面上
 			eslintPlugin(),
@@ -49,33 +48,34 @@ export default defineConfig((mode: ConfigEnv): UserConfig => {
 			viteEnv.VITE_REPORT && visualizer(),
 			// * gzip 压缩
 			viteEnv.VITE_BUILD_GZIP &&
-			viteCompression({
-				verbose: true,
-				disable: false,
-				threshold: 10240,
-				algorithm: "gzip",
-				ext: ".gz"
-			})
+				viteCompression({
+					verbose: true,
+					disable: false,
+					threshold: 10240,
+					algorithm: "gzip",
+					ext: ".gz",
+				}),
 		],
 		// 路径别名
 		resolve: {
+			extensions: [".js", ".jsx", ".ts", ".tsx"],
 			alias: {
-				"@": fileURLToPath(new URL('./src', import.meta.url))
-			}
+				"@": fileURLToPath(new URL("./src", import.meta.url)),
+			},
 		},
 		// 全局样式
 		css: {
 			postcss: {
-				plugins: [ autoprefixer(), (tailwindcss as Plugin) ]
+				plugins: [autoprefixer(), tailwindcss],
 			},
 			preprocessorOptions: {
 				less: {
 					// 是否允许在less中写js
 					javascriptEnabled: true,
 					// 每个less文件编译前添加的额外less代码
-					additionalData: `@import "@/styles/var.less";`
-				}
-			}
+					additionalData: `@import "@/styles/var.less";`,
+				},
+			},
 		},
 		// esbuild: {
 		// 	pure: viteEnv.VITE_DROP_CONSOLE ? ["console.log", "debugger"] : []

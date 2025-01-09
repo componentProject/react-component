@@ -1,9 +1,15 @@
 import Watermark from "../index.tsx";
 import type { StoryFn } from "@storybook/react";
-import "./Watermark.css";
 
 /**
- * 水印组件
+ * 利用父元素会被子元素撑开的特点,将子组件包裹在relative的父元素内,
+ * 通过width:calc(100% - ${offsetLeft}); height:calc(100% - ${offsetTop}); position:absolute;将水印画布撑大到与子元素同大小
+ *
+ * 利用canvas将图片/文字绘制到画布中,并转换为base64,
+ *
+ * 通过useEffect监视配置变化,重新绘制水印,
+ *
+ * 通过mutationObserver监视dom元素变化,重新绘制水印
  */
 const meta = {
 	title: "水印",

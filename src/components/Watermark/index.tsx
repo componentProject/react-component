@@ -1,5 +1,5 @@
 import { useRef, FC, useCallback, useEffect } from "react";
-import useWatermark from "./useWatermark";
+import useWatermark from "./hooks/useWatermark.ts";
 import type { WatermarkProps } from "./types";
 
 const Watermark: FC<WatermarkProps> = (props) => {

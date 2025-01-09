@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { WatermarkProps } from "./types";
+import type { WatermarkProps } from "../types";
 import { merge } from "lodash-es";
 
 export type WatermarkOptions = Omit<WatermarkProps, "className" | "style" | "children">;
@@ -8,6 +8,11 @@ export function isNumber(obj: any): obj is number {
 	return Object.prototype.toString.call(obj) === "[object Number]" && obj === obj;
 }
 
+/**
+ * 如果第一个参数可转为number,返回第一个参数,否则返回第二个参数
+ * @param value
+ * @param defaultValue
+ */
 const toNumber = (value?: string | number, defaultValue?: number) => {
 	if (value === undefined) {
 		return defaultValue;
@@ -19,6 +24,9 @@ const toNumber = (value?: string | number, defaultValue?: number) => {
 	return isNumber(numberVal) ? numberVal : defaultValue;
 };
 
+/**
+ * 默认配置
+ */
 const defaultOptions = {
 	rotate: -20,
 	zIndex: 1,
@@ -33,14 +41,17 @@ const defaultOptions = {
 	getContainer: () => document.body,
 };
 
-const getMergedOptions = (o: Partial<WatermarkOptions>) => {
-	const options = o || {};
-
+/**
+ * 获取合并后的配置
+ * @param options
+ */
+const getMergedOptions = (options: Partial<WatermarkOptions> = {}) => {
 	const mergedOptions = {
 		...options,
 		rotate: options.rotate || defaultOptions.rotate,
 		zIndex: options.zIndex || defaultOptions.zIndex,
 		fontStyle: { ...defaultOptions.fontStyle, ...options.fontStyle },
+		// toNumber将第一个参数转为数字,如果转换的不成功,则返回第二个参数
 		width: toNumber(options.width, options.image ? defaultOptions.width : undefined),
 		height: toNumber(options.height, undefined)!,
 		getContainer: options.getContainer!,
@@ -57,6 +68,12 @@ const getMergedOptions = (o: Partial<WatermarkOptions>) => {
 	return mergedOptions;
 };
 
+/**
+ * 根据画布宽高计算文本宽高
+ * @param ctx 画布实例
+ * @param content 文本内容
+ * @param rotate 旋转角度
+ */
 const measureTextSize = (ctx: CanvasRenderingContext2D, content: string[], rotate: number) => {
 	let width = 0;
 	let height = 0;
@@ -86,6 +103,10 @@ const measureTextSize = (ctx: CanvasRenderingContext2D, content: string[], rotat
 	};
 };
 
+/**
+ * 获取画布
+ * @param options
+ */
 const getCanvasData = async (
 	options: Required<WatermarkOptions>,
 ): Promise<{ width: number; height: number; base64Url: string }> => {
@@ -96,6 +117,10 @@ const getCanvasData = async (
 
 	const ratio = window.devicePixelRatio;
 
+	/**
+	 * 配置画布
+	 * @param size
+	 */
 	const configCanvas = (size: { width: number; height: number }) => {
 		const canvasWidth = gap[0] + size.width;
 		const canvasHeight = gap[1] + size.height;
@@ -112,6 +137,9 @@ const getCanvasData = async (
 		ctx.rotate(RotateAngle);
 	};
 
+	/**
+	 * 绘制文字
+	 */
 	const drawText = () => {
 		const { fontSize, color, fontWeight, fontFamily } = fontStyle;
 		const realFontSize = toNumber(fontSize, 0) || fontStyle.fontSize;
@@ -139,6 +167,9 @@ const getCanvasData = async (
 		return Promise.resolve({ base64Url: canvas.toDataURL(), height, width });
 	};
 
+	/**
+	 * 绘制图片
+	 */
 	function drawImage() {
 		return new Promise<{ width: number; height: number; base64Url: string }>((resolve) => {
 			const img = new Image();

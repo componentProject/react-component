@@ -1,6 +1,6 @@
 import ConfigProvider from "../index.tsx";
-import Calendar from "../../Calendar/index.tsx";
-import Space from "../../Space/index.tsx";
+import Calendar from "@/components/Calendar/index.tsx";
+import Space from "@/components/Space/index.tsx";
 import "./Space.css";
 import { StoryFn } from "@storybook/react";
 
