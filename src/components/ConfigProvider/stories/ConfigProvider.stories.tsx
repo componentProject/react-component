@@ -2,44 +2,40 @@ import ConfigProvider from "../index.tsx";
 import Calendar from "../../Calendar/index.tsx";
 import Space from "../../Space/index.tsx";
 import "./Space.css";
+import { StoryFn } from "@storybook/react";
 
 /**
- * flex布局组件
+ * 全局配置组件
  */
 const meta = {
 	title: "ConfigProvider",
 	component: ConfigProvider,
 	args: {},
-	tags: ["!autodocs"],
-	// argTypes: {
-	// 	space: {control: 'radio', options: ['small', 'middle', 'large', 32]},
-	// 	locale: {control: 'radio', options: ['zh-CN', 'en-US']}
-	// },
+	tags: ["autodocs"],
 };
 export default meta;
 
-export const space = (props) => {
-	return (
-		<ConfigProvider {...props}>
-			<Space>
-				<div className="box"></div>
-				<div className="box"></div>
-				<div className="box"></div>
-			</Space>
-		</ConfigProvider>
-	);
+const Template: StoryFn = ({ children, ...props }) => {
+	return <ConfigProvider {...props}>{children}</ConfigProvider>;
 };
+
+export const space = Template.bind({});
 space.argTypes = {
 	space: { control: "radio", options: ["small", "middle", "large", 32] },
 };
-
-export const calendar = (props) => {
-	return (
-		<ConfigProvider {...props}>
-			<Calendar />
-		</ConfigProvider>
-	);
+space.args = {
+	children: (
+		<Space>
+			<div className="box"></div>
+			<div className="box"></div>
+			<div className="box"></div>
+		</Space>
+	),
 };
+export const calendar = Template.bind({});
 calendar.argTypes = {
 	locale: { control: "radio", options: ["zh-CN", "en-US"] },
+};
+calendar.args = {
+	children: <Calendar />,
 };

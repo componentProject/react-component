@@ -1,7 +1,8 @@
 import CopyToClipboard from "../index.tsx";
+import { StoryFn } from "@storybook/react";
 
 const meta = {
-	title: "CopyToClipboard",
+	title: "copyToClipboard",
 	component: CopyToClipboard,
 	args: {},
 	argTypes: {
@@ -13,7 +14,7 @@ const meta = {
 
 export default meta;
 
-const Template = (props) => {
+const Template: StoryFn = (props) => {
 	return (
 		<>
 			<CopyToClipboard {...props}>

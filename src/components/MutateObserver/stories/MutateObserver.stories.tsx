@@ -1,5 +1,6 @@
 import MutateObserver from "../index.tsx";
 import { useState, useEffect } from "react";
+import { StoryFn } from "@storybook/react";
 
 const meta = {
 	title: "MutateObserver",
@@ -14,7 +15,7 @@ const meta = {
 
 export default meta;
 
-const Template = (props) => {
+const Template: StoryFn = (props) => {
 	const [className, setClassName] = useState("aaa");
 
 	useEffect(() => {

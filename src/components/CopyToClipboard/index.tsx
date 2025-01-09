@@ -8,7 +8,7 @@ import type { CopyToClipboardProps } from "./types";
  * 通过copy-to-clipboard实现
  */
 const CopyToClipboard: FC<CopyToClipboardProps> = (props) => {
-	const { text, onCopy, debug, message, format, children } = props;
+	const { text = "", onCopy, debug, message, format, children } = props;
 
 	const elem = Children.only(children);
 
@@ -30,7 +30,7 @@ const CopyToClipboard: FC<CopyToClipboardProps> = (props) => {
 		}
 	}
 
-	return cloneElement(elem, { onClick });
+	return cloneElement(elem!, { onClick });
 };
 
 export default CopyToClipboard;

@@ -1,4 +1,5 @@
 import { createFromIconfont } from "../index.tsx";
+import { StoryFn } from "@storybook/react";
 
 /**
  * iconfont组件,需要先通过createFromIconfont函数创建,
@@ -45,7 +46,7 @@ const meta = {
 };
 export default meta;
 
-const Template = (props) => {
+const Template: StoryFn = (props) => {
 	const IconFont = createFromIconfont("//at.alicdn.com/t/c/font_3590692_mp9kgduugne.js");
 	return <IconFont {...props} />;
 };

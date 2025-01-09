@@ -23,6 +23,9 @@ importers:
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
+      lodash-es:
+        specifier: ^4.17.21
+        version: 4.17.21
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -2399,6 +2402,9 @@ packages:
   locate-path@7.2.0:
     resolution: {integrity: sha512-gvVijfZvn7R+2qyPX8mAuKcFGDf6Nc61GdvGafQsHL0sBIxfKzA+usWn4GFC/bk+QdwPUD4kWFJLhElipq+0VA==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+
+  lodash-es@4.17.21:
+    resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
 
   lodash.camelcase@4.3.0:
     resolution: {integrity: sha512-TwuEnCnxbc3rAvhf/LbG7tJUDzhqXyFnv3dtzLOPgCG/hODL7WFnsbwktkD7yUV0RrreP/l1PALq/YSg6VvjlA==}
@@ -5945,6 +5951,8 @@ snapshots:
   locate-path@7.2.0:
     dependencies:
       p-locate: 6.0.0
+
+  lodash-es@4.17.21: {}
 
   lodash.camelcase@4.3.0: {}
 

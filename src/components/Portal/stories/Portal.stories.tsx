@@ -1,4 +1,5 @@
 import Portal from "../index.tsx";
+import { StoryFn } from "@storybook/react";
 
 const meta = {
 	title: "Portal",
@@ -17,7 +18,7 @@ const meta = {
 
 export default meta;
 
-const Template = (props) => {
+const Template: StoryFn = (props) => {
 	return (
 		<>
 			<div style={{ width: "200px", height: "200px", border: "1px solid" }}>

@@ -1,5 +1,6 @@
 import Space from "../index.tsx";
 import "./Space.css";
+import type { StoryFn } from "@storybook/react";
 
 /**
  * flex布局组件
@@ -15,7 +16,7 @@ const meta = {
 };
 export default meta;
 
-const Template = (props) => {
+const Template: StoryFn = (props) => {
 	return (
 		<Space {...props}>
 			<div className="box"></div>

@@ -2,6 +2,7 @@ import { Dayjs } from "dayjs";
 import allLocales from "../locale";
 
 interface HeaderProps {
+	locale: "zh-CN" | "en-US";
 	curMonth: Dayjs;
 	prevMonthHandler: () => void;
 	nextMonthHandler: () => void;

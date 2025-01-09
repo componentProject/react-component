@@ -1,6 +1,7 @@
 // import {fn} from '@storybook/test';
 
 import Icon from "../index.tsx";
+import { StoryFn } from "@storybook/react";
 
 const meta = {
 	title: "Icon",
@@ -20,7 +21,7 @@ const meta = {
 
 export default meta;
 
-const Template = (props) => {
+const Template: StoryFn = (props) => {
 	return <Icon {...props} />;
 };
 
@@ -30,11 +31,11 @@ iconfont.args = {
 	scriptUrl: "//at.alicdn.com/t/c/font_3590692_mp9kgduugne.js",
 };
 
-export const icon = (props) => {
+export const icon: StoryFn = (props) => {
 	return (
 		<Icon {...props}>
 			<svg
-				t="1651119499039"
+				d="1651119499039"
 				className="icon"
 				viewBox="0 0 1024 1024"
 				version="1.1"

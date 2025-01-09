@@ -1,10 +1,10 @@
-import type {ReactElement} from "react";
+import type { ReactElement } from "react";
 
 export interface CopyToClipboardProps {
 	/**
 	 * 点击时,实际复制的文本
 	 */
-	text: string;
+	text?: string;
 	/**
 	 * 额外的点击参数,
 	 *
@@ -25,7 +25,7 @@ export interface CopyToClipboardProps {
 	 * copy-to-clipboard的options参数
 	 */
 	format?: string;
-	children: ReactElement;
+	children?: ReactElement;
 	// options?: {
 	// 	debug?: boolean;
 	// 	message?: string;

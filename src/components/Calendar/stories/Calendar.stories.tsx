@@ -1,6 +1,7 @@
 // import {fn} from '@storybook/test';
 
 import Calendar from "../index.tsx";
+import { StoryFn } from "@storybook/react";
 
 const meta = {
 	title: "日历",
@@ -19,7 +20,7 @@ const meta = {
 
 export default meta;
 
-const Template = (props) => {
+const Template: StoryFn = (props) => {
 	return <Calendar {...props} />;
 };
 export const calendar = Template.bind({});
