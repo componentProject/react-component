@@ -6,8 +6,8 @@ import { createHtmlPlugin } from "vite-plugin-html";
 import viteCompression from "vite-plugin-compression";
 import { fileURLToPath, URL } from "node:url";
 import eslintPlugin from "vite-plugin-eslint";
-import * as autoprefixer from "autoprefixer";
-import * as tailwindcss from "tailwindcss";
+import autoprefixer from "autoprefixer";
+import tailwindcss from "tailwindcss";
 // @see: https://vitejs.dev/config/
 export default defineConfig((mode: ConfigEnv): UserConfig => {
 	const env = loadEnv(mode.mode, process.cwd());
