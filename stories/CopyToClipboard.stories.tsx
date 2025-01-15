@@ -1,4 +1,4 @@
-import CopyToClipboard from "../index.tsx";
+import CopyToClipboard from "@/components/CopyToClipboard";
 import { StoryFn } from "@storybook/react";
 
 const meta = {

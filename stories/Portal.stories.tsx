@@ -1,4 +1,4 @@
-import Portal from "../index.tsx";
+import Portal from "@/components/Portal";
 import { StoryFn } from "@storybook/react";
 
 const meta = {

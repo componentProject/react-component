@@ -1,6 +1,6 @@
 // import {fn} from '@storybook/test';
 
-import Calendar from "../index.tsx";
+import Calendar from "@/components/Calendar";
 import { StoryFn } from "@storybook/react";
 
 const meta = {

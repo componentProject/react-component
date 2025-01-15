@@ -1,4 +1,4 @@
-import Watermark from "../index.tsx";
+import Watermark from "@/components/Watermark";
 import type { StoryFn } from "@storybook/react";
 
 /**

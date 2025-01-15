@@ -1,6 +1,6 @@
 // import {fn} from '@storybook/test';
 
-import Icon from "../index.tsx";
+import Icon from "@/components/Icon";
 import { StoryFn } from "@storybook/react";
 
 const meta = {

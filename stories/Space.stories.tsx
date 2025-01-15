@@ -1,4 +1,4 @@
-import Space from "../index.tsx";
+import Space from "@/components/Space";
 import "./Space.css";
 import type { StoryFn } from "@storybook/react";
 

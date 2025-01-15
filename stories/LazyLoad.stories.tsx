@@ -1,8 +1,9 @@
-import LazyLoad from "../index.tsx";
+import LazyLoad from "@/components/LazyLoad";
 import type { StoryFn } from "@storybook/react";
 import React from "react";
-import img1 from "./img1.png";
-import img2 from "./img2.png";
+import img1 from "./assets/images/img1.png";
+import img2 from "./assets/images/img2.png";
+
 /**
  *
  */
@@ -13,7 +14,7 @@ const meta = {
 	argTypes: {},
 };
 export default meta;
-const LazyGuang = React.lazy(() => import("./Guang"));
+const LazyGuang = React.lazy(() => import("./components/Guang"));
 const Template: StoryFn = () => {
 	return (
 		<div>
@@ -53,7 +54,7 @@ const Template: StoryFn = () => {
 					console.log("comp visible");
 				}}
 			>
-				<img src={img1} />
+				<img src={img1} alt="失败辣" />
 				<LazyGuang />
 			</LazyLoad>
 			<LazyLoad
@@ -63,7 +64,7 @@ const Template: StoryFn = () => {
 					console.log("img visible");
 				}}
 			>
-				<img src={img2} />
+				<img src={img2} alt="失败辣" />
 			</LazyLoad>
 		</div>
 	);

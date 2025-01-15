@@ -1,4 +1,4 @@
-import { createFromIconfont } from "../index.tsx";
+import { createFromIconfont } from "@/components/IconFont";
 import { StoryFn } from "@storybook/react";
 
 /**

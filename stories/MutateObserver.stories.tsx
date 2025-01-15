@@ -1,4 +1,4 @@
-import MutateObserver from "../index.tsx";
+import MutateObserver from "@/components/MutateObserver";
 import { useState, useEffect } from "react";
 import { StoryFn } from "@storybook/react";
 
