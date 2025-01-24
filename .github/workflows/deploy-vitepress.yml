@@ -52,7 +52,7 @@ jobs:
         uses: actions/configure-pages@v4
       - name: 下载依赖
         # npm ci / pnpm install / yarn install / bun install
-        run: pnpm install
+        run: pnpm add -D vitepress
       - name: 打包vitepress
         # npm run docs:build / pnpm docs:build / yarn docs:build / bun run docs:build
         run: pnpm docs:build
