@@ -27,35 +27,38 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: 检出main分支代码
         uses: actions/checkout@v4
         with:
+          ref: main
           # 如果未启用 lastUpdated，则不需要
           fetch-depth: 0
       # 如果使用 pnpm，请取消此区域注释
-      - uses: pnpm/action-setup@v3
+      - name: 设置并安装指定pnpm版本
+        uses: pnpm/action-setup@v3
         with:
           version: 9
       # end
       # 如果使用 Bun，请取消注释
-      # - uses: oven-sh/setup-bun@v1
-      - name: Setup Node
+      # - name: 设置并安装Bun
+      #   uses: oven-sh/setup-bun@v1
+      - name: 设置并安装指定node版本
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: pnpm # npm / pnpm / yarn
-      - name: Setup Pages
+      - name: 配置页面
         uses: actions/configure-pages@v4
-      - name: Install dependencies
+      - name: 下载依赖
         # npm ci / pnpm install / yarn install / bun install
         run: pnpm install
-      - name: Build with VitePress
+      - name: 打包vitepress
         # npm run docs:build / pnpm docs:build / yarn docs:build / bun run docs:build
         run: pnpm docs:build
-      - name: Upload artifact
+      - name: 上传打包文件
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/.vitepress/dist
+          path: .docs/.vitepress/dist
 
   # 部署工作
   deploy:
@@ -64,8 +67,8 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     needs: build
     runs-on: ubuntu-latest
-    name: Deploy
+    name: 发布
     steps:
-      - name: Deploy to GitHub Pages
+      - name: 发布到GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
