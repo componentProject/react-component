@@ -1,10 +1,11 @@
 import { defineConfig } from "vitepress";
-
+// https://github.com/mingyuLi97/blog
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
 	title: "reactComponent",
 	description: "一个react组件库",
 	base: "/react-component/",
+	lang: "zh-CN",
 	themeConfig: {
 		// https://vitepress.dev/reference/default-theme-config
 		// 标题
@@ -55,6 +56,8 @@ export default defineConfig({
 			// local or algolia
 			// provider: 'local'
 			//#region algolia
+			// algolia有两种方式,使用Crawler爬虫,或者github的DocSearch Scraper Action
+			// 参考https://juejin.cn/post/7157340749065895944
 			provider: "algolia",
 			options: {
 				appId: "DDD3D6CGWQ",
