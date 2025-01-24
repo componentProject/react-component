@@ -5,8 +5,7 @@
 
 # 依赖
 node_modules
-# 工作流需要,暂时注释
-# *-lock.*
+ *-lock.*
 
 # 打包文件
 dist

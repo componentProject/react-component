@@ -46,12 +46,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: pnpm # npm / pnpm / yarn
+          # 缓存依赖,npm / pnpm / yarn,根据pnpm-lock.yaml等其他文件
+          # cache: pnpm
       - name: 配置页面
         uses: actions/configure-pages@v4
       - name: 下载依赖
         # npm ci / pnpm install / yarn install / bun install
-        run: pnpm add -D vitepress
+        run: pnpm install
       - name: 打包vitepress
         # npm run docs:build / pnpm docs:build / yarn docs:build / bun run docs:build
         run: pnpm docs:build
