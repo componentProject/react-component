@@ -11,6 +11,7 @@ export default defineConfig({
 		siteTitle: "vueComponent",
 		// logo
 		logo: `https://vuejs.org/images/logo.png`,
+		logoLink: "https://componentproject.github.io/react-component/",
 		// 导航栏
 		nav: [
 			// 单层级
@@ -48,7 +49,7 @@ export default defineConfig({
 			},
 		],
 
-		socialLinks: [{ icon: "github", link: "https://github.com/vuejs/vitepress" }],
+		socialLinks: [{ icon: "github", link: "https://github.com/componentProject/react-component" }],
 		// 搜索配置
 		search: {
 			// local or algolia
