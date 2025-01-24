@@ -5,7 +5,7 @@ on:
   # 在针对 `main` 分支的推送上运行。如果你
   # 使用 `master` 分支作为默认分支，请将其更改为 `master`
   push:
-    branches: [main]
+    branches: [ main ]
 
   # 允许你从 Actions 选项卡手动运行此工作流程
   workflow_dispatch:
@@ -73,3 +73,18 @@ jobs:
       - name: 发布到GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  # 重新推送数据到algolia
+  algolia:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: 获取algolia配置
+        id: algolia_config
+        run: echo "config=$(cat crawlerConfig.json | jq -r tostring)" >> $GITHUB_OUTPUT
+      - name: 推送indices到algolia
+        uses: signcl/docsearch-scraper-action@master
+        env:
+          APPLICATION_ID: ${{ secrets.APPLICATION_ID }}
+          API_KEY: ${{ secrets.ADMIN_API_KEY }}
+          CONFIG: ${{ steps.algolia_config.outputs.config }}
