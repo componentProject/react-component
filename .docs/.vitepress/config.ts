@@ -56,9 +56,9 @@ export default defineConfig({
 			//#region algolia
 			provider: "algolia",
 			options: {
-				appId: "U30ELOTLE6",
-				apiKey: "b6db2a4a0256519acf2e1d3408781856",
-				indexName: "vueComponent",
+				appId: "DDD3D6CGWQ",
+				apiKey: "3b7df1c9bcf3d1c31fa74e9707936af5",
+				indexName: "reactComponent",
 			},
 			//#endregion
 		},
