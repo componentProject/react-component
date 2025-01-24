@@ -4,6 +4,7 @@ import { defineConfig } from "vitepress";
 export default defineConfig({
 	title: "reactComponent",
 	description: "一个react组件库",
+	base: "/react-component/",
 	themeConfig: {
 		// https://vitepress.dev/reference/default-theme-config
 		// 标题
