@@ -32,7 +32,13 @@
 		"allowSyntheticDefaultImports": true
 	},
 	"include": [
-		"src",
-		"stories"
+		"env.d.ts",
+		"src/**/*",
+		"src/**/*.vue",
+		".stories/*",
+		".stories/**/*"
+	],
+	"exclude": [
+		"src/**/__tests__/*"
 	]
 }

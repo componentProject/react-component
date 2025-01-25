@@ -1,5 +1,5 @@
 import Space from "@/components/Space";
-import "./Space.css";
+import "./assets/styles/Space.css";
 import type { StoryFn } from "@storybook/react";
 
 /**
