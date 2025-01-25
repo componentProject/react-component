@@ -11,7 +11,7 @@
     "docs:build": "vitepress build .docs",
     "docs:preview": "vitepress preview .docs",
     "storybook:dev": "storybook dev -p 6007",
-    "storybook:build": "storybook build -o .storybook/dist",
+    "storybook:build": "storybook build -o docs/storybook",
     "lint": "eslint .",
     "installAll": "installAll.sh",
     "prepare": "husky"

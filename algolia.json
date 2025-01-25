@@ -1,7 +1,7 @@
 {
   "index_name": "vueComponent",
   "start_urls": [
-    "https://componentproject.github.io/vue-component/"
+    "https://componentproject.github.io/react-component/vitepress/"
   ],
   "rateLimit": 8,
   "maxDepth": 10,

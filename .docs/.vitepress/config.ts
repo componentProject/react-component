@@ -6,6 +6,7 @@ export default defineConfig({
 	description: "一个react组件库",
 	base: "/react-component/",
 	lang: "zh-CN",
+	outDir: "../docs/vitepress",
 	themeConfig: {
 		// https://vitepress.dev/reference/default-theme-config
 		// 标题

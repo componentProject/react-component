@@ -1,11 +1,11 @@
-# 构建 storybook 站点并将其部署到 GitHub Pages 的示例工作流程
-name: 发布storybook
+
+# 构建 静态 站点并将其部署到 GitHub Pages 的示例工作流程
+name: 发布storybook&vitepress
 
 on:
-  # 在针对 `main` 分支的推送上运行。如果你
+  # 在针对 `docs` 分支的推送上运行。如果你
   # 使用 `master` 分支作为默认分支，请将其更改为 `master`
   push:
-    paths: [ '.storybook/**','.stories/**',".github/workflows/deploy-storybook.yml" ]
     branches: [ main ]
 
   # 允许你从 Actions 选项卡手动运行此工作流程
@@ -57,16 +57,21 @@ jobs:
       - name: 打包storybook
         # npm run docs:build / pnpm docs:build / yarn docs:build / bun run docs:build
         run: pnpm storybook:build
+      - name: 打包vitepress
+        # npm run docs:build / pnpm docs:build / yarn docs:build / bun run docs:build
+        run: pnpm vitepress:build
       - name: 上传打包文件
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .storybook/dist
+          path: docs
 
   # 部署工作
   deploy:
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: |
+        ${{ steps.deployment.outputs.page_url }}vitepress
+        ${{ steps.deployment.outputs.page_url }}storybook
     needs: build
     runs-on: ubuntu-latest
     name: 发布
@@ -74,3 +79,19 @@ jobs:
       - name: 发布到GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  # 重新推送数据到algolia
+  algolia:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - uses: actions/checkout@v3
+      - name: 获取algolia配置
+        id: algolia_config
+        run: echo "config=$(cat algolia.json | jq -r tostring)" >> $GITHUB_OUTPUT
+      - name: 推送indices到algolia
+        uses: signcl/docsearch-scraper-action@master
+        env:
+          APPLICATION_ID: ${{ secrets.APPLICATION_ID }}
+          API_KEY: ${{ secrets.ADMIN_API_KEY }}
+          CONFIG: ${{ steps.algolia_config.outputs.config }}
