@@ -4,7 +4,7 @@ import { defineConfig } from "vitepress";
 export default defineConfig({
 	title: "reactComponent",
 	description: "一个react组件库",
-	base: "/react-component/",
+	base: "/react-component/vitepress/",
 	lang: "zh-CN",
 	outDir: "../docs/vitepress",
 	themeConfig: {
