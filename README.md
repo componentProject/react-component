@@ -14,5 +14,5 @@ pnpm dev
 
 # 在线地址
 
-- vitepress https://componentproject.github.io/react-component/
-- storybook 暂无
+- vitepress https://componentproject.github.io/react-component/vitepress/
+- storybook https://componentproject.github.io/react-component/storybook/
