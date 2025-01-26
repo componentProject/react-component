@@ -1,4 +1,3 @@
-
 # 构建 静态 站点并将其部署到 GitHub Pages 的示例工作流程
 name: 发布storybook&vitepress
 
@@ -57,9 +56,9 @@ jobs:
       - name: 打包storybook
         # npm run docs:build / pnpm docs:build / yarn docs:build / bun run docs:build
         run: pnpm storybook:build
-      - name: 打包vitepress
-        # npm run docs:build / pnpm docs:build / yarn docs:build / bun run docs:build
-        run: pnpm vitepress:build
+      #      - name: 打包vitepress
+      #        # npm run docs:build / pnpm docs:build / yarn docs:build / bun run docs:build
+      #        run: pnpm vitepress:build
       - name: 上传打包文件
         uses: actions/upload-pages-artifact@v3
         with:
@@ -81,17 +80,17 @@ jobs:
         uses: actions/deploy-pages@v4
 
   # 重新推送数据到algolia
-  algolia:
-    runs-on: ubuntu-latest
-    needs: deploy
-    steps:
-      - uses: actions/checkout@v3
-      - name: 获取algolia配置
-        id: algolia_config
-        run: echo "config=$(cat algolia.json | jq -r tostring)" >> $GITHUB_OUTPUT
-      - name: 推送indices到algolia
-        uses: signcl/docsearch-scraper-action@master
-        env:
-          APPLICATION_ID: ${{ secrets.APPLICATION_ID }}
-          API_KEY: ${{ secrets.ADMIN_API_KEY }}
-          CONFIG: ${{ steps.algolia_config.outputs.config }}
+#  algolia:
+#    runs-on: ubuntu-latest
+#    needs: deploy
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: 获取algolia配置
+#        id: algolia_config
+#        run: echo "config=$(cat algolia.json | jq -r tostring)" >> $GITHUB_OUTPUT
+#      - name: 推送indices到algolia
+#        uses: signcl/docsearch-scraper-action@master
+#        env:
+#          APPLICATION_ID: ${{ secrets.APPLICATION_ID }}
+#          API_KEY: ${{ secrets.ADMIN_API_KEY }}
+#          CONFIG: ${{ steps.algolia_config.outputs.config }}
