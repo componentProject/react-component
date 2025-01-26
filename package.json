@@ -86,7 +86,7 @@
     "vite-plugin-compression": "^0.5.1",
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-html": "^3.2.2",
-    "vitepress": "1.5.0",
+		"vitepress": "1.6.3",
     "vitepress-theme-demoblock": "^3.0.7"
   },
   "eslintConfig": {
