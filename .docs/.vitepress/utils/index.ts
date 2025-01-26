@@ -28,20 +28,22 @@ export function getSidebar(fileName: string) {
 
 	// 转换sidebarStructure为适合VitePress侧边栏的格式
 	function getSidebarItems(sidebarStructure, fileName) {
-		return Object.entries(sidebarStructure).reduce((modules, [key, value]) => {
-			if (key === "index") {
+		return Object.entries(sidebarStructure).reduce((modules, [text, value]) => {
+			if (text === "index") {
 				return modules;
 			} else if (typeof value === "object") {
 				modules.push({
-					text: key,
+					text,
 					collapsible: true,
 					collapsed: true,
-					items: getSidebarItems(value, `${fileName}/${key}`),
+					items: getSidebarItems(value, `${fileName}/${text}`),
 				});
 			} else {
+				const link = `/${fileName}/${path.relative(srcPath, value).replace(".md", "")}`;
 				modules.push({
-					text: key,
-					link: `${fileName}/${path.relative(srcPath, value).replace(".md", "")}`,
+					activeMatch: link,
+					text,
+					link,
 				});
 			}
 			return modules;
@@ -49,6 +51,5 @@ export function getSidebar(fileName: string) {
 	}
 
 	const sidebar = getSidebarItems(sidebarStructure, fileName);
-	console.log("sidebar", sidebar);
 	return sidebar;
 }
