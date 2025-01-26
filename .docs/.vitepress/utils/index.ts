@@ -1,6 +1,10 @@
 import fs from "fs";
 import path from "path";
 
+/**
+ * 将.docs目录下的指定目录里所有md文件转成vitepress的sidebar格式
+ * @param fileName
+ */
 export function getSidebar(fileName: string) {
 	const getDirectoryStructure = (srcPath: string) => {
 		const items = {};

@@ -8,17 +8,13 @@ import { fileURLToPath, URL } from "node:url";
 // https://vitepress.dev/reference/site-config
 import { getSidebar } from "./utils";
 
+import { demoblockPlugin, demoblockVitePlugin } from "vitepress-theme-demoblock";
+import vueJsx from "@vitejs/plugin-vue-jsx";
+
 async function config() {
 	const posts = await getPosts();
 	const pageSize = 5;
 	const postLength = await getPostLength();
-
-	const components = [
-		{
-			text: "基础组件",
-			items: getSidebar("components"),
-		},
-	];
 	return {
 		title: "reactComponent",
 		description: "一个react组件库",
@@ -26,6 +22,7 @@ async function config() {
 		lang: "zh-CN",
 		outDir: "../docs/vitepress",
 		vite: {
+			plugins: [demoblockVitePlugin(), vueJsx()],
 			resolve: {
 				alias: {
 					"@": fileURLToPath(new URL("../../src", import.meta.url)),
@@ -38,7 +35,7 @@ async function config() {
 				{
 					rel: "icon",
 					type: "image/svg",
-					href: "/horse.svg",
+					href: "/react-component/vitepress/horse.svg",
 				},
 			],
 			[
@@ -72,10 +69,14 @@ async function config() {
 			codeTransformers: [transformerTwoslash()],
 			config: (md) => {
 				md.use(mathjax3);
+				md.use(demoblockPlugin, {
+					customClass: "demoblock-custom",
+				});
 			},
 		},
 		themeConfig: {
 			// https://vitepress.dev/reference/default-theme-config
+			avator: "/react-component/vitepress/avator.png",
 			// 标题
 			siteTitle: "reactComponent",
 			// logo
@@ -106,11 +107,7 @@ async function config() {
 			],
 
 			// 侧边栏,配置基本同导航栏
-			sidebar: {
-				"/components": components,
-				"/posts/components": components,
-				"/navs/components": components,
-			},
+			sidebar: {},
 			socialLinks: [{ icon: "github", link: "https://github.com/componentProject/react-component" }],
 			// 搜索配置
 			search: {
