@@ -70,7 +70,7 @@ jobs:
     environment:
       name: github-pages
       url: |
-#        ${{ steps.deployment.outputs.page_url }}vitepress
+        ${{ steps.deployment.outputs.page_url }}vitepress
         ${{ steps.deployment.outputs.page_url }}storybook
     needs: build
     runs-on: ubuntu-latest
