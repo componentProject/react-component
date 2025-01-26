@@ -19,7 +19,6 @@ async function config() {
 			items: getSidebar("components"),
 		},
 	];
-	console.log("components", getSidebar("components"));
 	return {
 		title: "reactComponent",
 		description: "一个react组件库",
@@ -99,6 +98,10 @@ async function config() {
 					text: "🏡Blogs",
 					link: "/",
 				},
+				{
+					text: "storybook组件库",
+					link: "https://componentproject.github.io/react-component/storybook/",
+				},
 				...getSidebar("navs"),
 			],
 
@@ -106,6 +109,7 @@ async function config() {
 			sidebar: {
 				"/components": components,
 				"/posts/components": components,
+				"/navs/components": components,
 			},
 			socialLinks: [{ icon: "github", link: "https://github.com/componentProject/react-component" }],
 			// 搜索配置
