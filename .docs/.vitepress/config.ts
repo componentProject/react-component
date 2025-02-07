@@ -1,4 +1,4 @@
-import { getComponents, getComponentLength } from "./theme/serverUtils";
+import { getComponents } from "./utils/serverUtils";
 import { buildBlogRSS } from "./theme/rss";
 import { transformerTwoslash } from "@shikijs/vitepress-twoslash";
 import mathjax3 from "markdown-it-mathjax3";
