@@ -1,4 +1,4 @@
-import { getPosts, getPostLength } from "./theme/serverUtils";
+import { getComponents, getComponentLength } from "./theme/serverUtils";
 import { buildBlogRSS } from "./theme/rss";
 import { transformerTwoslash } from "@shikijs/vitepress-twoslash";
 import mathjax3 from "markdown-it-mathjax3";
@@ -12,9 +12,13 @@ import { demoblockPlugin, demoblockVitePlugin } from "vitepress-theme-demoblock"
 import vueJsx from "@vitejs/plugin-vue-jsx";
 
 async function config() {
-	const posts = await getPosts();
+	const componentPath = "/components";
+	const posts = await getComponents(componentPath);
 	const pageSize = 5;
-	const postLength = await getPostLength();
+	const postLength = posts.length;
+
+	const components = await getSidebar("components");
+	const navs = await getSidebar("navs");
 	return {
 		title: "reactComponent",
 		description: "一个react组件库",
@@ -103,11 +107,13 @@ async function config() {
 					text: "storybook组件库",
 					link: "https://componentproject.github.io/react-component/storybook/",
 				},
-				...getSidebar("navs"),
+				...navs,
 			],
 
 			// 侧边栏,配置基本同导航栏
-			sidebar: {},
+			sidebar: {
+				"/components/": components,
+			},
 			socialLinks: [{ icon: "github", link: "https://github.com/componentProject/react-component" }],
 			// 搜索配置
 			search: {

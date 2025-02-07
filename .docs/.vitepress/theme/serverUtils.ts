@@ -3,20 +3,19 @@ import matter from "gray-matter";
 import fs from "fs-extra";
 import path from "path";
 
-export async function getPosts() {
-	const paths = await getPostMDFilePaths();
+export async function getComponents(componentPath: string) {
+	const paths = await getComponentMDFilePaths(componentPath);
 	const posts = await Promise.all(
 		paths.map(async (item) => {
-			const content = await fs.readFile(path.join(__dirname, "../..", item), "utf-8");
+			const content = await fs.readFile(path.join(__dirname, `../..${componentPath}`, item), "utf-8");
 			const { data } = matter(content);
 			data.date = _convertDate(data.date);
 			return {
 				frontMatter: data,
-				regularPath: `/${item.replace(".md", ".html")}`,
+				regularPath: `${componentPath}/${item.replace(".md", ".html")}`,
 			};
 		}),
 	);
-	console.log("posts", posts);
 	posts.sort(_compareDate);
 	return posts;
 }
@@ -30,15 +29,14 @@ function _compareDate(obj1, obj2) {
 	return obj1.frontMatter.date < obj2.frontMatter.date ? 1 : -1;
 }
 
-async function getPostMDFilePaths() {
-	const paths = await globby(["**/*.md"], {
+async function getComponentMDFilePaths(componentPath: string) {
+	return await globby(["**/*.md"], {
 		ignore: ["node_modules", "README.md"],
-		cwd: "./.docs",
+		cwd: `./.docs${componentPath}`,
 	});
-	return paths.filter((item) => item.includes("posts/"));
 }
 
-export async function getPostLength() {
-	// getPostMDFilePath return type is object not array
-	return [...(await getPostMDFilePaths())].length;
+export async function getComponentLength(componentPath: string) {
+	// getComponentMDFilePath return type is object not array
+	return [...(await getComponentMDFilePaths(componentPath))].length;
 }
