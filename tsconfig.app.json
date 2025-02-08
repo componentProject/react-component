@@ -35,8 +35,8 @@
 		"env.d.ts",
 		"src/**/*",
 		"src/**/*.vue",
-		".stories/*",
-		".stories/**/*"
+      ".storybook/.stories/*",
+      ".storybook/.stories/**/*"
 	],
 	"exclude": [
 		"src/**/__tests__/*"
