@@ -1,11 +1,15 @@
 import { RefObject, useEffect, useState } from "react";
 
+/**
+ * 监听ref是否在滚动
+ * @param ref
+ */
 const useScrolling = (ref: RefObject<HTMLElement>): boolean => {
 	const [scrolling, setScrolling] = useState<boolean>(false);
 
 	useEffect(() => {
 		if (ref.current) {
-			let scollingTimer: number;
+			let scollingTimer: NodeJS.Timeout;
 
 			const handleScrollEnd = () => {
 				setScrolling(false);
