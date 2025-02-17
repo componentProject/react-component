@@ -1,13 +1,20 @@
 import { defineConfig, loadEnv, ConfigEnv, UserConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import { wrapperEnv } from "./src/utils/getEnv.js";
-import { visualizer } from "rollup-plugin-visualizer";
-import { createHtmlPlugin } from "vite-plugin-html";
-import viteCompression from "vite-plugin-compression";
 import { fileURLToPath, URL } from "node:url";
+import { wrapperEnv } from "./src/utils/getEnv.js";
+
+// 性能优化模块
+import { visualizer } from "rollup-plugin-visualizer";
+import viteCompression from "vite-plugin-compression";
+import viteImagemin from "vite-plugin-imagemin";
+import importToCDN from "vite-plugin-cdn-import";
+
+// 其余vite插件
+import react from "@vitejs/plugin-react";
+import { createHtmlPlugin } from "vite-plugin-html";
 import eslintPlugin from "vite-plugin-eslint";
 import autoprefixer from "autoprefixer";
 import tailwindcss from "tailwindcss";
+
 // @see: https://vitejs.dev/config/
 export default defineConfig((mode: ConfigEnv): UserConfig => {
 	const env = loadEnv(mode.mode, process.cwd());
@@ -15,23 +22,6 @@ export default defineConfig((mode: ConfigEnv): UserConfig => {
 
 	return {
 		// base: "/",
-		// 代理配置
-		server: {
-			host: "0.0.0.0", // 服务器主机名，如果允许外部访问，可设置为"0.0.0.0"
-			port: viteEnv.VITE_PORT,
-			open: viteEnv.VITE_OPEN,
-			cors: true,
-			// https: false,
-			// 代理跨域（mock 不需要配置，这里只是个事列）
-			proxy: {
-				"/api": {
-					// target: "https://mock.mengxuegu.com/mock/62abda3212c1416424630a45", // easymock
-					target: "http://192.168.211.180/ts-system", // easymock
-					changeOrigin: true,
-					rewrite: (path) => path.replace(/^\/api/, ""),
-				},
-			},
-		},
 		// 插件
 		plugins: [
 			react(),
@@ -44,18 +34,97 @@ export default defineConfig((mode: ConfigEnv): UserConfig => {
 			}),
 			// * EsLint 报错信息显示在浏览器界面上
 			eslintPlugin(),
-			// * 是否生成包预览
+			// 是否生成包预览
 			viteEnv.VITE_REPORT && visualizer(),
 			// * gzip 压缩
-			viteEnv.VITE_BUILD_GZIP &&
-				viteCompression({
-					verbose: true,
-					disable: false,
-					threshold: 10240,
-					algorithm: "gzip",
-					ext: ".gz",
-				}),
+			// 代码压缩
+			viteCompression({
+				// gzip压缩需要服务器nginx配置以下内容:
+				// http {
+				//   gzip_static on;
+				//   gzip_proxied any;
+				// }
+				// 可选 'brotliCompress' 或 'gzip'
+				algorithm: viteEnv.VITE_BUILD_GZIP ? "gzip" : "brotliCompress",
+				verbose: true, //输出日志信息
+				disable: false, //是否禁用
+				ext: ".gz", // 压缩文件后缀
+				threshold: 10240, // 仅压缩大于 10KB 的文件
+				deleteOriginFile: false, // 是否删除原始文件
+			}),
+			// 图片压缩
+			viteImagemin({
+				gifsicle: { optimizationLevel: 3 }, // GIF 压缩
+				mozjpeg: { quality: 75 }, // JPEG 压缩
+				pngquant: { quality: [0.8, 0.9] }, // PNG 压缩
+				svgo: { plugins: [{ removeViewBox: false }] }, // SVG 压缩
+			}),
+			// CDN加速
+			importToCDN({
+				modules: [
+					{
+						name: "react", // 模块名
+						var: "React", // 全局变量名
+						path: "https://unpkg.com/react@18/umd/react.development.js", // CDN 地址
+					},
+					{
+						name: "react-dom", // 模块名
+						var: "ReactDOM", // 全局变量名
+						path: "https://unpkg.com/react-dom@18/umd/react-dom.development.js", // CDN 地址
+					},
+					{
+						name: "react-router-dom", // 模块名
+						var: "ReactRouterDOM", // 全局变量名
+						path: "https://unpkg.com/react-router-dom@6/dist/react-router-dom.development.js", // CDN 地址
+					},
+					{
+						name: "axios", // 模块名
+						var: "axios", // 全局变量名
+						path: "https://unpkg.com/axios/dist/axios.min.js", // CDN 地址
+					},
+					{
+						name: "moment", // 模块名
+						var: "moment", // 全局变量名
+						path: "https://unpkg.com/moment/min/moment.min.js", // CDN 地址
+					},
+					{
+						name: "radash", // 模块名
+						var: "radash", // 全局变量名
+						path: "https://unpkg.com/radash/dist/radash.min.js", // CDN 地址
+					},
+				],
+			}),
 		],
+		build: {
+			// 启用 CSS 代码拆分,使加载模块时,仅加载对应css,而不是打包为一个样式文件
+			cssCodeSplit: true,
+			// 关闭 sourcemap
+			sourcemap: false,
+			// 大资源拆分
+			chunkSizeWarningLimit: 1500,
+			rollupOptions: {
+				// 移除cdn引入的包
+				external: ["react", "react-dom", "react-router-dom", "axios", "moment", "radash"],
+				output: {
+					// 静态资源打包做处理
+					chunkFileNames: "static/js/[name]-[hash].js",
+					entryFileNames: "static/js/[name]-[hash].js",
+					assetFileNames: "static/[ext]/[name]-[hash].[ext]",
+					// 依赖拆分
+					manualChunks(id) {
+						if (id.includes("node_modules")) {
+							return id.toString().split("node_modules/")[1].split("/")[0].toString();
+						}
+					},
+				},
+			},
+			terserOptions: {
+				compress: {
+					drop_console: true,
+					drop_debugger: true,
+				},
+			},
+		},
 		// 路径别名
 		resolve: {
 			extensions: [".js", ".jsx", ".ts", ".tsx"],
@@ -77,28 +146,16 @@ export default defineConfig((mode: ConfigEnv): UserConfig => {
 				},
 			},
 		},
-		// esbuild: {
-		// 	pure: viteEnv.VITE_DROP_CONSOLE ? ["console.log", "debugger"] : []
-		// },
-		// build: {
-		// 	outDir: "dist",
-		// 	// esbuild 打包更快
-		// 	minify: "esbuild",
-		// 	// minify: "terser",
-		// 	// terserOptions: {
-		// 	// 	compress: {
-		// 	// 		drop_console: viteEnv.VITE_DROP_CONSOLE,
-		// 	// 		drop_debugger: true
-		// 	// 	}
-		// 	// },
-		// 	rollupOptions: {
-		// 		output: {
-		// 			// 静态资源分类打包
-		// 			chunkFileNames: "assets/js/[name]-[hash].js",
-		// 			entryFileNames: "assets/js/[name]-[hash].js",
-		// 			assetFileNames: "assets/[ext]/[name]-[hash].[ext]"
-		// 		}
-		// 	}
-		// }
+
+		// 代理配置
+		server: {
+			host: "0.0.0.0", // 服务器主机名，如果允许外部访问，可设置为"0.0.0.0"
+			port: viteEnv.VITE_PORT,
+			open: viteEnv.VITE_OPEN,
+			cors: true,
+			// https: false,
+			// 代理跨域（mock 不需要配置，这里只是个事列）
+			proxy: {},
+		},
 	};
 });

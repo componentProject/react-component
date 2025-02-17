@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "vitepress:dev": "vitepress dev .docs",
     "vitepress:build": "vitepress build .docs",
@@ -85,9 +85,11 @@
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
     "vite": "^5.4.1",
+    "vite-plugin-cdn-import": "^1.0.1",
     "vite-plugin-compression": "^0.5.1",
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-html": "^3.2.2",
+    "vite-plugin-imagemin": "^0.6.1",
     "vitepress": "1.6.3",
     "vitepress-theme-demoblock": "^3.0.7"
   },
