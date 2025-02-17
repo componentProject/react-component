@@ -41,6 +41,8 @@ specifiers:
   globby: 14.0.0
   gray-matter: ^4.0.3
   husky: ^9.1.7
+  i18next: ^24.2.2
+  i18next-browser-languagedetector: ^8.0.3
   js-cookie: ^3.0.5
   lodash-es: ^4.17.21
   markdown-it: ^14.1.0
@@ -49,6 +51,7 @@ specifiers:
   prettier: ^3.4.2
   react: ^18.3.1
   react-dom: ^18.3.1
+  react-i18next: ^15.4.0
   react-router: ^7.0.2
   resize-observer-polyfill: ^1.5.1
   rollup-plugin-visualizer: ^5.12.0
@@ -81,10 +84,13 @@ dependencies:
   dayjs: 1.11.13
   gitalk: 1.8.0_nnrd3gsncyragczmpvfhocinkq
   husky: 9.1.7
+  i18next: 24.2.2_typescript@5.7.3
+  i18next-browser-languagedetector: 8.0.3
   js-cookie: 3.0.5
   lodash-es: 4.17.21
   react: 18.3.1
   react-dom: 18.3.1_react@18.3.1
+  react-i18next: 15.4.0_rwxvilx74emfti7emycvkcwtze
   react-router: 7.1.3_nnrd3gsncyragczmpvfhocinkq
   resize-observer-polyfill: 1.5.1
   sass-embedded: 1.83.4
@@ -6148,6 +6154,12 @@ packages:
       terser: 5.37.0
     dev: true
 
+  /html-parse-stringify/3.0.1:
+    resolution: {integrity: sha512-KknJ50kTInJ7qIScF3jeaFRpMpE8/lfiTdzf/twXyPBLAGrLRTmkz3AdTnKeh40X8k9L2fdYwEp/42WGXIRGcg==}
+    dependencies:
+      void-elements: 3.1.0
+    dev: false
+
   /html-tags/3.3.1:
     resolution: {integrity: sha512-ztqyC3kLto0e9WbNp0aeP+M3kTt+nbaIveGmUxAtZa+8iFgKLUOD4YKM5j+f3QD89bra7UeumolZHKuOXnTmeQ==}
     engines: {node: '>=8'}
@@ -6193,6 +6205,24 @@ packages:
     resolution: {integrity: sha512-5gs5ytaNjBrh5Ow3zrvdUUY+0VxIuWVL4i9irt6friV+BqdCfmV11CQTWMiBYWHbXhco+J1kHfTOUkePhCDvMA==}
     engines: {node: '>=18'}
     hasBin: true
+    dev: false
+
+  /i18next-browser-languagedetector/8.0.3:
+    resolution: {integrity: sha512-beOOLArattPBc2YZG5IXGJytdYFgUR7cS8Wd6HT4IczIoWKgmTspOQ2yasaGklelVo5seLPmnEKvLHR+E/MdWQ==}
+    dependencies:
+      '@babel/runtime': 7.26.0
+    dev: false
+
+  /i18next/24.2.2_typescript@5.7.3:
+    resolution: {integrity: sha512-NE6i86lBCKRYZa5TaUDkU5S4HFgLIEJRLr3Whf2psgaxBleQ2LC1YW1Vc+SCgkAW7VEzndT6al6+CzegSUHcTQ==}
+    peerDependencies:
+      typescript: ^5
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      '@babel/runtime': 7.26.0
+      typescript: 5.7.3
     dev: false
 
   /iconv-lite/0.4.24:
@@ -8675,6 +8705,26 @@ packages:
       react-dom: 18.3.1_react@18.3.1
     dev: false
 
+  /react-i18next/15.4.0_rwxvilx74emfti7emycvkcwtze:
+    resolution: {integrity: sha512-Py6UkX3zV08RTvL6ZANRoBh9sL/ne6rQq79XlkHEdd82cZr2H9usbWpUNVadJntIZP2pu3M2rL1CN+5rQYfYFw==}
+    peerDependencies:
+      i18next: '>= 23.2.3'
+      react: '>= 16.8.0'
+      react-dom: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      '@babel/runtime': 7.26.0
+      html-parse-stringify: 3.0.1
+      i18next: 24.2.2_typescript@5.7.3
+      react: 18.3.1
+      react-dom: 18.3.1_react@18.3.1
+    dev: false
+
   /react-inspector/6.0.2_react@18.3.1:
     resolution: {integrity: sha512-x+b7LxhmHXjHoU/VrFAzw5iutsILRoYyDq97EDYdFpPLcvqtEzk4ZSZSQjnFPbr5T57tLXnHcqFYoN1pI6u8uQ==}
     peerDependencies:
@@ -10950,6 +11000,11 @@ packages:
       - typescript
       - universal-cookie
     dev: true
+
+  /void-elements/3.1.0:
+    resolution: {integrity: sha512-Dhxzh5HZuiHQhbvTW9AMetFfBHDMYpo23Uo9btPXgdYP+3T5S+p+jgNy7spra+veYhBP2dCSgxR/i2Y02h5/6w==}
+    engines: {node: '>=0.10.0'}
+    dev: false
 
   /vue-demi/0.14.10_vue@3.5.13:
     resolution: {integrity: sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg==}
