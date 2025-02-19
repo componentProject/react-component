@@ -135,12 +135,7 @@ export default defineConfig((mode: ConfigEnv): UserConfig => {
 				plugins: [autoprefixer(), tailwindcss],
 			},
 			preprocessorOptions: {
-				less: {
-					// 是否允许在less中写js
-					javascriptEnabled: true,
-					// 每个less文件编译前添加的额外less代码
-					additionalData: `@import "@/styles/var.less";`,
-				},
+				scss: { api: "modern-compiler" },
 			},
 		},
 
