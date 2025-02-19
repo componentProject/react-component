@@ -15,5 +15,18 @@ export default {
 		"no-empty-source": null,
 		// 禁用 scss 的 扩展检测
 		"scss/load-partial-extension": null,
+		// 使 tailwind 可用
+		"at-rule-no-unknown": [
+			true,
+			{
+				ignoreAtRules: ["tailwind"],
+			},
+		],
+		"scss/at-rule-no-unknown": [
+			true,
+			{
+				ignoreAtRules: ["tailwind"],
+			},
+		],
 	},
 };

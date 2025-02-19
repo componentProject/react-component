@@ -10,10 +10,10 @@
 		],
 		"skipLibCheck": true,
 		//Path Alias
-		"baseUrl": "./",
+		"baseUrl": ".",
 		"paths": {
 			"@/*": [
-				"src/*"
+				"./src/*"
 			]
 		},
 		/* Bundler mode */
