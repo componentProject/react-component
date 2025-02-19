@@ -11,7 +11,6 @@ import importToCDN from "vite-plugin-cdn-import";
 // 其余vite插件
 import react from "@vitejs/plugin-react";
 import { createHtmlPlugin } from "vite-plugin-html";
-import eslintPlugin from "vite-plugin-eslint";
 import autoprefixer from "autoprefixer";
 import tailwindcss from "tailwindcss";
 
@@ -32,8 +31,6 @@ export default defineConfig((mode: ConfigEnv): UserConfig => {
 					},
 				},
 			}),
-			// * EsLint 报错信息显示在浏览器界面上
-			eslintPlugin(),
 			// 是否生成包预览
 			viteEnv.VITE_REPORT && visualizer(),
 			// * gzip 压缩

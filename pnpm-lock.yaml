@@ -75,7 +75,6 @@ specifiers:
   vite: ^5.4.1
   vite-plugin-cdn-import: ^1.0.1
   vite-plugin-compression: ^0.5.1
-  vite-plugin-eslint: ^1.8.1
   vite-plugin-html: ^3.2.2
   vite-plugin-imagemin: ^0.6.1
   vitepress: 1.6.3
@@ -158,7 +157,6 @@ devDependencies:
   vite: 5.4.14_sass-embedded@1.83.4
   vite-plugin-cdn-import: 1.0.1_vite@5.4.14
   vite-plugin-compression: 0.5.1_vite@5.4.14
-  vite-plugin-eslint: 1.8.1_eslint@9.18.0+vite@5.4.14
   vite-plugin-html: 3.2.2_vite@5.4.14
   vite-plugin-imagemin: 0.6.1_vite@5.4.14
   vitepress: 1.6.3_t2skk7nnmt4ogjvgo7t6ux73qe
