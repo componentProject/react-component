@@ -1,5 +1,4 @@
 import { defineConfig, loadEnv, ConfigEnv, UserConfig } from "vite";
-import { fileURLToPath, URL } from "node:url";
 import { wrapperEnv } from "./src/utils/getEnv.js";
 
 // 性能优化模块
@@ -13,6 +12,7 @@ import react from "@vitejs/plugin-react";
 import { createHtmlPlugin } from "vite-plugin-html";
 import autoprefixer from "autoprefixer";
 import tailwindcss from "tailwindcss";
+import path from "path";
 
 // @see: https://vitejs.dev/config/
 export default defineConfig((mode: ConfigEnv): UserConfig => {
@@ -126,7 +126,7 @@ export default defineConfig((mode: ConfigEnv): UserConfig => {
 		resolve: {
 			extensions: [".js", ".jsx", ".ts", ".tsx"],
 			alias: {
-				"@": fileURLToPath(new URL("./src", import.meta.url)),
+				"@": path.resolve(__dirname, "./src"),
 			},
 		},
 		// 全局样式
