@@ -132,7 +132,7 @@ export default defineConfig((mode: ConfigEnv): UserConfig => {
 		// 全局样式
 		css: {
 			postcss: {
-				plugins: [autoprefixer(), tailwindcss],
+				plugins: [autoprefixer(), tailwindcss()],
 			},
 			preprocessorOptions: {
 				scss: { api: "modern-compiler" },
