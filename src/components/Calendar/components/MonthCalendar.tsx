@@ -1,5 +1,6 @@
 import { Dayjs } from "dayjs";
 import { CalendarProps } from "../types";
+import type { ReactElement } from "react";
 import allLocales from "../locale";
 import cs from "classnames";
 
@@ -34,7 +35,7 @@ function getAllDays(date: Dayjs) {
 }
 
 function MonthCalendar(props: MonthCalendarProps) {
-	const { value, curMonth, dateRender, dateInnerContent, selectHandler, locale } = props;
+	const { value, curMonth, dateRender, dateInnerContent, selectHandler, locale = "zh-CN" } = props;
 
 	const CalendarLocale = allLocales[locale];
 
@@ -43,9 +44,9 @@ function MonthCalendar(props: MonthCalendarProps) {
 	const allDays = getAllDays(curMonth);
 
 	function renderDays(days: Array<{ date: Dayjs; currentMonth: boolean }>) {
-		const rows = [];
+		const rows: Array<ReactElement[]> = [];
 		for (let i = 0; i < 6; i++) {
-			const row = [];
+			const row: ReactElement[] = [];
 			for (let j = 0; j < 7; j++) {
 				const item = days[i * 7 + j];
 				row[j] = (
