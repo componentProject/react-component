@@ -17,6 +17,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@floating-ui/react": "^0.27.4",
     "@storybook/addon-storysource": "^8.4.4",
     "ahooks": "^3.8.1",
     "class-variance-authority": "^0.7.1",
