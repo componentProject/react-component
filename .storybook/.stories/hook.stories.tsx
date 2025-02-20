@@ -70,6 +70,7 @@ export const Cookie = () => {
 		</div>
 	);
 };
+
 /**
  * 监听ref是否处于鼠标悬浮状态
  */
@@ -124,6 +125,21 @@ export const Scrolling = () => {
 	);
 };
 /**
+ * 获取元素的大小,并在size改变后重新计算
+ */
+export const Size = () => {
+	const ref = useRef<HTMLDivElement>(null);
+	const size = useSize(ref);
+	return (
+		<div ref={ref}>
+			<p>改变窗口大小试试</p>
+			<p>
+				width: {size?.width}px, height: {size?.height}px
+			</p>
+		</div>
+	);
+};
+/**
  * 保障定时器只执行一次
  */
 export const Timeout = () => {
@@ -151,21 +167,7 @@ export const Countdown = () => {
 		</p>
 	);
 };
-/**
- * 获取元素的大小,并在size改变后重新计算
- */
-export const Size = () => {
-	const ref = useRef<HTMLDivElement>(null);
-	const size = useSize(ref);
-	return (
-		<div ref={ref}>
-			<p>改变窗口大小试试</p>
-			<p>
-				width: {size?.width}px, height: {size?.height}px
-			</p>
-		</div>
-	);
-};
+
 const Demo: FC<{ count: number }> = (props) => {
 	const [randomNum, setRandomNum] = useState(Math.random());
 

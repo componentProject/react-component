@@ -52,6 +52,7 @@ function MonthCalendar(props: MonthCalendarProps) {
 					<div
 						className={"calendar-month-body-cell " + (item.currentMonth ? "calendar-month-body-cell-current" : "")}
 						onClick={() => selectHandler?.(item.date)}
+						key={`${i}-${j}`}
 					>
 						{dateRender ? (
 							dateRender(item.date)
