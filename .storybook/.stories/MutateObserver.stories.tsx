@@ -7,8 +7,24 @@ const meta = {
 	component: MutateObserver,
 	args: {},
 	argTypes: {
+		options: {
+			control: "object",
+			type: {
+				subtree: "boolean",
+				childList: "boolean",
+				attributeFilter: "string[]",
+			},
+			description: "MutationObserverInit",
+		},
+		onMutate: {
+			control: "function",
+			type: "((mutations: MutationRecord[], observer: MutationObserver) => void)",
+			description: "(mutations: MutationRecord[], observer: MutationObserver) => void",
+		},
 		children: {
 			control: "disabled",
+			type: "ReactElement",
+			description: "ReactElement",
 		},
 	},
 };

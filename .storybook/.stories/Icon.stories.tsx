@@ -8,13 +8,34 @@ const meta = {
 	component: Icon,
 	args: {},
 	argTypes: {
-		color: { control: "color" },
-		size: { control: "text" },
-		spin: { control: "boolean" },
-		style: { control: "object" },
-		scriptUrl: { control: "text" },
-		type: { control: "text" },
-		className: { control: "text" },
+		color: {
+			control: "color",
+			description: "Icon color",
+		},
+		size: {
+			control: "text",
+			description: "Icon size",
+		},
+		spin: {
+			control: "boolean",
+			description: "Whether to rotate the icon",
+		},
+		style: {
+			control: "object",
+			description: "Icon custom style",
+		},
+		scriptUrl: {
+			control: "text",
+			description: "Iconfont script URL",
+		},
+		type: {
+			control: "text",
+			description: "Icon type",
+		},
+		className: {
+			control: "text",
+			description: "Icon custom class",
+		},
 		children: { control: "disabled" },
 	},
 };
