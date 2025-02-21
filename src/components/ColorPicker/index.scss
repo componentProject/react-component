@@ -1,0 +1,34 @@
+.color-picker {
+    width: 300px;
+
+    &-panel {
+        &-palette {
+            position: relative;
+            min-height: 160px;
+    
+            &-main {
+                position: absolute;
+                inset: 0;
+            }
+
+            &-handler {
+                box-sizing: border-box;
+                width: 16px;
+                height: 16px;
+                border: 2px solid #fff;
+                border-radius: 50%;
+                box-shadow: 0 0 1px 1px rgb(0 0 0 / 0%);
+                user-select: none;
+                cursor: pointer;
+            }
+
+            &-handler-sm {
+                width: 12px;
+                height: 12px;
+            }
+
+            margin-bottom: 12px;
+        }
+    }
+    
+}

@@ -18,8 +18,8 @@ type Alignment = "start" | "end";
 type Side = "top" | "right" | "bottom" | "left";
 type AlignedPlacement = `${Side}-${Alignment}`;
 
-interface PopoverProps extends PropsWithChildren {
-	content: ReactNode;
+export interface PopoverProps extends PropsWithChildren {
+	content?: ReactNode;
 	trigger?: "hover" | "click";
 	placement?: Side | AlignedPlacement;
 	open?: boolean;

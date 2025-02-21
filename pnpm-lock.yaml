@@ -4,6 +4,7 @@ specifiers:
   '@chromatic-com/storybook': ^1.9.0
   '@commitlint/cli': ^19.6.1
   '@commitlint/config-conventional': ^19.6.0
+  '@ctrl/tinycolor': ^4.1.0
   '@eslint/js': ^9.9.0
   '@floating-ui/react': ^0.27.4
   '@shikijs/vitepress-twoslash': ^1.26.1
@@ -83,6 +84,7 @@ specifiers:
   vitepress-theme-demoblock: ^3.0.7
 
 dependencies:
+  '@ctrl/tinycolor': 4.1.0
   '@floating-ui/react': 0.27.4_nnrd3gsncyragczmpvfhocinkq
   '@storybook/addon-storysource': 8.5.0_storybook@8.5.0
   ahooks: 3.8.4_react@18.3.1
@@ -833,6 +835,11 @@ packages:
     dependencies:
       postcss-selector-parser: 7.0.0
     dev: true
+
+  /@ctrl/tinycolor/4.1.0:
+    resolution: {integrity: sha512-WyOx8cJQ+FQus4Mm4uPIZA64gbk3Wxh0so5Lcii0aJifqwoVOlfFtorjLE0Hen4OYyHZMXDWqMmaQemBhgxFRQ==}
+    engines: {node: '>=14'}
+    dev: false
 
   /@docsearch/css/3.8.2:
     resolution: {integrity: sha512-y05ayQFyUmCXze79+56v/4HpycYF3uFqB78pLPrSV5ZKAlDuIAAJNhaRi8tTdRNXh05yxX/TyNnzD6LwSM89vQ==}

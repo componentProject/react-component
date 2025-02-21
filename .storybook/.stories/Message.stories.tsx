@@ -6,7 +6,7 @@ const meta = {
 	args: {},
 	argTypes: {
 		children: {
-			control: "disabled",
+			control: false,
 		},
 	},
 };

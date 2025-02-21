@@ -1,4 +1,5 @@
 import Popover from "@/components/Popover";
+import type { PopoverProps } from "@/components/Popover";
 
 const meta = {
 	title: "Popover",
@@ -67,7 +68,7 @@ const meta = {
 };
 export default meta;
 
-export const popover = (args) => {
+export const popover = (args: PopoverProps) => {
 	const popoverContent = (
 		<div>
 			三光前端
