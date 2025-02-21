@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import type { RefObject } from "react";
-import type { Color, TransformOffset } from "./interface";
-
-type EventType = MouseEvent;
+import type { RefObject, MouseEvent as MouseEventForReact } from "react";
+import type { TransformOffset } from "./interface";
+import { Color } from "./color.ts";
+type EventType = MouseEvent | MouseEventForReact<HTMLDivElement, MouseEvent>;
 
 type EventHandle = (e: EventType) => void;
 

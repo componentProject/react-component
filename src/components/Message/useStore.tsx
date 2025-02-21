@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { MessageProps, Position } from "./MessageProvider.tsx";
-import { getId } from "../utils";
+import { getId } from "@/utils";
 
 export type MessageList = {
 	top: MessageProps[];

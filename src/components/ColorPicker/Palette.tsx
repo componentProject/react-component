@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import type { FC } from "react";
-import type { Color } from "./interface.ts";
+import { Color } from "./color.ts";
 import Handler from "./Handler";
 import Transform from "./Transform";
 import useColorDrag from "./useColorDrag";

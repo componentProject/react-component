@@ -2,7 +2,7 @@ import React, { CSSProperties, useEffect, useState } from "react";
 import { getMaskStyle } from "./getMaskStyle";
 
 import "./index.scss";
-import { getId } from "@/components/utils";
+import { getId } from "@/utils";
 
 interface MaskProps {
 	element: HTMLElement;

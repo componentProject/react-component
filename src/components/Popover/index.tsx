@@ -13,7 +13,7 @@ import {
 import { useRef, useState } from "react";
 import "./index.css";
 import { createPortal } from "react-dom";
-import { getId } from "@/components/utils";
+import { getId } from "@/utils";
 
 type Alignment = "start" | "end";
 type Side = "top" | "right" | "bottom" | "left";
