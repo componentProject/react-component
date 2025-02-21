@@ -1,3 +1,6 @@
+# 用户
+/server/uploads
+
 # 日志文件
 *.log
 *-debug.log*
