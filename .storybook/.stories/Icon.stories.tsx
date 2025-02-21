@@ -36,7 +36,7 @@ const meta = {
 			control: "text",
 			description: "Icon custom class",
 		},
-		children: { control: "disabled" },
+		children: { control: false },
 	},
 };
 

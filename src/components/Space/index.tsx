@@ -40,7 +40,7 @@ const Space: FC<SpaceProps> = ({
 		className,
 	);
 
-	const nodes = childNodes.map((child: object, i) => {
+	const nodes = childNodes.map((child: any, i) => {
 		const key = (child && child.key) || `space-item-${i}`;
 
 		return (

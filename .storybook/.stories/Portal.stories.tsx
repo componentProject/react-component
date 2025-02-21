@@ -12,7 +12,7 @@ const meta = {
 			description: "要挂载的容器",
 		},
 		children: {
-			control: "disabled",
+			control: false,
 			type: "ReactNode",
 			description: "要渲染的子元素",
 		},

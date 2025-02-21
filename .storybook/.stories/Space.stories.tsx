@@ -10,7 +10,7 @@ const meta = {
 	component: Space,
 	args: {},
 	argTypes: {
-		split: { control: "dom" },
+		split: { control: false },
 		size: { control: "radio", options: ["small", "middle", "large", 32] },
 	},
 };
