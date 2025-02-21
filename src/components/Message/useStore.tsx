@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { MessageProps, Position } from "./MessageProvider.tsx";
+import { getId } from "../utils";
 
 export type MessageList = {
 	top: MessageProps[];
@@ -35,7 +36,6 @@ function useStore(defaultPosition: Position) {
 					[position]: messages,
 				};
 			});
-			console.log("id", id);
 			return id;
 		},
 
@@ -73,15 +73,6 @@ function useStore(defaultPosition: Position) {
 			setMessageList({ ...initialState });
 		},
 	};
-}
-
-let count = 1;
-export function getId(messageProps: MessageProps) {
-	if (messageProps.id) {
-		return messageProps.id;
-	}
-	count += 1;
-	return count;
 }
 
 export function getMessagePosition(messageList: MessageList, id: number) {

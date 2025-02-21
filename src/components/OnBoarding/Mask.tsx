@@ -2,6 +2,7 @@ import React, { CSSProperties, useEffect, useState } from "react";
 import { getMaskStyle } from "./getMaskStyle";
 
 import "./index.scss";
+import { getId } from "@/components/utils";
 
 interface MaskProps {
 	element: HTMLElement;
@@ -31,6 +32,7 @@ export const Mask: React.FC<MaskProps> = (props) => {
 
 	const [style, setStyle] = useState<CSSProperties>({});
 
+	const [zIndex, setZIndex] = useState(999);
 	useEffect(() => {
 		const observer = new ResizeObserver(() => {
 			const style = getMaskStyle(element, container || document.documentElement);
@@ -38,8 +40,8 @@ export const Mask: React.FC<MaskProps> = (props) => {
 			setStyle(style);
 		});
 		observer.observe(container || document.documentElement);
+		setZIndex(getId());
 	}, []);
-
 	useEffect(() => {
 		if (!element) {
 			return;
@@ -63,7 +65,13 @@ export const Mask: React.FC<MaskProps> = (props) => {
 	};
 
 	return (
-		<div style={style} className="mask">
+		<div
+			style={{
+				zIndex,
+				...style,
+			}}
+			className="mask"
+		>
 			{getContent()}
 		</div>
 	);

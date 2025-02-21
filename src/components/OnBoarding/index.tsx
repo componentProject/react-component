@@ -1,9 +1,12 @@
 import React, { FC, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { Button, Popover } from "antd";
-import { Mask } from "./Mask";
-import { TooltipPlacement } from "antd/es/tooltip";
+// import { Button, Popover } from "antd";
+// import { TooltipPlacement } from "antd/es/tooltip";
 
+import { Button } from "antd";
+import Popover from "@/components/Popover";
+import type { placementType as TooltipPlacement } from "@/components/Popover";
+import { Mask } from "./Mask";
 export interface OnBoardingStepConfig {
 	selector: () => HTMLElement | null;
 
