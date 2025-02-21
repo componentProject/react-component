@@ -1,10 +1,11 @@
-import { TransformOffset } from "./Transform";
+import { TransformOffset } from "./interface";
 import { Color } from "./color";
+import type { RefObject } from "react";
 
 export const calculateColor = (props: {
 	offset: TransformOffset;
-	containerRef: React.RefObject<HTMLDivElement>;
-	targetRef: React.RefObject<HTMLDivElement>;
+	containerRef: RefObject<HTMLDivElement>;
+	targetRef: RefObject<HTMLDivElement>;
 	color: Color;
 }): Color => {
 	const { offset, targetRef, containerRef, color } = props;
@@ -29,8 +30,8 @@ export const calculateColor = (props: {
 };
 
 export const calculateOffset = (
-	containerRef: React.RefObject<HTMLDivElement>,
-	targetRef: React.RefObject<HTMLDivElement>,
+	containerRef: RefObject<HTMLDivElement>,
+	targetRef: RefObject<HTMLDivElement>,
 	color: Color,
 ): TransformOffset => {
 	const { width, height } = containerRef.current!.getBoundingClientRect();

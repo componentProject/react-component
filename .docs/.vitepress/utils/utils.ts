@@ -47,8 +47,9 @@ export function useYearSort(post: Post[]) {
 	return data;
 }
 
-export function getHeaders(range: any) {
-	const headers = [...document.querySelectorAll(".VPDoc h2,h3,h4,h5,h6")]
+export function getHeaders() {
+	// return resolveHeaders(headers, range);
+	return [...document.querySelectorAll(".VPDoc h2,h3,h4,h5,h6")]
 		.filter((el) => el.id && el.hasChildNodes())
 		.map((el) => {
 			const level = Number(el.tagName[1]);
@@ -58,9 +59,6 @@ export function getHeaders(range: any) {
 				level,
 			};
 		});
-
-	// return resolveHeaders(headers, range);
-	return headers;
 }
 
 function serializeHeader(h: Element): string {
@@ -83,7 +81,7 @@ export function resolveHeaders(headers: any, range?: any): any {
 		return [];
 	}
 	let minLevel = 3;
-	headers.map((header) => {
+	headers.map((header: any) => {
 		minLevel = Math.min(header.level, minLevel);
 	});
 	const levelsRange = (typeof range === "object" && !Array.isArray(range) ? range.level : range) || minLevel;
@@ -93,7 +91,7 @@ export function resolveHeaders(headers: any, range?: any): any {
 		typeof levelsRange === "number" ? [levelsRange, levelsRange] : levelsRange === "deep" ? [2, 6] : levelsRange;
 
 	console.log(high, low, "loooww");
-	headers = headers.filter((h) => h.level >= high && h.level <= low);
+	headers = headers.filter((h: any) => h.level >= high && h.level <= low);
 
 	const ret: any = [];
 	outer: for (let i = 0; i < headers.length; i++) {
@@ -114,3 +112,5 @@ export function resolveHeaders(headers: any, range?: any): any {
 
 	return ret;
 }
+
+console.log("resolveHeaders", resolveHeaders);

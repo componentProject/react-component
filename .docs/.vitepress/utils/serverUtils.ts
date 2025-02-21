@@ -25,7 +25,7 @@ function _convertDate(date = new Date().toString()) {
 	return json_date.split("T")[0];
 }
 
-function _compareDate(obj1, obj2) {
+function _compareDate(obj1: any, obj2: any) {
 	return obj1.frontMatter.date < obj2.frontMatter.date ? 1 : -1;
 }
 
@@ -40,3 +40,5 @@ export async function getComponentLength(componentPath: string) {
 	// getComponentMDFilePath return type is object not array
 	return [...(await getComponentMDFilePaths(componentPath))].length;
 }
+
+console.log("getComponentLength", getComponentLength);

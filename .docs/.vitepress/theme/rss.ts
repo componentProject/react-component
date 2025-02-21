@@ -39,7 +39,7 @@ const markdown = MarkdownIt({
 
 export async function buildBlogRSS() {
 	const posts = await generateRSS();
-	writeFeed("feed", posts);
+	await writeFeed("feed", posts);
 }
 
 async function generateRSS() {
