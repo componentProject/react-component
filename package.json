@@ -17,11 +17,13 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.6.1",
     "@ctrl/tinycolor": "^4.1.0",
     "@floating-ui/react": "^0.27.4",
     "@storybook/addon-storysource": "^8.4.4",
     "ahooks": "^3.8.1",
     "antd": "^5.24.1",
+    "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",
