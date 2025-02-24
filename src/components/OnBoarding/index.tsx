@@ -5,31 +5,10 @@ import { createPortal } from "react-dom";
 
 import { Button } from "antd";
 import Popover from "@/components/Popover";
-import type { placementType as TooltipPlacement } from "@/components/Popover";
 import { Mask } from "./Mask";
-export interface OnBoardingStepConfig {
-	selector: () => HTMLElement | null;
+import { propsType } from "./types";
 
-	placement?: TooltipPlacement;
-
-	renderContent?: (currentStep: number) => React.ReactNode;
-
-	beforeForward?: (currentStep: number) => Promise<void> | void;
-
-	beforeBack?: (currentStep: number) => Promise<void> | void;
-}
-
-export interface OnBoardingProps {
-	step?: number;
-
-	steps: OnBoardingStepConfig[];
-
-	getContainer?: () => HTMLElement;
-
-	onStepsEnd?: () => Promise<void> | void;
-}
-
-export const OnBoarding: FC<OnBoardingProps> = (props) => {
+export const OnBoarding: FC<propsType> = (props) => {
 	const { step = 0, steps, onStepsEnd, getContainer } = props;
 
 	const [currentStep, setCurrentStep] = useState<number>(0);

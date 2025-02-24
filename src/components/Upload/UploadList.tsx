@@ -1,22 +1,7 @@
-import { FC } from "react";
+import type { FC } from "react";
+import type { UploadListProps } from "./types";
 import { Progress } from "antd";
 import { CheckOutlined, CloseOutlined, DeleteOutlined, LoadingOutlined } from "@ant-design/icons";
-
-export interface UploadFile {
-	uid: string;
-	size: number;
-	name: string;
-	status?: "ready" | "uploading" | "success" | "error";
-	percent?: number;
-	raw?: File;
-	response?: any;
-	error?: any;
-}
-
-interface UploadListProps {
-	fileList: UploadFile[];
-	onRemove: (file: UploadFile) => void;
-}
 
 export const UploadList: FC<UploadListProps> = (props) => {
 	const { fileList, onRemove } = props;

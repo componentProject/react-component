@@ -1,6 +1,6 @@
 import MutateObserver from "@/components/MutateObserver";
 import { useState, useEffect } from "react";
-import { StoryFn } from "@storybook/react";
+import type { StoryFn } from "@storybook/react";
 
 const meta = {
 	title: "MutateObserver",
@@ -17,7 +17,7 @@ const meta = {
 			description: "MutationObserverInit",
 		},
 		onMutate: {
-			control: "function",
+			control: false,
 			type: "((mutations: MutationRecord[], observer: MutationObserver) => void)",
 			description: "(mutations: MutationRecord[], observer: MutationObserver) => void",
 		},

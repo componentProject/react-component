@@ -1,17 +1,8 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { FC } from "react";
+import type { propsType } from "./types";
 
-import type { MyLazyloadProps } from "./types";
-
-const Index: FC<MyLazyloadProps> = ({
-	className = "",
-	style,
-	offset,
-	width,
-	onContentVisible,
-	placeholder,
-	height,
-	children,
-}) => {
+const Index: FC<propsType> = ({ className = "", style, offset, width, onContentVisible, placeholder, height, children }) => {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const [visible, setVisible] = useState(false);
 

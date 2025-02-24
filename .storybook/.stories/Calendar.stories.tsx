@@ -1,9 +1,10 @@
 // import {fn} from '@storybook/test';
 
 import Calendar from "@/components/Calendar";
-import { StoryFn } from "@storybook/react";
+import type { propsType } from "@/components/Calendar/types";
+import type { Meta, StoryFn } from "@storybook/react";
 
-const meta = {
+const meta: Meta<propsType> = {
 	title: "日历",
 	component: Calendar,
 	parameters: {

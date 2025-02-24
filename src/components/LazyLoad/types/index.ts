@@ -1,6 +1,6 @@
 import { CSSProperties, ReactNode } from "react";
 
-export interface MyLazyloadProps {
+export interface propsType {
 	className?: string;
 	style?: CSSProperties;
 	placeholder?: ReactNode;

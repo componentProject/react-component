@@ -10,33 +10,43 @@ const meta = {
 	argTypes: {
 		color: {
 			control: "color",
+			type: "string",
 			description: "Icon color",
 		},
 		size: {
 			control: "text",
+			type: "string | string[]",
 			description: "Icon size",
 		},
 		spin: {
 			control: "boolean",
+			type: "boolean",
 			description: "Whether to rotate the icon",
 		},
 		style: {
 			control: "object",
+			type: "React.CSSProperties",
 			description: "Icon custom style",
 		},
 		scriptUrl: {
 			control: "text",
+			type: "string",
 			description: "Iconfont script URL",
 		},
 		type: {
 			control: "text",
+			type: "string",
 			description: "Icon type",
 		},
 		className: {
 			control: "text",
+			type: "string",
 			description: "Icon custom class",
 		},
-		children: { control: false },
+		children: {
+			control: false,
+			type: "React.ReactNode",
+		},
 	},
 };
 

@@ -1,8 +1,8 @@
 import React from "react";
 
-export type SizeType = 'small' | 'middle' | 'large' | number  | undefined;
+export type SizeType = "small" | "middle" | "large" | number | undefined;
 
-export interface SpaceProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface propsType extends React.HTMLAttributes<HTMLDivElement> {
 	/**
 	 * 用于分割每个子元素的元素
 	 */
@@ -24,11 +24,11 @@ export interface SpaceProps extends React.HTMLAttributes<HTMLDivElement> {
 	/**
 	 * flex主轴方向: horizontal横向 | vertical纵向
 	 */
-	direction?: 'horizontal' | 'vertical';
+	direction?: "horizontal" | "vertical";
 	/**
 	 * flex副轴方向: start | end | center | baseline
 	 */
-	align?: 'start' | 'end' | 'center' | 'baseline';
+	align?: "start" | "end" | "center" | "baseline";
 	/**
 	 * 是否换行,默认否
 	 */

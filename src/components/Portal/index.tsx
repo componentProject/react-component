@@ -1,7 +1,7 @@
 import { forwardRef, useEffect, useMemo, useImperativeHandle } from "react";
 import { createPortal } from "react-dom";
 
-import type { PortalProps } from "./types";
+import type { propsType } from "./types";
 
 import { getAttach } from "./utils";
 
@@ -14,7 +14,7 @@ import { getAttach } from "./utils";
  *
  * 否则，默认挂载到 document.body：
  */
-const Portal = forwardRef((props: PortalProps, ref) => {
+const Portal = forwardRef((props: propsType, ref) => {
 	const { attach = document.body, children } = props;
 
 	const container = useMemo(() => {

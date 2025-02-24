@@ -1,10 +1,10 @@
 import { Dayjs } from "dayjs";
-import { CalendarProps } from "../types";
+import { propsType } from "../types";
 import type { ReactElement } from "react";
 import allLocales from "../locale";
 import cs from "classnames";
 
-interface MonthCalendarProps extends CalendarProps {
+interface MonthCalendarProps extends propsType {
 	selectHandler?: (date: Dayjs) => void;
 	curMonth: Dayjs;
 }

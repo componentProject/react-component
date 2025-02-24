@@ -1,13 +1,13 @@
 import { Children, cloneElement } from "react";
 import copy from "copy-to-clipboard";
 import type { FC } from "react";
-import type { CopyToClipboardProps } from "./types";
+import type { propsType } from "./types";
 /**
  * 点击时复制传入的text到剪切板,
  *
  * 通过copy-to-clipboard实现
  */
-const CopyToClipboard: FC<CopyToClipboardProps> = (props) => {
+const CopyToClipboard: FC<propsType> = (props) => {
 	const { text = "", onCopy, debug, message, format, children } = props;
 
 	const elem = Children.only(children);

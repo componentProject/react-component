@@ -3,7 +3,7 @@ import { ConfigContext } from "../ConfigProvider";
 import { Children, useContext, useMemo } from "react";
 import type { FC, CSSProperties } from "react";
 import classNames from "classnames";
-import { SpaceProps, SizeType } from "./types";
+import { propsType, SizeType } from "./types";
 
 const spaceSize = {
 	small: 8,
@@ -15,7 +15,7 @@ function getNumberSize(size: SizeType) {
 	return typeof size === "string" ? spaceSize[size] : size || 0;
 }
 
-const Space: FC<SpaceProps> = ({
+const Space: FC<propsType> = ({
 	className,
 	style,
 	children,
@@ -25,7 +25,7 @@ const Space: FC<SpaceProps> = ({
 	split,
 	wrap = false,
 	...otherProps
-}: SpaceProps) => {
+}: propsType) => {
 	const { space } = useContext(ConfigContext);
 	size = space || size;
 	const childNodes = Children.toArray(children);

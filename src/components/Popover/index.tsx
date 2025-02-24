@@ -1,4 +1,5 @@
-import { CSSProperties, PropsWithChildren, ReactNode, useEffect } from "react";
+import { useEffect } from "react";
+import type { propsType } from "./types";
 import {
 	useInteractions,
 	useFloating,
@@ -15,22 +16,7 @@ import "./index.css";
 import { createPortal } from "react-dom";
 import { getId } from "@/utils";
 
-type Alignment = "start" | "end";
-type Side = "top" | "right" | "bottom" | "left";
-type AlignedPlacement = `${Side}-${Alignment}`;
-export type placementType = Side | AlignedPlacement;
-
-export interface PopoverProps extends PropsWithChildren {
-	content?: ReactNode;
-	trigger?: "hover" | "click";
-	placement?: placementType;
-	open?: boolean;
-	onOpenChange?: (open: boolean) => void;
-	className?: string;
-	style?: CSSProperties;
-}
-
-export default function Popover(props: PopoverProps) {
+export default function Popover(props: propsType) {
 	const { open, onOpenChange, content, children, trigger = "click", placement = "bottom", className, style } = props;
 
 	const arrowRef = useRef(null);
@@ -53,8 +39,9 @@ export default function Popover(props: PopoverProps) {
 		],
 	});
 
-	// eslint-disable-next-line react-hooks/rules-of-hooks
-	const interaction = trigger === "hover" ? useHover(context) : useClick(context);
+	const hover = useHover(context);
+	const click = useClick(context);
+	const interaction = trigger === "hover" ? hover : click;
 
 	const dismiss = useDismiss(context);
 

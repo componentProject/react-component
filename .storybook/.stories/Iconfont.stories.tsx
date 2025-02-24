@@ -15,44 +15,60 @@ const meta = {
 		style: {},
 		className: "",
 	},
-	parameters: {
-		docs: {
-			description: {
-				component:
-					"iconfont组件,需要先通过createFromIconfont函数创建,例如const IconFont = createFromIconfont('//at.alicdn.com/t/c/font_3590692_mp9kgduugne.js')",
-			},
-		},
-	},
+	parameters: {},
 	argTypes: {
 		color: {
-			description: "颜色",
+			control: "color",
+			type: "string",
+			description: "Icon color",
 		},
 		size: {
-			description: "尺寸",
+			control: "text",
+			type: "string | string[]",
+			description: "Icon size",
 		},
 		spin: {
-			description: "是否旋转",
+			control: "boolean",
+			type: "boolean",
+			description: "Whether to rotate the icon",
 		},
 		style: {
-			description: "样式",
+			control: "object",
+			type: "React.CSSProperties",
+			description: "Icon custom style",
+		},
+		scriptUrl: {
+			control: "text",
+			type: "string",
+			description: "Iconfont script URL",
 		},
 		type: {
-			description: "iconfont的名字",
+			control: "text",
+			type: "string",
+			description: "Icon type",
 		},
 		className: {
-			description: "类名",
+			control: "text",
+			type: "string",
+			description: "Icon custom class",
+		},
+		children: {
+			control: false,
+			type: "React.ReactNode",
 		},
 	},
 };
 export default meta;
 
-const Template: StoryFn = (props) => {
-	const IconFont = createFromIconfont("//at.alicdn.com/t/c/font_3590692_mp9kgduugne.js");
+const Template: StoryFn = (args) => {
+	const { scriptUrl, ...props } = args;
+	const IconFont = createFromIconfont(scriptUrl);
 	return <IconFont {...props} />;
 };
 
 export const Defalut = Template.bind({});
 
 Defalut.args = {
+	scriptUrl: "//at.alicdn.com/t/c/font_3590692_mp9kgduugne.js",
 	type: "icon-zhangshangcaifuyemianshoujiban345",
 };

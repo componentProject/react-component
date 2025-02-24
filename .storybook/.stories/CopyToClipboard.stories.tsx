@@ -1,13 +1,14 @@
 import CopyToClipboard from "@/components/CopyToClipboard";
-import { StoryFn } from "@storybook/react";
+import { propsType } from "@/components/CopyToClipboard/types";
+import { Meta, StoryFn } from "@storybook/react";
 
-const meta = {
+const meta: Meta<propsType> = {
 	title: "copyToClipboard",
 	component: CopyToClipboard,
 	args: {},
 	argTypes: {
 		children: {
-			control: "disabled",
+			control: false,
 		},
 	},
 };

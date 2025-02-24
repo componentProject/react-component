@@ -1,4 +1,4 @@
-import { TransformOffset } from "./interface";
+import { TransformOffset } from "./types";
 import { Color } from "./color";
 import type { RefObject } from "react";
 

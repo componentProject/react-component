@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import type { WatermarkProps } from "../types";
+import type { propsType } from "../types";
 import { merge } from "lodash-es";
 
-export type WatermarkOptions = Omit<WatermarkProps, "className" | "style" | "children">;
+export type WatermarkOptions = Omit<propsType, "className" | "style" | "children">;
 
 export function isNumber(obj: any): obj is number {
 	return Object.prototype.toString.call(obj) === "[object Number]" && obj === obj;

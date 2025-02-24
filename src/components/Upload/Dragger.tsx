@@ -1,9 +1,7 @@
-import { FC, useState, DragEvent, PropsWithChildren } from "react";
+import { useState } from "react";
+import type { FC, DragEvent } from "react";
+import type { DraggerProps } from "./types";
 import classNames from "classnames";
-
-interface DraggerProps extends PropsWithChildren {
-	onFile: (files: FileList) => void;
-}
 
 export const Dragger: FC<DraggerProps> = (props) => {
 	const { onFile, children } = props;

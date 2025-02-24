@@ -1,28 +1,15 @@
-import { FC, useRef, ChangeEvent, PropsWithChildren, useState } from "react";
+import { useRef, useState } from "react";
+import type { FC, ChangeEvent } from "react";
 import axios from "axios";
 
 import "./index.scss";
-import UploadList, { UploadFile } from "./UploadList";
+import UploadList from "./UploadList";
+import type { UploadFile } from "./UploadList.tsx";
 import Dragger from "./Dragger";
 
-export interface UploadProps extends PropsWithChildren {
-	action: string;
-	headers?: Record<string, any>;
-	name?: string;
-	data?: Record<string, any>;
-	withCredentials?: boolean;
-	accept?: string;
-	multiple?: boolean;
-	beforeUpload?: (file: File) => boolean | Promise<File>;
-	onProgress?: (percentage: number, file: File) => void;
-	onSuccess?: (data: any, file: File) => void;
-	onError?: (err: any, file: File) => void;
-	onChange?: (file: File) => void;
-	onRemove?: (file: UploadFile) => void;
-	drag: boolean;
-}
+import type { propsType } from "./types";
 
-export const Upload: FC<UploadProps> = (props) => {
+export const Upload: FC<propsType> = (props) => {
 	const {
 		action,
 		name,

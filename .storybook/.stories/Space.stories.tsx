@@ -11,7 +11,11 @@ const meta = {
 	args: {},
 	argTypes: {
 		split: { control: false },
-		size: { control: "radio", options: ["small", "middle", "large", 32] },
+		style: { control: false },
+		size: {
+			control: "radio",
+			options: ["small", "middle", "large", 32],
+		},
 	},
 };
 export default meta;

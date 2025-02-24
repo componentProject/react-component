@@ -1,5 +1,5 @@
 import { CSSProperties, type ReactNode } from "react";
-import { Color } from "./color";
+import { Color } from "../color.ts";
 export interface TransformOffset {
 	x: number;
 	y: number;
@@ -31,7 +31,7 @@ export interface RGBA extends RGB {
 
 export type ColorType = string | number | RGB | RGBA | HSL | HSLA | Color;
 
-export interface ColorPickerProps {
+export interface propsType {
 	className?: string;
 	style?: CSSProperties;
 	value?: ColorType;

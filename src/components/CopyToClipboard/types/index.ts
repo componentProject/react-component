@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
 
-export interface CopyToClipboardProps {
+export interface propsType {
 	/**
 	 * 点击时,实际复制的文本
 	 */

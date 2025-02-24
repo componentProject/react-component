@@ -1,11 +1,11 @@
 import cs from "classnames";
-import type { ColorPickerProps } from "./interface";
+import type { propsType } from "./types";
 import { Color } from "./color";
 import Palette from "./Palette";
 import "./index.scss";
 import { useControllableValue } from "ahooks";
 
-function ColorPickerPanel(props: ColorPickerProps) {
+function ColorPickerPanel(props: propsType) {
 	const { className, style, onChange } = props;
 
 	const [colorValue, setColorValue] = useControllableValue<Color>(props);

@@ -1,7 +1,7 @@
-import {Dayjs} from "dayjs";
-import {CSSProperties, ReactNode} from "react";
+import { Dayjs } from "dayjs";
+import { CSSProperties, ReactNode } from "react";
 
-export interface CalendarProps {
+export interface propsType {
 	value?: Dayjs;
 	defaultValue?: Dayjs;
 	style?: CSSProperties;
@@ -19,6 +19,6 @@ export interface CalendarProps {
 	/**
 	 * 国际化相关
 	 */
-	locale?: 'zh-CN' | 'en-US';
+	locale?: "zh-CN" | "en-US";
 	onChange?: (date: Dayjs) => void;
 }

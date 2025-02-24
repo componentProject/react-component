@@ -1,17 +1,10 @@
-import React, { forwardRef } from "react";
+import { forwardRef } from "react";
 import { createFromIconfont } from "../IconFont";
 import cs from "classnames";
 
 import "./index.scss";
 
-type BaseIconProps = {
-	className?: string;
-	style?: React.CSSProperties;
-	size?: string | string[];
-	spin?: boolean;
-};
-
-export type IconProps = BaseIconProps & Omit<React.SVGAttributes<SVGElement>, keyof BaseIconProps>;
+import type { IconProps, IconFontProps } from "@/components/Icon/types";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const getSize = (size: IconProps["size"]) => {
@@ -25,19 +18,8 @@ export const getSize = (size: IconProps["size"]) => {
 	return [width, height];
 };
 
-export interface IconFontProps {
-	style?: React.CSSProperties;
-	scriptUrl?: string;
-	type?: string;
-	className?: string;
-	size?: string | string[];
-	spin?: boolean;
-	color?: string;
-	children?: React.ReactNode;
-}
-
 /** Icon组件,传递scriptUrl可以使用iconfont */
-const Icon = forwardRef((props: IconFontProps, ref) => {
+const Icon = forwardRef<HTMLElement, IconFontProps>((props, ref) => {
 	const { style, className, spin = false, size = "1em", color = "currentColor", children, scriptUrl, ...rest } = props;
 
 	const [width, height] = getSize(size);

@@ -1,9 +1,9 @@
 import Popover from "@/components/Popover";
-import type { PopoverProps } from "@/components/Popover";
+import type { propsType } from "@/components/Popover";
 
 const meta = {
 	title: "Popover",
-	component: null,
+	component: undefined,
 	args: {
 		placement: "bottom",
 		trigger: "click",
@@ -45,7 +45,7 @@ const meta = {
 			description: "是否打开popover",
 		},
 		onOpenChange: {
-			control: "function",
+			control: false,
 			type: "(open: boolean) => void",
 			description: "popover 打开或关闭时的回调函数",
 		},
@@ -68,7 +68,7 @@ const meta = {
 };
 export default meta;
 
-export const popover = (args: PopoverProps) => {
+export const popover = (args: propsType) => {
 	const popoverContent = (
 		<div>
 			三光前端

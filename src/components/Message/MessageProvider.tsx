@@ -1,23 +1,12 @@
 import { forwardRef } from "react";
-import type { CSSProperties, FC, ReactNode } from "react";
+import type { FC } from "react";
+import type { MessageProps, MessageRef, Position } from "./types";
 import useStore from "./useStore";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 import "./MessageProvider.scss";
 import { createPortal } from "react-dom";
 import { useTimer } from "./useTimer";
-
-export type Position = "top" | "bottom";
-
-export interface MessageProps {
-	style?: CSSProperties;
-	className?: string | string[];
-	content: ReactNode | string;
-	duration?: number;
-	onClose?: (...args: any) => void;
-	id?: number;
-	position?: Position;
-}
 
 const MessageItem: FC<MessageProps> = (item) => {
 	const { onMouseEnter, onMouseLeave } = useTimer({
@@ -33,14 +22,7 @@ const MessageItem: FC<MessageProps> = (item) => {
 	);
 };
 
-export interface MessageRef {
-	add: (messageProps: MessageProps) => number;
-	remove: (id: number) => void;
-	update: (id: number, messageProps: MessageProps) => void;
-	clearAll: () => void;
-}
-
-export const MessageProvider = forwardRef<MessageRef, object>((_props, ref) => {
+export const MessageProvider = forwardRef<MessageRef, any>((_props, ref) => {
 	const { messageList, add, update, remove, clearAll } = useStore("top");
 
 	if ("current" in ref!) {

@@ -6,10 +6,10 @@ import { useContext, useState } from "react";
 import cs from "classnames";
 import { useControllableValue } from "ahooks";
 
-import type { CalendarProps } from "./types";
+import type { propsType } from "./types";
 import { ConfigContext } from "../ConfigProvider";
 
-function Calendar(props: CalendarProps) {
+function Calendar(props: propsType) {
 	const { style, className, onChange } = props;
 	let { locale } = props;
 	const configProvider = useContext(ConfigContext);

@@ -1,5 +1,5 @@
 import LazyLoad from "@/components/LazyLoad";
-import type { MyLazyloadProps } from "@/components/LazyLoad/types";
+import type { propsType } from "@/components/LazyLoad/types";
 import React from "react";
 import img1 from "./assets/images/img1.png";
 import img2 from "./assets/images/img2.png";
@@ -18,7 +18,7 @@ const meta = {
 			description: "自定义class",
 		},
 		style: {
-			control: "object",
+			control: false,
 			type: "CSSProperties",
 			description: "自定义style",
 		},
@@ -43,12 +43,12 @@ const meta = {
 			description: "高度",
 		},
 		onContentVisible: {
-			control: "function",
+			control: false,
 			type: "() => void",
 			description: "内容可见时的回调",
 		},
 		children: {
-			control: "text",
+			control: false,
 			type: "ReactNode",
 			description: "懒加载的内容",
 		},
@@ -57,7 +57,7 @@ const meta = {
 export default meta;
 const LazyMomo = React.lazy(() => import("./components/momo"));
 
-export const lazyLoad = (args: MyLazyloadProps) => {
+export const lazyLoad = (args: propsType) => {
 	return (
 		<div>
 			<p>xxxxxx</p>

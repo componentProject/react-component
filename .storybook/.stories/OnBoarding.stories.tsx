@@ -8,7 +8,35 @@ const meta = {
 		docs: {},
 	},
 	args: {},
-	argTypes: {},
+	argTypes: {
+		step: {
+			type: "number",
+			description:
+				"当前步骤,selector是指定步骤所要包裹的html容器,placement是popover的位置,renderContent为popover的内容,beforeForward是下一步前的回调,beforeBack是上一步前的回调",
+			control: "number",
+		},
+		steps: {
+			type: `Array<{
+									selector: () => HTMLElement | null;
+									placement?: "top" | "right" | "bottom" | "left"| "start-top" | "start-right" | "start-bottom" | "start-left" | "end-top" | "end-right" | "end-bottom" | "end-left";
+									renderContent?: (currentStep: number) => React.ReactNode;
+									beforeForward?: (currentStep: number) => Promise<void> | void;
+									beforeBack?: (currentStep: number) => Promise<void> | void;
+			}>`,
+			description: "步骤配置",
+			control: false,
+		},
+		getContainer: {
+			type: "() => HTMLElement",
+			description: "容器",
+			control: false,
+		},
+		onStepsEnd: {
+			type: "() => Promise<void> | void",
+			description: "所有步骤结束",
+			control: false,
+		},
+	},
 };
 
 export default meta;

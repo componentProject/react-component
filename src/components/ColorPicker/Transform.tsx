@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import type { TransformProps } from "./interface";
+import type { TransformProps } from "./types";
 
 const Transform = forwardRef<HTMLDivElement, TransformProps>((props, ref) => {
 	const { children, offset } = props;

@@ -25,6 +25,7 @@ specifiers:
   '@vitejs/plugin-vue-jsx': ^4.1.1
   ahooks: ^3.8.1
   antd: ^5.24.1
+  async-validator: ^4.2.5
   autoprefixer: ^10.4.20
   axios: ^1.7.9
   class-variance-authority: ^0.7.1
@@ -94,6 +95,7 @@ dependencies:
   '@storybook/addon-storysource': 8.5.0_storybook@8.5.0
   ahooks: 3.8.4_react@18.3.1
   antd: 5.24.1_nnrd3gsncyragczmpvfhocinkq
+  async-validator: 4.2.5
   axios: 1.7.9
   class-variance-authority: 0.7.1
   classnames: 2.5.1
@@ -173,8 +175,8 @@ devDependencies:
   vite-plugin-compression: 0.5.1_vite@5.4.14
   vite-plugin-html: 3.2.2_vite@5.4.14
   vite-plugin-imagemin: 0.6.1_vite@5.4.14
-  vitepress: 1.6.3_jdha34blr3dkvxf3i4vw2phmfq
-  vitepress-theme-demoblock: 3.0.7_jdha34blr3dkvxf3i4vw2phmfq
+  vitepress: 1.6.3_w64rpvanl63fczt74vatiwbr54
+  vitepress-theme-demoblock: 3.0.7_w64rpvanl63fczt74vatiwbr54
 
 packages:
 
@@ -3233,7 +3235,7 @@ packages:
       - typescript
     dev: true
 
-  /@vueuse/integrations/12.5.0_ucrwqteoyzrc37ce3tmsc2iaue:
+  /@vueuse/integrations/12.5.0_ud23ydvarjbklpbiwldn4r4qqy:
     resolution: {integrity: sha512-HYLt8M6mjUfcoUOzyBcX2RjpfapIwHPBmQJtTmXOQW845Y/Osu9VuTJ5kPvnmWJ6IUa05WpblfOwZ+P0G4iZsQ==}
     peerDependencies:
       async-validator: ^4
@@ -3276,6 +3278,7 @@ packages:
     dependencies:
       '@vueuse/core': 12.5.0_typescript@5.7.3
       '@vueuse/shared': 12.5.0_typescript@5.7.3
+      async-validator: 4.2.5
       axios: 1.7.9
       focus-trap: 7.6.4
       vue: 3.5.13_typescript@5.7.3
@@ -3619,6 +3622,9 @@ packages:
     resolution: {integrity: sha512-hsU18Ae8CDTR6Kgu9DYf0EbCr/a5iGL0rytQDobUcdpYOKokk8LEjVphnXkDkgpi0wYVsqrXuP0bZxJaTqdgoA==}
     engines: {node: '>= 0.4'}
     dev: false
+
+  /async-validator/4.2.5:
+    resolution: {integrity: sha512-7HhHjtERjqlNbZtqNqy2rckN/SpOOlmDliet+lP7k+eKZEjPk3DgyeU9lIXLdeLz0uBbbVp+9Qdow9wJWgwwfg==}
 
   /async/3.2.6:
     resolution: {integrity: sha512-htCUDlxyyCLMgaM3xXg0C0LW2xqfuQ6p05pCEIsXuyQ+a1koYKTuBMzRNwmybfLgvJDMd0r1LTn4+E0Ti6C2AA==}
@@ -11696,7 +11702,7 @@ packages:
       fsevents: 2.3.3
     dev: true
 
-  /vitepress-theme-demoblock/3.0.7_jdha34blr3dkvxf3i4vw2phmfq:
+  /vitepress-theme-demoblock/3.0.7_w64rpvanl63fczt74vatiwbr54:
     resolution: {integrity: sha512-pA+Ag1Ojo25Dw6VYCFocLZahHovCF4Dlgf2iw3mODea6HvP6LTCkCnYgG6eMnRygVsVOA1lB9cHYhb2pRTnfdg==}
     engines: {node: '>=16.0.0'}
     hasBin: true
@@ -11722,7 +11728,7 @@ packages:
       shiki: 1.29.1
       unified: 11.0.5
       unist-util-visit: 5.0.0
-      vitepress: 1.6.3_jdha34blr3dkvxf3i4vw2phmfq
+      vitepress: 1.6.3_w64rpvanl63fczt74vatiwbr54
       vue: 3.5.13_typescript@5.7.3
       yaml: 2.7.0
     transitivePeerDependencies:
@@ -11757,7 +11763,7 @@ packages:
       - universal-cookie
     dev: true
 
-  /vitepress/1.6.3_jdha34blr3dkvxf3i4vw2phmfq:
+  /vitepress/1.6.3_w64rpvanl63fczt74vatiwbr54:
     resolution: {integrity: sha512-fCkfdOk8yRZT8GD9BFqusW3+GggWYZ/rYncOfmgcDtP3ualNHCAg+Robxp2/6xfH1WwPHtGpPwv7mbA3qomtBw==}
     hasBin: true
     peerDependencies:
@@ -11780,7 +11786,7 @@ packages:
       '@vue/devtools-api': 7.7.1
       '@vue/shared': 3.5.13
       '@vueuse/core': 12.5.0_typescript@5.7.3
-      '@vueuse/integrations': 12.5.0_ucrwqteoyzrc37ce3tmsc2iaue
+      '@vueuse/integrations': 12.5.0_ud23ydvarjbklpbiwldn4r4qqy
       focus-trap: 7.6.4
       mark.js: 8.11.1
       markdown-it-mathjax3: 4.3.2

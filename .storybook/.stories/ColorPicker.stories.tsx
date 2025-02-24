@@ -10,25 +10,32 @@ const meta = {
 	},
 	args: {},
 	argTypes: {
-		value: {
-			control: "object",
-			type: "{h: number, s: number, v: number}",
+		className: {
+			control: "text",
+			type: "string",
+			description: "ColorPicker 的 className",
 		},
-		defaultValue: {
+		style: {
 			control: "object",
-			type: "{h: number, s: number, v: number}",
+			type: "CSSProperties",
+			description: "ColorPicker 的 style",
+		},
+		value: {
+			control: false,
+			type: "string | number | RGB | RGBA | HSL | HSLA | Color",
+			description: "当前颜色",
 		},
 		onChange: {
-			control: "function",
+			control: false,
 			type: "(color: Color) => void",
+			description: "颜色变化时的回调",
 		},
 	},
 };
 
 export default meta;
 
-export const colorPicker = () => {
-	// eslint-disable-next-line react-hooks/rules-of-hooks
+export const ColorPickerDemo = () => {
 	const [color, setColor] = useState<Color>(new Color("rgb(166,57,255)"));
 
 	const handleHueChange: ChangeEventHandler<HTMLInputElement> = (e) => {

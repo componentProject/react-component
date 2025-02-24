@@ -1,8 +1,8 @@
 import { useRef, FC, useCallback, useEffect } from "react";
 import useWatermark from "./hooks/useWatermark.ts";
-import type { WatermarkProps } from "./types";
+import type { propsType } from "./types";
 
-const Watermark: FC<WatermarkProps> = (props) => {
+const Watermark: FC<propsType> = (props) => {
 	const { className, style, zIndex, width, height, rotate, image, content, fontStyle, gap, offset } = props;
 
 	const containerRef = useRef<HTMLDivElement>(null);

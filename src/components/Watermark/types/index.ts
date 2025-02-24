@@ -1,13 +1,13 @@
 import { CSSProperties, PropsWithChildren } from "react";
 
-export interface WatermarkProps extends PropsWithChildren {
+export interface propsType extends PropsWithChildren {
 	style?: CSSProperties;
 	className?: string;
 	zIndex?: string | number;
 	width?: number;
 	height?: number;
 	/**
-	 * 旋转角度
+	 * 旋转角度,单位度数
 	 */
 	rotate?: number;
 	/**
@@ -32,5 +32,8 @@ export interface WatermarkProps extends PropsWithChildren {
 	 * x轴和y轴的偏移量
 	 */
 	offset?: [number, number];
+	/**
+	 * 获取容器,如果不提供,将使用body
+	 */
 	getContainer?: () => HTMLElement;
 }

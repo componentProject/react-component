@@ -1,7 +1,7 @@
 import { InboxOutlined } from "@ant-design/icons";
 // import {Button} from 'antd';
-import Upload, { UploadProps } from "@/components/Upload";
-
+import Upload from "@/components/Upload";
+import type { UploadProps } from "@/components/Upload";
 const meta = {
 	title: "Upload",
 	component: null,
@@ -44,32 +44,32 @@ const meta = {
 			description: "是否允许多文件上传",
 		},
 		beforeUpload: {
-			control: "function",
+			control: false,
 			type: "(file: File) => boolean | Promise<File>",
 			description: "上传前检查",
 		},
 		onProgress: {
-			control: "function",
+			control: false,
 			type: "(percentage: number, file: File) => void",
 			description: "上传中",
 		},
 		onSuccess: {
-			control: "function",
+			control: false,
 			type: "(data: any, file: File) => void",
 			description: "上传成功",
 		},
 		onError: {
-			control: "function",
+			control: false,
 			type: "(err: any, file: File) => void",
 			description: "上传失败",
 		},
 		onChange: {
-			control: "function",
+			control: false,
 			type: "(file: File) => void",
 			description: "文件改变",
 		},
 		onRemove: {
-			control: "function",
+			control: false,
 			type: "(file: UploadFile) => void",
 			description: "文件被删除",
 		},
