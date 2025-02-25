@@ -1,5 +1,8 @@
 @import "./base.css";
-/*@import './custom.scss';*/
+
+/* tailwind和它二选一 */
+
+/* @import "custom.scss"; */
 @import "tailwind.scss";
 
 #app {

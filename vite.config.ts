@@ -1,6 +1,8 @@
 import { defineConfig, loadEnv, ConfigEnv, UserConfig } from "vite";
 import { wrapperEnv } from "./src/utils/getEnv.js";
 
+// react
+import AutoImport from "unplugin-auto-import/vite";
 // 性能优化模块
 import { visualizer } from "rollup-plugin-visualizer";
 import viteCompression from "vite-plugin-compression";
@@ -33,63 +35,95 @@ export default defineConfig((mode: ConfigEnv): UserConfig => {
 			}),
 			// 是否生成包预览
 			viteEnv.VITE_REPORT && visualizer(),
-			// * gzip 压缩
 			// 代码压缩
-			viteCompression({
-				// gzip压缩需要服务器nginx配置以下内容:
-				// http {
-				//   gzip_static on;
-				//   gzip_proxied any;
-				// }
-				// 可选 'brotliCompress' 或 'gzip'
-				algorithm: viteEnv.VITE_BUILD_GZIP ? "gzip" : "brotliCompress",
-				verbose: true, //输出日志信息
-				disable: false, //是否禁用
-				ext: ".gz", // 压缩文件后缀
-				threshold: 10240, // 仅压缩大于 10KB 的文件
-				deleteOriginFile: false, // 是否删除原始文件
-			}),
+			viteEnv.VITE_COMPRESS &&
+				viteCompression({
+					// gzip压缩需要服务器nginx配置以下内容:
+					// http {
+					//   gzip_static on;
+					//   gzip_proxied any;
+					// }
+					// 可选 'brotliCompress' 或 'gzip'
+					algorithm: viteEnv.VITE_BUILD_GZIP ? "gzip" : "brotliCompress",
+					verbose: true, //输出日志信息
+					disable: false, //是否禁用
+					ext: ".gz", // 压缩文件后缀
+					threshold: 10240, // 仅压缩大于 10KB 的文件
+					deleteOriginFile: false, // 是否删除原始文件
+				}),
 			// 图片压缩
-			viteImagemin({
-				gifsicle: { optimizationLevel: 3 }, // GIF 压缩
-				mozjpeg: { quality: 75 }, // JPEG 压缩
-				pngquant: { quality: [0.8, 0.9] }, // PNG 压缩
-				svgo: { plugins: [{ removeViewBox: false }] }, // SVG 压缩
-			}),
+			viteEnv.VITE_IMAGEMIN &&
+				viteImagemin({
+					// gif压缩
+					gifsicle: {
+						optimizationLevel: 7,
+						interlaced: false,
+					},
+					optipng: {
+						optimizationLevel: 7,
+					},
+					mozjpeg: {
+						quality: 20,
+					},
+					pngquant: {
+						quality: [0.8, 0.9],
+						speed: 4,
+					},
+					// svg压缩
+					svgo: {
+						plugins: [
+							{
+								name: "removeViewBox",
+							},
+							{
+								name: "removeEmptyAttrs",
+								active: false,
+							},
+						],
+					},
+				}),
 			// CDN加速
-			importToCDN({
-				modules: [
-					{
-						name: "react", // 模块名
-						var: "React", // 全局变量名
-						path: "https://unpkg.com/react@18/umd/react.development.js", // CDN 地址
-					},
-					{
-						name: "react-dom", // 模块名
-						var: "ReactDOM", // 全局变量名
-						path: "https://unpkg.com/react-dom@18/umd/react-dom.development.js", // CDN 地址
-					},
-					{
-						name: "react-router-dom", // 模块名
-						var: "ReactRouterDOM", // 全局变量名
-						path: "https://unpkg.com/react-router-dom@6/dist/react-router-dom.development.js", // CDN 地址
-					},
-					{
-						name: "axios", // 模块名
-						var: "axios", // 全局变量名
-						path: "https://unpkg.com/axios/dist/axios.min.js", // CDN 地址
-					},
-					{
-						name: "moment", // 模块名
-						var: "moment", // 全局变量名
-						path: "https://unpkg.com/moment/min/moment.min.js", // CDN 地址
-					},
-					{
-						name: "radash", // 模块名
-						var: "radash", // 全局变量名
-						path: "https://unpkg.com/radash/dist/radash.min.js", // CDN 地址
-					},
-				],
+			viteEnv.VITE_USE_CDN &&
+				importToCDN({
+					modules: [
+						{
+							name: "react", // 模块名
+							var: "React", // 全局变量名
+							path: "https://unpkg.com/react@18/umd/react.development.js", // CDN 地址
+						},
+						{
+							name: "react-dom", // 模块名
+							var: "ReactDOM", // 全局变量名
+							path: "https://unpkg.com/react-dom@18/umd/react-dom.development.js", // CDN 地址
+						},
+						{
+							name: "react-router-dom", // 模块名
+							var: "ReactRouterDOM", // 全局变量名
+							path: "https://unpkg.com/react-router-dom@6/dist/react-router-dom.development.js", // CDN 地址
+						},
+						{
+							name: "axios", // 模块名
+							var: "axios", // 全局变量名
+							path: "https://unpkg.com/axios/dist/axios.min.js", // CDN 地址
+						},
+						{
+							name: "moment", // 模块名
+							var: "moment", // 全局变量名
+							path: "https://unpkg.com/moment/min/moment.min.js", // CDN 地址
+						},
+						{
+							name: "radash", // 模块名
+							var: "radash", // 全局变量名
+							path: "https://unpkg.com/radash/dist/radash.min.js", // CDN 地址
+						},
+					],
+				}),
+
+			// 自动引入
+			AutoImport({
+				imports: ["react"],
+				resolvers: [],
+				dts: path.resolve(__dirname, "./src/typings/auto-imports.d.ts"),
 			}),
 		],
 		build: {
@@ -101,7 +135,7 @@ export default defineConfig((mode: ConfigEnv): UserConfig => {
 			chunkSizeWarningLimit: 1500,
 			rollupOptions: {
 				// 移除cdn引入的包
-				external: ["react", "react-dom", "react-router-dom", "axios", "moment", "radash"],
+				external: viteEnv.VITE_USE_CDN ? ["react", "react-dom", "react-router-dom", "axios", "moment", "radash"] : [],
 				output: {
 					// 静态资源打包做处理
 					chunkFileNames: "static/js/[name]-[hash].js",
@@ -116,10 +150,12 @@ export default defineConfig((mode: ConfigEnv): UserConfig => {
 				},
 			},
 			terserOptions: {
-				compress: {
-					drop_console: true,
-					drop_debugger: true,
-				},
+				compress: viteEnv.VITE_DROP_CONSOLE
+					? {
+							drop_console: true,
+							drop_debugger: true,
+						}
+					: {},
 			},
 		},
 		// 路径别名
