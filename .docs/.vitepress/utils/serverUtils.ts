@@ -2,10 +2,11 @@ import { globby } from "globby";
 import matter from "gray-matter";
 import fs from "fs-extra";
 import path from "path";
+import type { PostType } from "./utils.ts";
 
 export async function getComponents(componentPath: string) {
 	const paths = await getComponentMDFilePaths(componentPath);
-	const posts = await Promise.all(
+	const posts = (await Promise.all(
 		paths.map(async (item) => {
 			const content = await fs.readFile(path.join(__dirname, `../..${componentPath}`, item), "utf-8");
 			const { data } = matter(content);
@@ -15,7 +16,7 @@ export async function getComponents(componentPath: string) {
 				regularPath: `${componentPath}/${item.replace(".md", ".html")}`,
 			};
 		}),
-	);
+	)) as PostType[];
 	posts.sort(_compareDate);
 	return posts;
 }
@@ -25,8 +26,12 @@ function _convertDate(date = new Date().toString()) {
 	return json_date.split("T")[0];
 }
 
-function _compareDate(obj1: any, obj2: any) {
-	return obj1.frontMatter.date < obj2.frontMatter.date ? 1 : -1;
+function _compareDate(obj1: PostType, obj2: PostType) {
+	if (obj1.frontMatter.date && obj2.frontMatter.date) {
+		return obj1.frontMatter.date < obj2.frontMatter.date ? 1 : -1;
+	} else {
+		return 1;
+	}
 }
 
 async function getComponentMDFilePaths(componentPath: string) {
