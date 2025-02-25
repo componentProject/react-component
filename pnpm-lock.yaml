@@ -25,13 +25,10 @@ importers:
         version: 3.8.4(react@18.3.1)
       antd:
         specifier: ^5.24.1
-        version: 5.24.2(date-fns@2.16.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 5.24.2(date-fns@2.16.1)(moment@2.30.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       async-validator:
         specifier: ^4.2.5
         version: 4.2.5
-      axios:
-        specifier: ^1.7.9
-        version: 1.7.9
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -68,12 +65,6 @@ importers:
       lucide-react:
         specifier: ^0.475.0
         version: 0.475.0(react@18.3.1)
-      react:
-        specifier: ^18.3.1
-        version: 18.3.1
-      react-dom:
-        specifier: ^18.3.1
-        version: 18.3.1(react@18.3.1)
       react-i18next:
         specifier: ^15.4.0
         version: 15.4.1(i18next@24.2.2(typescript@5.7.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -159,6 +150,9 @@ importers:
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.5.3)
+      axios:
+        specifier: ^1.7.9
+        version: 1.7.9
       commitizen:
         specifier: ^4.3.1
         version: 4.3.1(@types/node@22.13.5)(typescript@5.7.3)
@@ -207,12 +201,27 @@ importers:
       markdown-it-mathjax3:
         specifier: ^4.3.2
         version: 4.3.2
+      moment:
+        specifier: ^2.30.1
+        version: 2.30.1
       postcss:
         specifier: ^8.4.49
         version: 8.5.3
       prettier:
         specifier: ^3.4.2
         version: 3.5.2
+      radash:
+        specifier: ^12.1.0
+        version: 12.1.0
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
+      react-router-dom:
+        specifier: ^7.2.0
+        version: 7.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       rollup-plugin-visualizer:
         specifier: ^5.12.0
         version: 5.14.0(rollup@4.34.8)
@@ -4513,6 +4522,9 @@ packages:
   mlly@1.7.4:
     resolution: {integrity: sha512-qmdSIPC4bDJXgZTCR7XosJiNKySV7O215tsPtDN9iEO/7q/76b/ijtgRu/+epFXSJhijtTCCGp3DWS549P3xKw==}
 
+  moment@2.30.1:
+    resolution: {integrity: sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==}
+
   mozjpeg@7.1.1:
     resolution: {integrity: sha512-iIDxWvzhWvLC9mcRJ1uSkiKaj4drF58oCqK2bITm5c2Jt6cJ8qQjSSru2PCaysG+hLIinryj8mgz5ZJzOYTv1A==}
     engines: {node: '>=10'}
@@ -5036,6 +5048,10 @@ packages:
 
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
+
+  radash@12.1.0:
+    resolution: {integrity: sha512-b0Zcf09AhqKS83btmUeYBS8tFK7XL2e3RvLmZcm0sTdF1/UUlHSsjXdCcWNxe7yfmAlPve5ym0DmKGtTzP6kVQ==}
+    engines: {node: '>=14.18.0'}
 
   rc-cascader@3.33.0:
     resolution: {integrity: sha512-JvZrMbKBXIbEDmpIORxqvedY/bck6hGbs3hxdWT8eS9wSQ1P7//lGxbyKjOSyQiVBbgzNWriSe6HoMcZO/+0rQ==}
@@ -8673,7 +8689,7 @@ snapshots:
 
   ansi-styles@6.2.1: {}
 
-  antd@5.24.2(date-fns@2.16.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  antd@5.24.2(date-fns@2.16.1)(moment@2.30.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@ant-design/colors': 7.2.0
       '@ant-design/cssinjs': 1.23.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -8705,7 +8721,7 @@ snapshots:
       rc-motion: 2.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       rc-notification: 5.6.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       rc-pagination: 5.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-picker: 4.11.2(date-fns@2.16.1)(dayjs@1.11.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      rc-picker: 4.11.2(date-fns@2.16.1)(dayjs@1.11.13)(moment@2.30.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       rc-progress: 4.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       rc-rate: 2.13.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       rc-resize-observer: 1.4.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -11596,6 +11612,8 @@ snapshots:
       pkg-types: 1.3.1
       ufo: 1.5.4
 
+  moment@2.30.1: {}
+
   mozjpeg@7.1.1:
     dependencies:
       bin-build: 3.0.0
@@ -12078,6 +12096,8 @@ snapshots:
 
   queue-microtask@1.2.3: {}
 
+  radash@12.1.0: {}
+
   rc-cascader@3.33.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@babel/runtime': 7.26.9
@@ -12228,7 +12248,7 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  rc-picker@4.11.2(date-fns@2.16.1)(dayjs@1.11.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  rc-picker@4.11.2(date-fns@2.16.1)(dayjs@1.11.13)(moment@2.30.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@babel/runtime': 7.26.9
       '@rc-component/trigger': 2.2.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -12241,6 +12261,7 @@ snapshots:
     optionalDependencies:
       date-fns: 2.16.1
       dayjs: 1.11.13
+      moment: 2.30.1
 
   rc-progress@4.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:

@@ -48,7 +48,6 @@ export function useYearSort(post: Post[]) {
 }
 
 export function getHeaders() {
-	// return resolveHeaders(headers, range);
 	return [...document.querySelectorAll(".VPDoc h2,h3,h4,h5,h6")]
 		.filter((el) => el.id && el.hasChildNodes())
 		.map((el) => {
