@@ -35,7 +35,9 @@
 		"env.d.ts",
 		"src/**/*",
 		".storybook/.stories/*",
-		".storybook/.stories/**/*"
+		".storybook/.stories/**/*",
+		"./docs/.vitepress/**/*",
+		"./docs/.vitepress/*"
 	],
 	"exclude": [
 		"./server/*",
