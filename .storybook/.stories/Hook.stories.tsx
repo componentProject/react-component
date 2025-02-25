@@ -13,7 +13,7 @@ import { useState, useEffect, useRef } from "react";
 import type { FC } from "react";
 
 export default {
-	title: "hook",
+	title: "Hook",
 	component: null,
 	args: {},
 	argTypes: {},
