@@ -1,9 +1,9 @@
-import {useEffect} from "react";
+import { useEffect } from "react";
 
 const defaultOptions: MutationObserverInit = {
 	subtree: true,
 	childList: true,
-	attributeFilter: ['style', 'class'],
+	attributeFilter: ["style", "class"],
 };
 
 export default function useMutateObserver(
@@ -20,10 +20,10 @@ export default function useMutateObserver(
 
 		const nodeList = Array.isArray(nodeOrList) ? nodeOrList : [nodeOrList];
 
-		if ('MutationObserver' in window) {
+		if ("MutationObserver" in window) {
 			instance = new MutationObserver(callback);
 
-			nodeList.forEach(element => {
+			nodeList.forEach((element) => {
 				instance.observe(element, options);
 			});
 		}

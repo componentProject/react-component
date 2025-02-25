@@ -5,7 +5,7 @@ import {
 	// 系列类型的定义后缀都为 SeriesOption
 	BarSeriesOption,
 	LineChart,
-	LineSeriesOption
+	LineSeriesOption,
 } from "echarts/charts";
 import { LegendComponent } from "echarts/components";
 import {
@@ -20,7 +20,7 @@ import {
 	DatasetComponent,
 	DatasetComponentOption,
 	// 内置数据转换器组件 (filter, sort)
-	TransformComponent
+	TransformComponent,
 } from "echarts/components";
 import { LabelLayout, UniversalTransition } from "echarts/features";
 import { CanvasRenderer } from "echarts/renderers";
@@ -47,7 +47,7 @@ echarts.use([
 	LineChart,
 	LabelLayout,
 	UniversalTransition,
-	CanvasRenderer
+	CanvasRenderer,
 ]);
 
 export default echarts;

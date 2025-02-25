@@ -1,67 +1,67 @@
 .upload-input {
-    display: inline-block;
+	display: inline-block;
 }
 
 .upload-file-input {
-    display: none;
+	display: none;
 }
 
 .upload-list {
-    margin: 0;
-    padding: 0;
-    list-style-type: none;
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
 }
 
 .upload-list-item {
-    margin-top: 5px;
-    font-size: 14px;
-    line-height: 2em;
-    font-weight: bold;
-    box-sizing: border-box;
-    min-width: 200px;
-    position: relative;
+	margin-top: 5px;
+	font-size: 14px;
+	line-height: 2em;
+	font-weight: bold;
+	box-sizing: border-box;
+	min-width: 200px;
+	position: relative;
 
-    &-success {
-        color: blue;
-    }
-    
-    &-error {
-        color: red;
-    }
+	&-success {
+		color: blue;
+	}
 
-    .file-name {
-        .anticon {
-            margin-right: 10px;
-        }
-    }
+	&-error {
+		color: red;
+	}
 
-    .file-actions {
-        display: none;
-        position: absolute;
-        right: 7px;
-        top: 0;
-        cursor: pointer;
-    }
+	.file-name {
+		.anticon {
+			margin-right: 10px;
+		}
+	}
 
-    &:hover {
-        .file-actions {
-            display: block;
-        }
-    }
+	.file-actions {
+		display: none;
+		position: absolute;
+		right: 7px;
+		top: 0;
+		cursor: pointer;
+	}
+
+	&:hover {
+		.file-actions {
+			display: block;
+		}
+	}
 }
 
 .upload-dragger {
-    background: #eee;
-    border: 1px dashed #aaa;
-    border-radius: 4px;
-    cursor: pointer;
-    padding: 20px;
-    width: 200px;
-    height: 100px;
-    text-align: center;
+	background: #eee;
+	border: 1px dashed #aaa;
+	border-radius: 4px;
+	cursor: pointer;
+	padding: 20px;
+	width: 200px;
+	height: 100px;
+	text-align: center;
 
-    &.is-dragover {
-      border: 2px dashed blue;
-      background: rgba(blue, .3);
-    }
+	&.is-dragover {
+		border: 2px dashed blue;
+		background: rgba(blue, 0.3);
+	}
 }

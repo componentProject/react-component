@@ -19,13 +19,13 @@ export default {
 		"at-rule-no-unknown": [
 			true,
 			{
-				ignoreAtRules: ["tailwind"],
+				ignoreAtRules: ["tailwind", "forward", "use", "each"],
 			},
 		],
 		"scss/at-rule-no-unknown": [
 			true,
 			{
-				ignoreAtRules: ["tailwind"],
+				ignoreAtRules: ["tailwind", "forward", "use", "each"],
 			},
 		],
 	},
