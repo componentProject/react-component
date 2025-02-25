@@ -3,15 +3,16 @@ import { buildBlogRSS } from "./theme/rss";
 import { transformerTwoslash } from "@shikijs/vitepress-twoslash";
 import mathjax3 from "markdown-it-mathjax3";
 
+import type { UserConfig } from "vitepress";
+import { demoblockPlugin, demoblockVitePlugin } from "vitepress-theme-demoblock";
+import vueJsx from "@vitejs/plugin-vue-jsx";
+
 // https://github.com/mingyuLi97/blog
 // https://vitepress.dev/reference/site-config
 import { getSidebar } from "./utils";
-
-import { demoblockPlugin, demoblockVitePlugin } from "vitepress-theme-demoblock";
-import vueJsx from "@vitejs/plugin-vue-jsx";
 import path from "path";
 
-async function config() {
+async function config(): Promise<Awaited<UserConfig>> {
 	const componentPath = "/components";
 	const posts = await getComponents(componentPath);
 	const pageSize = 5;
@@ -26,12 +27,12 @@ async function config() {
 		lang: "zh-CN",
 		outDir: "../docs/vitepress",
 		vite: {
-			plugins: [demoblockVitePlugin(), vueJsx()],
 			resolve: {
 				alias: {
 					"@": path.resolve(__dirname, "../../src"),
 				},
 			},
+			plugins: [demoblockVitePlugin() as any, vueJsx() as any],
 		},
 		head: [
 			[
@@ -80,7 +81,7 @@ async function config() {
 		},
 		themeConfig: {
 			// https://vitepress.dev/reference/default-theme-config
-			avator: "/react-component/vitepress/avator.png",
+			avator: "/vue-component/vitepress/avator.png",
 			// 标题
 			siteTitle: "reactComponent",
 			// logo
