@@ -113,11 +113,6 @@
     "vitepress": "1.6.3",
     "vitepress-theme-demoblock": "^3.0.7"
   },
-  "eslintConfig": {
-    "extends": [
-      "plugin:storybook/recommended"
-    ]
-  },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
