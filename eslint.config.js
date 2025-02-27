@@ -3,20 +3,26 @@ import globals from "globals";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
+import storybook from "eslint-plugin-storybook";
 
-export default tseslint.config(
-	{ ignores: ["dist"] },
+export default [
 	{
-		extends: [js.configs.recommended, ...tseslint.configs.recommended],
-		files: ["**/*.{ts,tsx}"],
+		name: "app/files-to-lint",
 		languageOptions: {
 			ecmaVersion: 2020,
 			globals: globals.browser,
 		},
-		plugins: {
-			"react-hooks": reactHooks,
-			"react-refresh": reactRefresh,
-		},
+		files: ["**/*.{ts,mts,tsx,vue}"],
+	},
+	{
+		name: "app/files-to-ignore",
+		ignores: ["**/dist/**", "**/dist-ssr/**", "**/coverage/**"],
+	},
+	...storybook.configs["flat/recommended"],
+	js.configs.recommended,
+	...tseslint.configs.recommended,
+	reactRefresh,
+	{
 		rules: {
 			...reactHooks.configs.recommended.rules,
 			// "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
@@ -26,4 +32,4 @@ export default tseslint.config(
 			"@typescript-eslint/no-unsafe-function-type": "off",
 		},
 	},
-);
+];
