@@ -25,6 +25,7 @@ export default defineConfig((mode: modeType): UserConfig => {
 	const viteEnv = wrapperEnv(env);
 	const isStorybook = mode.type === "storybook";
 	const reactPlugins = isStorybook ? [] : [react()];
+	viteEnv.VITE_USE_CDN = isStorybook ? false : viteEnv.VITE_USE_CDN;
 	return {
 		// base: "/",
 		// 插件
