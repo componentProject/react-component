@@ -18,27 +18,6 @@ const config: StorybookConfig = {
 	core: {
 		builder: "@storybook/builder-vite",
 	},
-	async viteFinal(config, { configType }) {
-		const { plugins, build } = viteConfig({ mode: configType, type: "storybook" } as modeType);
-		const mergeconfig = mergeConfig(config, {
-			build,
-			plugins,
-		});
-		const existingPlugins = [importToCDN].map((item) => item.name);
-		const mergePluginNames: string[] = [];
-		const mergePlugins: PluginOptionType[] = [];
-		mergeconfig.plugins.forEach((item?: PluginOptionType) => {
-			if (!item) return;
-			if (!mergePluginNames.includes(item.name)) {
-				mergePluginNames.push(item.name);
-				mergePlugins.push(item);
-			}
-		});
-		mergeconfig.plugins = mergePlugins.filter((plugin: PluginOptionType) => {
-			return !existingPlugins.includes(plugin?.name);
-		});
-		return mergeconfig;
-	},
 	docs: {
 		autodocs: true,
 	},
