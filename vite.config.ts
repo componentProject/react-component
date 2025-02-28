@@ -94,7 +94,6 @@ export default defineConfig((mode): UserConfig => {
 			viteEnv.VITE_USE_CDN &&
 				importToCDN({
 					modules,
-					enableInDevMode: true,
 				}),
 		],
 		build: {
