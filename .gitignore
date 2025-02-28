@@ -13,6 +13,7 @@ node_modules
 # 打包文件
 dist
 dist-ssr
+docs
 .docs/.vitepress/cache
 .docs/.vitepress/dist
 #本地配置

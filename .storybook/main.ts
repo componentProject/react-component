@@ -13,11 +13,12 @@ const config: StorybookConfig = {
 		builder: "@storybook/builder-vite",
 	},
 	async viteFinal(config, { configType }) {
-		const { plugins, build } = viteConfig({ mode: configType, type: "storybook" } as modeType);
-		return mergeConfig(config, {
-			build,
-			plugins,
-		});
+		return config;
+		// const { plugins, build } = viteConfig({ mode: configType, type: "storybook" } as modeType);
+		// return mergeConfig(config, {
+		// 	build,
+		// 	plugins,
+		// });
 	},
 	docs: {
 		autodocs: true,
