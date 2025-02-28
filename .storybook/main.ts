@@ -26,7 +26,7 @@ const config: StorybookConfig = {
 		mergeconfig.plugins = mergeconfig.plugins.filter((plugin: PluginOptionType) => {
 			return plugin?.name != "vite-plugin-cdn-import";
 		});
-		return config;
+		return mergeconfig;
 	},
 	docs: {
 		autodocs: true,
