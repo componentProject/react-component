@@ -17,18 +17,9 @@ const config: StorybookConfig = {
 		builder: "@storybook/builder-vite",
 	},
 	async viteFinal(config, { configType }) {
-		const mergePluginNames: string[] = [];
-		const mergePlugins: PluginOptionType[] = [];
-		config.plugins.forEach((item?: PluginOptionType) => {
-			if (!item) return;
-			if (!mergePluginNames.includes(item.name)) {
-				mergePluginNames.push(item.name);
-				mergePlugins.push(item);
-			}
-		});
 		if (configType === "PRODUCTION") {
 			const existingPlugins = [importToCDN].map((item) => item.name);
-			config.plugins = mergePlugins.filter((plugin: PluginOptionType) => {
+			config.plugins = config.plugins.filter((plugin: PluginOptionType) => {
 				return !existingPlugins.includes(plugin?.name);
 			});
 			config.build.rollupOptions.external = config.build.rollupOptions.external.filter(

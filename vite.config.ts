@@ -21,7 +21,14 @@ import { external, modules } from "./src/constants";
 export default defineConfig((mode): UserConfig => {
 	const env = loadEnv(mode.mode, process.cwd());
 	const viteEnv = wrapperEnv(env);
-	const reactPlugins = [react()];
+	const reactPlugins = [
+		react(), // 自动引入
+		AutoImport({
+			imports: ["react"],
+			resolvers: [],
+			dts: path.resolve(__dirname, "./src/typings/auto-imports.d.ts"),
+		}),
+	];
 	return {
 		// base: "/",
 		// 插件
@@ -87,15 +94,8 @@ export default defineConfig((mode): UserConfig => {
 			viteEnv.VITE_USE_CDN &&
 				importToCDN({
 					modules,
-					enableInDevMode: false,
+					enableInDevMode: true,
 				}),
-
-			// 自动引入
-			AutoImport({
-				imports: ["react"],
-				resolvers: [],
-				dts: path.resolve(__dirname, "./src/typings/auto-imports.d.ts"),
-			}),
 		],
 		build: {
 			// 启用 CSS 代码拆分,使加载模块时,仅加载对应css,而不是打包为一个样式文件
