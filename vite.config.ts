@@ -1,4 +1,5 @@
-import { defineConfig, loadEnv, ConfigEnv, UserConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
+import type { UserConfig } from "vite";
 import { wrapperEnv } from "./src/utils/getEnv.ts";
 
 // react
@@ -15,17 +16,12 @@ import { createHtmlPlugin } from "vite-plugin-html";
 import autoprefixer from "autoprefixer";
 import tailwindcss from "tailwindcss";
 import path from "path";
-
-export interface modeType extends ConfigEnv {
-	type?: string;
-}
+import { external, modules } from "./src/constants";
 // @see: https://vitejs.dev/config/
-export default defineConfig((mode: modeType): UserConfig => {
+export default defineConfig((mode): UserConfig => {
 	const env = loadEnv(mode.mode, process.cwd());
 	const viteEnv = wrapperEnv(env);
-	const isStorybook = mode.type === "storybook";
-	const reactPlugins = isStorybook ? [] : [react()];
-	viteEnv.VITE_USE_CDN = isStorybook ? false : viteEnv.VITE_USE_CDN;
+	const reactPlugins = [react()];
 	return {
 		// base: "/",
 		// 插件
@@ -90,38 +86,7 @@ export default defineConfig((mode: modeType): UserConfig => {
 			// CDN加速
 			viteEnv.VITE_USE_CDN &&
 				importToCDN({
-					modules: [
-						{
-							name: "react", // 模块名
-							var: "React", // 全局变量名
-							path: "https://unpkg.com/react@18/umd/react.development.js", // CDN 地址
-						},
-						{
-							name: "react-dom", // 模块名
-							var: "ReactDOM", // 全局变量名
-							path: "https://unpkg.com/react-dom@18/umd/react-dom.development.js", // CDN 地址
-						},
-						{
-							name: "react-router-dom", // 模块名
-							var: "ReactRouterDOM", // 全局变量名
-							path: "https://unpkg.com/react-router-dom@6/dist/react-router-dom.development.js", // CDN 地址
-						},
-						{
-							name: "axios", // 模块名
-							var: "axios", // 全局变量名
-							path: "https://unpkg.com/axios/dist/axios.min.js", // CDN 地址
-						},
-						{
-							name: "moment", // 模块名
-							var: "moment", // 全局变量名
-							path: "https://unpkg.com/moment/min/moment.min.js", // CDN 地址
-						},
-						{
-							name: "radash", // 模块名
-							var: "radash", // 全局变量名
-							path: "https://unpkg.com/radash/dist/radash.min.js", // CDN 地址
-						},
-					],
+					modules,
 				}),
 
 			// 自动引入
@@ -140,7 +105,7 @@ export default defineConfig((mode: modeType): UserConfig => {
 			chunkSizeWarningLimit: 1500,
 			rollupOptions: {
 				// 移除cdn引入的包
-				external: viteEnv.VITE_USE_CDN ? ["react", "react-dom", "react-router-dom", "axios", "moment", "radash"] : [],
+				external: viteEnv.VITE_USE_CDN ? external : [],
 				output: {
 					// 静态资源打包做处理
 					chunkFileNames: "static/js/[name]-[hash].js",
