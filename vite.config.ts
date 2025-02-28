@@ -29,6 +29,12 @@ export default defineConfig((mode): UserConfig => {
 			dts: path.resolve(__dirname, "./src/typings/auto-imports.d.ts"),
 		}),
 	];
+	// CDN加速
+	const importToCDNPlugins = viteEnv.VITE_USE_CDN
+		? importToCDN({
+				modules,
+			})
+		: [];
 	return {
 		// base: "/",
 		// 插件
@@ -41,6 +47,7 @@ export default defineConfig((mode): UserConfig => {
 					},
 				},
 			}),
+			...importToCDNPlugins,
 			// 是否生成包预览
 			viteEnv.VITE_REPORT && visualizer(),
 			// 代码压缩
@@ -89,11 +96,6 @@ export default defineConfig((mode): UserConfig => {
 							},
 						],
 					},
-				}),
-			// CDN加速
-			viteEnv.VITE_USE_CDN &&
-				importToCDN({
-					modules,
 				}),
 		],
 		build: {

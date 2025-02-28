@@ -17,11 +17,11 @@ const config: StorybookConfig = {
 		builder: "@storybook/builder-vite",
 	},
 	async viteFinal(config, { configType }) {
+		const existingPlugins = [...importToCDN({ modules: [] })].map((item) => item.name);
+		config.plugins = config.plugins.filter((plugin: PluginOptionType) => {
+			return !existingPlugins.includes(plugin?.name);
+		});
 		if (configType === "PRODUCTION") {
-			const existingPlugins = [importToCDN].map((item) => item.name);
-			config.plugins = config.plugins.filter((plugin: PluginOptionType) => {
-				return !existingPlugins.includes(plugin?.name);
-			});
 			config.build.rollupOptions.external = config.build.rollupOptions.external.filter(
 				(item: string) => !external.includes(item),
 			);
