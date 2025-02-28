@@ -16,16 +16,20 @@ import autoprefixer from "autoprefixer";
 import tailwindcss from "tailwindcss";
 import path from "path";
 
+export interface modeType extends ConfigEnv {
+	type?: string;
+}
 // @see: https://vitejs.dev/config/
-export default defineConfig((mode: ConfigEnv): UserConfig => {
+export default defineConfig((mode: modeType): UserConfig => {
 	const env = loadEnv(mode.mode, process.cwd());
 	const viteEnv = wrapperEnv(env);
-
+	const isStorybook = mode.type === "storybook";
+	const reactPlugins = isStorybook ? [] : [react()];
 	return {
 		// base: "/",
 		// 插件
 		plugins: [
-			react(),
+			...reactPlugins,
 			createHtmlPlugin({
 				inject: {
 					data: {
