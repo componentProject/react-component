@@ -1,5 +1,5 @@
 import { defineConfig, loadEnv, ConfigEnv, UserConfig } from "vite";
-import { wrapperEnv } from "./src/utils/getEnv.js";
+import { wrapperEnv } from "./src/utils/getEnv.ts";
 
 // react
 import AutoImport from "unplugin-auto-import/vite";
