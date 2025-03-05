@@ -1,30 +1,37 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import type { FC } from "react";
 import { createPortal } from "react-dom";
-// import { Button, Popover } from "antd";
-// import { TooltipPlacement } from "antd/es/tooltip";
-
 import { Button } from "antd";
+import type { propsType } from "./types";
 import Popover from "@/components/Popover";
 import { Mask } from "./Mask";
-import { propsType } from "./types";
 
+/** OnBoarding 组件 */
 export const OnBoarding: FC<propsType> = (props) => {
+	/** 解构 props */
 	const { step = 0, steps, onStepsEnd, getContainer } = props;
 
+	/** 当前步骤状态 */
 	const [currentStep, setCurrentStep] = useState<number>(0);
 
+	/** 当前选中元素 */
 	const currentSelectedElement = steps[currentStep]?.selector();
 
+	/** 当前容器元素 */
 	const currentContainerElement = getContainer?.() || document.documentElement;
 
+	/** 完成状态 */
 	const [done, setDone] = useState(false);
 
+	/** 遮罩动画移动状态 */
 	const [isMaskMoving, setIsMaskMoving] = useState<boolean>(false);
 
+	/** 获取当前步骤配置 */
 	const getCurrentStep = () => {
 		return steps[currentStep];
 	};
 
+	/** 返回上一步 */
 	const back = async () => {
 		if (currentStep === 0) {
 			return;
@@ -35,6 +42,7 @@ export const OnBoarding: FC<propsType> = (props) => {
 		setCurrentStep(currentStep - 1);
 	};
 
+	/** 前进到下一步 */
 	const forward = async () => {
 		if (currentStep === steps.length - 1) {
 			await onStepsEnd?.();
@@ -47,10 +55,12 @@ export const OnBoarding: FC<propsType> = (props) => {
 		setCurrentStep(currentStep + 1);
 	};
 
+	/** 监听 step 变化 */
 	useEffect(() => {
 		setCurrentStep(step!);
 	}, [step]);
 
+	/** 渲染 Popover */
 	const renderPopover = (wrapper: React.ReactNode) => {
 		const config = getCurrentStep();
 
@@ -61,6 +71,7 @@ export const OnBoarding: FC<propsType> = (props) => {
 		const { renderContent } = config;
 		const content = renderContent ? renderContent(currentStep) : null;
 
+		/** 操作按钮 */
 		const operation = (
 			<div className={"onboarding-operation"}>
 				{currentStep !== 0 && (
@@ -92,16 +103,20 @@ export const OnBoarding: FC<propsType> = (props) => {
 		);
 	};
 
+	/** 用于触发更新 */
 	const [, setRenderTick] = useState<number>(0);
 
+	/** 初始化渲染时更新 */
 	useEffect(() => {
 		setRenderTick(1);
 	}, []);
 
+	/** 当前选中元素不存在或已完成，返回 null */
 	if (!currentSelectedElement || done) {
 		return null;
 	}
 
+	/** 渲染 Mask 组件 */
 	const mask = (
 		<Mask
 			onAnimationStart={() => {
@@ -116,5 +131,6 @@ export const OnBoarding: FC<propsType> = (props) => {
 		/>
 	);
 
+	/** 使用 createPortal 将 Mask 组件渲染到指定容器 */
 	return createPortal(mask, currentContainerElement);
 };

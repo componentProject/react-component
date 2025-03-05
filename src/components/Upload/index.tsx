@@ -4,7 +4,7 @@ import axios from "axios";
 
 import "./index.scss";
 import UploadList from "./UploadList";
-import type { UploadFile } from "./UploadList.tsx";
+import type { UploadFile } from "./types";
 import Dragger from "./Dragger";
 
 import type { propsType } from "./types";
