@@ -101,7 +101,8 @@ function MonthCalendar(props: MonthCalendarProps) {
 											: "",
 									)}
 								>
-									{item.date.date()} // 显示日期中的日
+									{/*显示日期中的天*/}
+									{item.date.date()}
 								</div>
 								<div className="calendar-month-cell-body-date-content">{dateInnerContent?.(item.date)}</div>
 							</div>

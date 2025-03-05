@@ -27,6 +27,7 @@ const Template: StoryFn = ({ children, ...props }) => {
 
 export const space = Template.bind({});
 space.args = {
+	space: 32,
 	children: (
 		<Space>
 			<div className="box"></div>

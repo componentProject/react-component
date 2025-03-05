@@ -12,10 +12,12 @@ import { getAttach } from "./utils";
  *  并通过useImperativeHandle返回容器dom,也就是通过ref获取该组件时返回的是容器dom
  *
  *  props:
+ *
  *    attach: string/HTMLElement,可选,默认document.body,
  *      如果传入的是 string,就作为选择器来找到对应的 dom 作为挂载点,
  *      如果是 HTMLElement,则直接作为挂载节点,
  *      否则,默认挂载到 document.body
+ *
  *    children: ReactNode,必填,
  *      该组件的子元素
  */

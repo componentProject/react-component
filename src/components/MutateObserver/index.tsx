@@ -10,8 +10,11 @@ import type { propsType } from "./types";
  * 通过options配置监听器,等同于mutationObserver的options
  *
  *  props:
+ *
  *    options:  MutationObserverInit,配置监听器
+ *
  *    onMutate: (mutations: MutationRecord[], observer: MutationObserver) => void,变化回调
+ *
  *    children: ReactElement,子元素
  */
 const MutateObserver: FC<propsType> = (props) => {

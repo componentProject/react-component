@@ -7,12 +7,17 @@ import type { propsType } from "./types";
  *
  * 通过copy-to-clipboard实现
  *
- *  @param {Object} props - 组件的props
- *  @param {string} props.text - 需要复制到剪切板的文本
- *  @param {(text: string, result: boolean) => void} props.onCopy - 复制完成后的回调函数
- *  @param {boolean} props.debug - 是否在控制台中打印调试信息
- *  @param {string} props.message - 复制完成后的提示信息
- *  @param {string | string[]} props.format - 需要复制的格式
+ *  @param props - 组件的props
+ *
+ *  @param props.text - 需要复制到剪切板的文本
+ *
+ *  @param props.onCopy - 复制完成后的回调函数
+ *
+ *  @param props.debug - 是否在控制台中打印调试信息
+ *
+ *  @param props.message - 复制完成后的提示信息
+ *
+ *  @param props.format - 需要复制的格式
  */
 const CopyToClipboard: FC<PropsWithChildren<propsType>> = (props) => {
 	const {
