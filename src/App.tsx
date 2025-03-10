@@ -9,10 +9,10 @@ import "./locales"; // 引入 i18n 配置
 function App() {
 	const { t, i18n } = useTranslation();
 
-	const changeLanguage = (lng) => {
-		i18n.changeLanguage(lng);
+	const changeLanguage = (lng: string) => {
+		i18n.changeLanguage(lng).then((r) => console.log(r));
 	};
-	const lngs = {
+	const lnguages = {
 		en: { nativeName: "English" },
 		zh: { nativeName: "中文" },
 	};
@@ -21,11 +21,11 @@ function App() {
 			<h1>{t("language")}</h1>
 			<header>
 				<select onChange={(e) => changeLanguage(e.target.value)}>
-					{Object.keys(lngs).map((lng) => (
+					{Object.keys(lnguages).map((lng) => (
 						<option
 							key={lng}
 							value={lng}
-							label={lngs[lng].nativeName}
+							label={lnguages[lng].nativeName}
 							style={{ fontWeight: i18n.resolvedLanguage === lng ? "bold" : "normal" }}
 						/>
 					))}

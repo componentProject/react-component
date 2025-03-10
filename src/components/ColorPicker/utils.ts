@@ -1,6 +1,6 @@
 import type { RefObject } from "react";
 import { TransformOffset } from "./types";
-import { Color } from "./color";
+import { Color } from "./color.ts";
 
 /**
  * 根据偏移量计算颜色

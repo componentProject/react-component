@@ -1,8 +1,8 @@
 import cs from "classnames";
-import type { propsType } from "./types";
-import { Color } from "./color";
-import Palette from "./Palette";
-import "./index.scss";
+import type { propsType } from "../types";
+import { Color } from "../color.ts";
+import Palette from "./Palette.tsx";
+import "../index.scss";
 import { useControllableValue } from "ahooks";
 
 // ColorPickerPanel 是一个颜色选择器面板组件

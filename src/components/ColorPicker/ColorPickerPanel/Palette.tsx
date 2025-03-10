@@ -1,10 +1,10 @@
 import { useRef } from "react";
 import type { FC } from "react";
-import { Color } from "./color.ts";
-import Handler from "./Handler";
-import Transform from "./Transform";
-import useColorDrag from "./useColorDrag";
-import { calculateColor, calculateOffset } from "./utils";
+import { Color } from "../color.ts";
+import Handler from "../Handler.tsx";
+import Transform from "../Transform.tsx";
+import useColorDrag from "../useColorDrag.ts";
+import { calculateColor, calculateOffset } from "../utils.ts";
 
 /**
  * 颜色选择器palette组件

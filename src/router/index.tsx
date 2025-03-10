@@ -1,11 +1,12 @@
 import { lazy } from "react";
-// import {Navigate} from "react-router-dom";
+import type { ComponentType } from "react";
 import { Navigate } from "react-router";
+import type { RouteObject } from "react-router";
 
 const componentFiles = import.meta.glob("../components/**/index.tsx");
-const routes = Object.keys(componentFiles).reduce((modules = [], modulePath) => {
+const routes: RouteObject[] = Object.keys(componentFiles).reduce((modules = [], modulePath) => {
 	const name = modulePath.split("/").at(-2);
-	const component = componentFiles[modulePath];
+	const component = componentFiles[modulePath] as () => Promise<{ default: ComponentType<any> }>;
 	if (!component) return modules;
 	const Component = lazy(component);
 	modules.push({
@@ -13,9 +14,12 @@ const routes = Object.keys(componentFiles).reduce((modules = [], modulePath) => 
 		element: <Component />,
 	});
 	return modules;
-}, []);
-routes.push({
-	path: "*",
-	element: <Navigate to={routes[0].path} replace />,
-});
+}, [] as RouteObject[]);
+
+if (routes[0].path) {
+	routes.push({
+		path: "*",
+		element: <Navigate to={routes[0].path} replace />,
+	});
+}
 export default routes;
