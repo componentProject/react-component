@@ -127,8 +127,8 @@ function MonthCalendar(props: MonthCalendarProps) {
 					</div>
 				))}
 			</div>
+			{/*渲染日期*/}
 			<div className="calendar-month-body">{renderDays(allDays)}</div>
-			// 渲染日期
 		</div>
 	);
 }
