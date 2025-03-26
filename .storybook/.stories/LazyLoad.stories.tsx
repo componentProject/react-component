@@ -60,35 +60,6 @@ const LazyMomo = React.lazy(() => import("./components/momo"));
 export const lazyLoad = (args: propsType) => {
 	return (
 		<div>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
-			<p>xxxxxx</p>
 			<LazyLoad
 				placeholder={<div>loading...</div>}
 				onContentVisible={() => {

@@ -12,7 +12,7 @@ import type { propsType } from "./types";
  * onContentVisible用于在组件可见时执行的回调函数
  * placeholder用于在组件不可见时显示的占位符
  */
-const Index: FC<propsType> = ({ className = "", style, offset, width, onContentVisible, placeholder, height, children }) => {
+const LazyLoad: FC<propsType> = ({ className = "", style, offset, width, onContentVisible, placeholder, height, children }) => {
 	/**
 	 * 创建一个容器的ref,用于观察器的observe
 	 */
@@ -116,4 +116,4 @@ const Index: FC<propsType> = ({ className = "", style, offset, width, onContentV
 	);
 };
 
-export default Index;
+export default LazyLoad;
