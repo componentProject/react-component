@@ -1,8 +1,16 @@
 {
   "name": "storybook",
 	"packageManager": "pnpm@8.6.0",
+	"engines": {
+		"node": ">=20.0.0"
+	},
+	"author": "1983531544@qq.com",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/moluoxixi/react-component.git"
+	},
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
