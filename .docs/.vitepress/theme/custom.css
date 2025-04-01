@@ -1,57 +1,75 @@
+@import "../../../node_modules/tailwindcss";
 @import "https://cdn.jsdelivr.net/npm/lxgw-wenkai-lite-webfont@1.6.0/style.min.css";
 
 :root {
-  --vp-c-brand: #a27b5c;
-  --vp-c-brand-light: #a27b5c;
-  --vp-c-brand-dark: #a27b5c;
-  --vp-c-hover: #212121;
-  --vp-c-bg: #faf6f1;
-  --vp-c-bg-alpha-with-backdrop: rgb(250 246 241 / 70%);
-  --vp-c-color-b: #26ccff;
-  --vp-c-color-c: #0cb9ed;
-  --vp-c-color-d: #a15000;
-  --vp-c-color-e: #ed7c0c;
-  --vp-font-family-base: "LXGW WenKai Lite", "Inter var experimental",
-    "Inter var", -apple-system, blinkmacsystemfont, "Segoe UI", roboto, oxygen,
-    ubuntu, cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-  --vp-font-family-mono: "LXGW WenKai Mono Lite", ui-monospace, sfmono-regular,
-    "SF Mono", menlo, monaco, consolas, "Liberation Mono", "Courier New",
-    monospace;
-  --vp-avator-border: #fff;
+	--vp-c-brand: #a27b5c;
+	--vp-c-brand-light: #a27b5c;
+	--vp-c-brand-dark: #a27b5c;
+	--vp-c-hover: #212121;
+	--vp-c-bg: #faf6f1;
+	--vp-c-bg-alpha-with-backdrop: rgb(250 246 241 / 70%);
+	--vp-c-color-b: #26ccff;
+	--vp-c-color-c: #0cb9ed;
+	--vp-c-color-d: #a15000;
+	--vp-c-color-e: #ed7c0c;
+	--vp-font-family-base: "LXGW WenKai Lite", "Inter var experimental",
+	"Inter var", -apple-system, blinkmacsystemfont, "Segoe UI", roboto, oxygen,
+	ubuntu, cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+	--vp-font-family-mono: "LXGW WenKai Mono Lite", ui-monospace, sfmono-regular,
+	"SF Mono", menlo, monaco, consolas, "Liberation Mono", "Courier New",
+	monospace;
+	--vp-avator-border: #fff;
 }
 
 .dark {
-  --vp-c-bg: #2c3639;
-  --vp-c-text: white;
-  --vp-c-hover: #fff;
-  --vp-c-bg-alpha-with-backdrop: rgb(44 54 57 / 70%);
-  --vp-avator-border: #3f4e4f;
+	--vp-c-bg: #2c3639;
+	--vp-c-text: white;
+	--vp-c-hover: #fff;
+	--vp-c-bg-alpha-with-backdrop: rgb(44 54 57 / 70%);
+	--vp-avator-border: #3f4e4f;
 }
 
 #app {
-  min-height: 100vh;
-  position: relative;
+	min-height: 100vh;
+	position: relative;
 }
 
 .theme {
-  background-color: var(--vp-c-bg);
+	background-color: var(--vp-c-bg);
 }
 
 .vp-doc h2 {
-  margin-top: 0;
-  border-top: none;
+	margin-top: 0;
+	border-top: none;
 }
 
 .VPDocOutlineDropdown {
-  display: none !important;
+	display: none !important;
 }
 
-
-.demoblock-custom{
-  background-color: white;
-
-  .demoblock-control{
-    background-color: white;
-  }
+#app {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
 }
 
+.Layout {
+	flex: 1;
+	overflow: hidden;
+	min-height: 0 !important;
+}
+
+.VPContent {
+	flex: 1;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+
+.VPHome {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	overflow: hidden;
+	margin-bottom: 0 ! important;
+}

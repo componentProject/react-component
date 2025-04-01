@@ -13,6 +13,7 @@ export default {
 		"scss/double-slash-comment-whitespace-inside": null,
 		// 禁用 空源文件
 		"no-empty-source": null,
+		"no-duplicate-selectors": null,
 		// 禁用 scss 的 扩展检测
 		"scss/load-partial-extension": null,
 		// 使 tailwind 可用

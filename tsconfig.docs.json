@@ -1,0 +1,22 @@
+{
+	"extends": "@vue/tsconfig/tsconfig.dom.json",
+	"compilerOptions": {
+		"composite": true,
+		"tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+		"noImplicitAny": false,
+		"baseUrl": ".",
+		"paths": {
+			"@/*": [
+				"./src/*"
+			]
+		}
+	},
+	"include": [
+		"./docs/.vitepress/**/*",
+		"./docs/.vitepress/*"
+	],
+	"exclude": [
+		"src/**/__tests__/*",
+		".docs/.vitepress/cache/**/*"
+	]
+}

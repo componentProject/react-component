@@ -5,12 +5,20 @@ import mathjax3 from "markdown-it-mathjax3";
 
 import type { UserConfig } from "vitepress";
 import { demoblockPlugin, demoblockVitePlugin } from "vitepress-theme-demoblock";
+// vite vue插件
 import vueJsx from "@vitejs/plugin-vue-jsx";
+import AutoImport from "unplugin-auto-import/vite";
+import Components from "unplugin-vue-components/vite";
+import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
+
+// 其余vite插件
+import autoprefixer from "autoprefixer";
+import tailwindcss from "@tailwindcss/postcss";
 
 // https://github.com/mingyuLi97/blog
 // https://vitepress.dev/reference/site-config
 import { getSidebar } from "./utils";
-import path from "path";
+import path from "node:path";
 
 async function config(): Promise<Awaited<UserConfig>> {
 	const componentPath = "/components";
@@ -32,7 +40,32 @@ async function config(): Promise<Awaited<UserConfig>> {
 					"@": path.resolve(__dirname, "../../src"),
 				},
 			},
-			plugins: [demoblockVitePlugin() as any, vueJsx() as any],
+			plugins: [
+				demoblockVitePlugin() as any,
+				vueJsx() as any,
+				// 自动引入
+				AutoImport({
+					imports: ["vue"],
+					resolvers: [ElementPlusResolver()],
+					dts: path.resolve(__dirname, "./typings/auto-imports.d.ts"),
+				}),
+				Components({
+					resolvers: [ElementPlusResolver()],
+					dts: path.resolve(__dirname, "./typings/components.d.ts"),
+				}),
+			],
+			css: {
+				postcss: {
+					plugins: [
+						tailwindcss(),
+						// 自动添加厂商前缀
+						autoprefixer() as any,
+					],
+				},
+				preprocessorOptions: {
+					scss: { api: "modern-compiler" },
+				},
+			},
 		},
 		head: [
 			[
