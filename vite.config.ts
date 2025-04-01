@@ -14,7 +14,7 @@ import importToCDN from "vite-plugin-cdn-import";
 import react from "@vitejs/plugin-react";
 import { createHtmlPlugin } from "vite-plugin-html";
 import autoprefixer from "autoprefixer";
-import tailwindcss from "tailwindcss";
+import tailwindcss from "@tailwindcss/postcss";
 import path from "path";
 import { external, modules } from "./src/constants";
 // @see: https://vitejs.dev/config/
