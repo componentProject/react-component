@@ -20,7 +20,7 @@ export default [
 	},
 	{
 		name: "app/files-to-ignore",
-		ignores: ["**/dist/**", "**/dist-ssr/**", "**/coverage/**"],
+		ignores: ["**/server/**", "**/dist/**", "**/dist-ssr/**", "**/coverage/**"],
 	},
 	...storybook.configs["flat/recommended"],
 	js.configs.recommended,

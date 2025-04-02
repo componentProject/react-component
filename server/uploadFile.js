@@ -1,8 +1,8 @@
 import express from "express";
 import multer from "multer";
 import cors from "cors";
-import path from "path";
-import fs from "fs";
+import path from "node:path";
+import fs from "node:fs";
 
 const app = express();
 app.use(cors());
