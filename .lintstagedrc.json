@@ -4,6 +4,6 @@
 		"prettier --write *.{js,jsx,ts,tsx}"
 	],
 	"*.{css,scss,less}": [
-		"stylelint *.{js,jsx,ts,tsx,vue} --fix"
+		"stylelint *.{css,scss,less} --fix"
 	]
 }
