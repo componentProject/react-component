@@ -1,9 +1,9 @@
 {
 	"*.{js,jsx,ts,tsx}": [
-		"eslint --fix --no-warn-ignored *.{js,jsx,ts,tsx}",
+		"eslint --fix",
 		"prettier --write *.{js,jsx,ts,tsx}"
 	],
 	"*.{css,scss,less}": [
-		"stylelint *.{css,scss,less} --fix"
+		"stylelint --fix"
 	]
 }

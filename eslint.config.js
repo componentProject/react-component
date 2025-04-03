@@ -18,10 +18,6 @@ export default [
 		},
 		files: ["**/*.{ts,mts,tsx,vue}"],
 	},
-	{
-		name: "app/files-to-ignore",
-		ignores: ["**/server/**", "**/dist/**", "**/dist-ssr/**", "**/coverage/**"],
-	},
 	...storybook.configs["flat/recommended"],
 	js.configs.recommended,
 	...tseslint.configs.recommended,
