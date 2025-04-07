@@ -1,11 +1,15 @@
-/* 基础样式 */
-@tailwind base;
-
-/* 组件样式 */
-@tailwind components;
-
-/* 实用程序样式 */
-@tailwind utilities;
+//#region tailwind v3
+///* 基础样式 */
+//@tailwind base;
+//
+///* 组件样式 */
+//@tailwind components;
+//
+///* 实用程序样式 */
+//@tailwind utilities;
+//#endregion
+//tailwind v4
+@use "tailwindcss";
 
 @layer base {
 	:root {

@@ -1,5 +1,6 @@
 # 用户
 /server/uploads
+.vitepress
 
 # 日志文件
 *.log

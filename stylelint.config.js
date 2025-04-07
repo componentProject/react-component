@@ -16,6 +16,7 @@ export default {
 		"no-duplicate-selectors": null,
 		// 禁用 scss 的 扩展检测
 		"scss/load-partial-extension": null,
+		"scss/comment-no-empty": null,
 		// 使 tailwind 可用
 		"at-rule-no-unknown": [
 			true,

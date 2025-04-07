@@ -5,6 +5,7 @@
 		&-palette {
 			position: relative;
 			min-height: 160px;
+			margin-bottom: 12px;
 
 			&-main {
 				position: absolute;
@@ -27,7 +28,6 @@
 				height: 12px;
 			}
 
-			margin-bottom: 12px;
 		}
 	}
 }
