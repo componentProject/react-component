@@ -1,6 +1,15 @@
+/**
+ * @file ConfigProvider.tsx
+ * @description 配置提供者组件，用于提供全局配置
+ */
+
+/** 导入React相关依赖 */
 import { createContext, useRef } from "react";
+/** 导入类型定义 */
 import type { PropsWithChildren, RefObject } from "react";
+/** 导入消息提供者组件 */
 import { MessageProvider } from "./MessageProvider.tsx";
+/** 导入消息引用类型 */
 import type { MessageRef } from "./types";
 
 /**
@@ -23,6 +32,7 @@ export const ConfigContext = createContext<ConfigProviderProps>({});
  * @param {PropsWithChildren} props - props
  */
 export function ConfigProvider(props: PropsWithChildren) {
+	/** 解构子组件 */
 	const { children } = props;
 
 	/**
@@ -38,8 +48,9 @@ export function ConfigProvider(props: PropsWithChildren) {
 		 * children 是 ConfigProvider 的子组件
 		 */
 		<ConfigContext.Provider value={{ messageRef }}>
-			{/* * MessageProvider 是 Message 组件的 provider * ref 是 MessageProvider 的 ref */}
+			{/* MessageProvider 是 Message 组件的 provider，ref 是 MessageProvider 的 ref */}
 			<MessageProvider ref={messageRef} />
+			{/* 渲染子组件 */}
 			{children}
 		</ConfigContext.Provider>
 	);

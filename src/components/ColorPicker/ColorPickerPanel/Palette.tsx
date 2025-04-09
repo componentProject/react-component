@@ -1,9 +1,16 @@
+/** 导入useRef hook */
 import { useRef } from "react";
+/** 导入FC类型 */
 import type { FC } from "react";
+/** 导入Color类 */
 import { Color } from "../color.ts";
+/** 导入Handler组件 */
 import Handler from "../Handler.tsx";
+/** 导入Transform组件 */
 import Transform from "../Transform.tsx";
+/** 导入useColorDrag hook */
 import useColorDrag from "../useColorDrag.ts";
+/** 导入calculateColor和calculateOffset工具函数 */
 import { calculateColor, calculateOffset } from "../utils.ts";
 
 /**
@@ -43,6 +50,9 @@ const Palette: FC<{
 		 * targetRef.current是Transform组件的dom
 		 */
 		targetRef: transformRef,
+		/**
+		 * color是当前选择的颜色
+		 */
 		color,
 		/**
 		 * onDragChange是拖拽时的回调函数
@@ -50,52 +60,70 @@ const Palette: FC<{
 		 */
 		onDragChange: (offsetValue) => {
 			/**
-			 * calculateColor 函数根据偏移量和当前选择的颜色,计算出新的颜色
+			 * calculateColor是计算颜色的工具函数
+			 * offsetValue是当前选择的颜色对应的偏移量
+			 * containerRef.current是容器的dom
 			 */
 			const newColor = calculateColor({
 				offset: offsetValue,
-				containerRef,
-				targetRef: transformRef,
+				containerRef: containerRef.current,
+				targetRef: transformRef.current,
 				color,
 			});
 			/**
 			 * onChange是props传递的回调函数
-			 * newColor是当前选择的颜色
+			 * newColor是计算出的新颜色
 			 */
 			onChange?.(newColor);
 		},
-		/**
-		 * calculate是计算偏移量的函数
-		 */
-		calculate: () => {
-			/**
-			 * calculateOffset 函数根据容器和Transform组件的dom,计算出当前选择的颜色对应的偏移量
-			 */
-			return calculateOffset(containerRef, transformRef, color);
-		},
 	});
 
+	/**
+	 * calculateOffset是计算偏移量的工具函数
+	 * color是当前选择的颜色
+	 * containerRef.current是容器的dom
+	 * transformRef.current是Transform组件的dom
+	 */
+	const offsetValue = calculateOffset(containerRef.current, transformRef.current, color);
+
+	/**
+	 * Palette的渲染
+	 */
 	return (
+		/**
+		 * 渲染颜色选择器容器
+		 */
 		<div
 			/**
-			 * containerRef是容器的ref对象
-			 * containerRef.current是容器的dom
+			 * ref是容器的ref对象
 			 */
 			ref={containerRef}
+			/**
+			 * className是容器的class name
+			 */
 			className="color-picker-panel-palette"
+			/**
+			 * onMouseDown是鼠标按下时的回调函数
+			 * dragStartHandle是拖拽开始时的回调函数
+			 */
 			onMouseDown={dragStartHandle}
 		>
+			/**
+			 * 渲染Transform组件
+			 */
 			<Transform
 				/**
-				 * transformRef是Transform组件的ref对象
-				 * transformRef.current是Transform组件的dom
+				 * ref是Transform组件的ref对象
 				 */
 				ref={transformRef}
 				/**
 				 * offset是当前选择的颜色对应的偏移量
 				 */
-				offset={{ x: offset.x, y: offset.y }}
+				offset={offset}
 			>
+				/**
+				 * 渲染Handler组件
+				 */
 				<Handler color={color.toRgbString()} />
 			</Transform>
 			<div

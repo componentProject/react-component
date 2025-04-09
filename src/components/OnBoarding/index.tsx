@@ -1,3 +1,8 @@
+/**
+ * @file OnBoarding/index.tsx
+ * @description 这是一个新手引导组件，功能是引导用户完成一系列操作步骤
+ */
+
 import React, { useEffect, useState } from "react";
 import type { FC } from "react";
 import { createPortal } from "react-dom";

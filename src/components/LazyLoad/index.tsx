@@ -1,48 +1,48 @@
+/**
+ * @file index.tsx
+ * @description 延迟加载组件，用于优化页面性能
+ */
+
+/** 导入React相关依赖 */
 import { useEffect, useRef, useState } from "react";
+/** 导入类型定义 */
 import type { FC } from "react";
+/** 导入属性类型 */
 import type { propsType } from "./types";
 
 /**
- * LazyLoad组件,用于延迟加载组件
- *
- * 该组件接受一个可选的className,用于设置容器的样式
- * 亦可接受一个可选的style对象,用于设置容器的样式
- * offset用于设置观察器的rootMargin,其值可以是数字或字符串,例如"100px"或100
- * width和height用于设置容器的宽高
- * onContentVisible用于在组件可见时执行的回调函数
- * placeholder用于在组件不可见时显示的占位符
+ * @component LazyLoad
+ * @description 延迟加载组件，用于优化页面性能
+ * @param {propsType} props - 组件属性
+ * @property {string} [className] - 自定义类名
+ * @property {React.CSSProperties} [style] - 自定义样式
+ * @property {number | string} [offset] - 观察器的rootMargin
+ * @property {number | string} [width] - 容器宽度
+ * @property {number | string} [height] - 容器高度
+ * @property {() => void} [onContentVisible] - 组件可见时的回调函数
+ * @property {React.ReactNode} [placeholder] - 组件不可见时的占位符
+ * @property {React.ReactNode} children - 子组件
  */
 const LazyLoad: FC<propsType> = ({ className = "", style, offset, width, onContentVisible, placeholder, height, children }) => {
-	/**
-	 * 创建一个容器的ref,用于观察器的observe
-	 */
+	/** 创建容器ref，用于观察器的observe */
 	const containerRef = useRef<HTMLDivElement>(null);
 
-	/**
-	 * 创建一个状态,用于记录组件的可见性
-	 */
+	/** 创建可见性状态 */
 	const [visible, setVisible] = useState(false);
 
-	/**
-	 * 创建一个观察器的ref,用于观察容器的可见性
-	 */
+	/** 创建观察器ref */
 	const elementObserver = useRef<IntersectionObserver>();
 
 	/**
-	 * 观察器的回调函数,用于在组件可见时执行
+	 * 处理延迟加载的回调函数
+	 * @param {IntersectionObserverEntry[]} entries - 观察器观察的元素数组
 	 */
 	function lazyLoadHandler(entries: IntersectionObserverEntry[]) {
-		/**
-		 *  entries是一个数组,包含了观察器观察的所有元素
-		 *  我们只需要关心第一个元素,即容器
-		 */
+		/** 获取第一个观察元素 */
 		const [entry] = entries;
 		const { isIntersecting } = entry;
 
-		/**
-		 *  如果容器可见,则设置状态为true,并执行onContentVisible回调函数
-		 *  并且停止观察器,避免重复执行回调函数
-		 */
+		/** 如果元素可见，设置状态并执行回调 */
 		if (isIntersecting) {
 			setVisible(true);
 			onContentVisible?.();
@@ -54,63 +54,43 @@ const LazyLoad: FC<propsType> = ({ className = "", style, offset, width, onConte
 		}
 	}
 
-	/**
-	 * useEffect Hook,用于在组件mount/unmount时执行某些操作
-	 * 在这里,我们使用useEffect来创建观察器,并在组件unmount时停止观察器
-	 */
+	/** 使用useEffect创建和清理观察器 */
 	useEffect(() => {
-		/**
-		 *  options用于设置观察器的配置项
-		 *  rootMargin用于设置观察器的rootMargin,其值可以是数字或字符串,例如"100px"或100
-		 *  threshold用于设置观察器的阈值,其值可以是0到1之间的数字,例如0.5
-		 */
+		/** 设置观察器选项 */
 		const options = {
 			rootMargin: typeof offset === "number" ? `${offset}px` : offset,
 			threshold: 0,
 		};
 
-		/**
-		 *  创建观察器,并将其绑定到elementObserver的ref上
-		 */
+		/** 创建观察器 */
 		elementObserver.current = new IntersectionObserver(lazyLoadHandler, options);
 
-		/**
-		 *  获取容器的ref
-		 */
+		/** 获取容器节点 */
 		const node = containerRef.current;
 
-		/**
-		 *  如果容器存在,则观察其可见性
-		 */
+		/** 开始观察容器 */
 		if (node instanceof HTMLElement) {
 			elementObserver.current.observe(node);
 		}
 
-		/**
-		 *  返回一个函数,用于在组件unmount时停止观察器
-		 */
+		/** 清理函数 */
 		return () => {
-			/**
-			 *  如果容器存在,则停止观察器
-			 */
 			if (node && node instanceof HTMLElement) {
 				elementObserver.current?.unobserve(node);
 			}
 		};
 	}, []);
 
-	/**
-	 *  styles用于设置容器的样式,将style和width/height对象合并
-	 */
+	/** 合并样式对象 */
 	const styles = { height, width, ...style };
 
-	/**
-	 *  返回一个div元素,用于渲染容器
-	 *  visible用于控制容器的可见性
-	 *  placeholder用于在容器不可见时显示的占位符
-	 */
+	/** 渲染组件 */
+	{
+		/* 容器元素 */
+	}
 	return (
 		<div ref={containerRef} className={className} style={styles}>
+			{/* 根据可见性渲染内容或占位符 */}
 			{visible ? children : placeholder}
 		</div>
 	);

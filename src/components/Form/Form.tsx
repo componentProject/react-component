@@ -1,14 +1,35 @@
+/**
+ * @file Form.tsx
+ * @description 表单组件，用于包装表单
+ */
+
+/** 导入React相关依赖 */
 import { useState, useRef, FormEvent, useImperativeHandle, forwardRef } from "react";
+/** 导入类名工具 */
 import classNames from "classnames";
+/** 导入表单上下文 */
 import FormContext from "./FormContext";
 
+/** 导入类型定义 */
 import type { propsType, FormRefApi } from "./types";
 
 /**
- * Form组件，用于包装表单
- * @param props
- * @param ref
- * @returns
+ * @interface FormProps
+ * @description 表单组件的属性接口
+ * @property {string} [className] - 自定义类名
+ * @property {React.CSSProperties} [style] - 自定义样式
+ * @property {React.ReactNode} children - 表单子元素
+ * @property {(values: Record<string, any>) => void} [onFinish] - 表单提交成功时的回调
+ * @property {(errors: Record<string, any>) => void} [onFinishFailed] - 表单提交失败时的回调
+ * @property {Record<string, any>} [initialValues] - 表单初始值
+ */
+
+/**
+ * @component Form
+ * @description 表单组件，用于包装表单，提供表单验证和提交功能
+ * @param {FormProps} props - 组件属性
+ * @param {React.RefObject<FormRefApi>} ref - 组件引用
+ * @returns {JSX.Element} 表单组件
  */
 const Form = forwardRef<FormRefApi, propsType>((props: propsType, ref) => {
 	/** props */
@@ -98,8 +119,9 @@ const Form = forwardRef<FormRefApi, propsType>((props: propsType, ref) => {
 				validateRegister: handleValidateRegister,
 			}}
 		>
-			{/*form*/}
+			{/* 表单容器 */}
 			<form {...others} className={cls} style={style} onSubmit={handleSubmit}>
+				{/* 表单内容 */}
 				{children}
 			</form>
 		</FormContext.Provider>

@@ -1,49 +1,59 @@
+/**
+ * @file index.tsx
+ * @description 颜色选择器面板组件
+ */
+
+/** 导入classnames工具函数 */
 import cs from "classnames";
+/** 导入组件属性类型 */
 import type { propsType } from "../types";
+/** 导入Color类 */
 import { Color } from "../color.ts";
+/** 导入Palette组件 */
 import Palette from "./Palette.tsx";
+/** 导入样式文件 */
 import "../index.scss";
+/** 导入useControllableValue hook */
 import { useControllableValue } from "ahooks";
 
-// ColorPickerPanel 是一个颜色选择器面板组件
-// props:
-// - className: 颜色选择器的class name
-// - style: 颜色选择器的style
-// - onChange: 颜色选择器变化时的回调函数
+/**
+ * @component ColorPickerPanel
+ * @description 颜色选择器面板组件，用于选择和管理颜色
+ * @param {propsType} props - 组件属性
+ * @property {string} [className] - 自定义类名
+ * @property {React.CSSProperties} [style] - 自定义样式
+ * @property {(color: Color) => void} [onChange] - 颜色变化时的回调函数
+ */
 function ColorPickerPanel(props: propsType) {
+	/** 解构props获取className、style和onChange */
 	const { className, style, onChange } = props;
 
-	//  colorValue 是当前选择的颜色
-	//  setColorValue 是更新colorValue的函数
-	//  useControllableValue 是一个hook,用于处理受控和非受控组件
-	//  colorValue的类型是Color
+	/** 使用useControllableValue hook管理颜色值 */
 	const [colorValue, setColorValue] = useControllableValue<Color>(props);
 
-	// classNames 是class name的合并
-	// cs 是一个utility函数,用于合并class name
+	/** 合并类名 */
 	const classNames = cs("color-picker", className);
 
-	// onPaletteColorChange 是 Palette 选择器变化时的回调函数
-	//  color 是当前选择的颜色
+	/**
+	 * 处理调色板颜色变化
+	 * @param {Color} color - 新选择的颜色
+	 */
 	function onPaletteColorChange(color: Color) {
-		// setColorValue 是更新colorValue的函数
+		/** 更新颜色值 */
 		setColorValue(color);
-		// onChange 是props传递的回调函数
+		/** 调用onChange回调 */
 		onChange?.(color);
 	}
 
-	// ColorPickerPanel 的渲染
+	{
+		/* 颜色选择器面板容器 */
+	}
 	return (
 		<div className={classNames} style={style}>
-			<Palette
-				color={colorValue}
-				// onPaletteColorChange 是 Palette 选择器变化时的回调函数
-				onChange={onPaletteColorChange}
-			></Palette>
-			<div
-				// 颜色选择器的颜色展示
-				style={{ width: 20, height: 20, background: colorValue.toRgbString() }}
-			></div>
+			{/* 调色板组件 */}
+			<Palette color={colorValue} onChange={onPaletteColorChange}></Palette>
+			{/* 颜色预览区域 */}
+			<div style={{ width: 20, height: 20, background: colorValue.toRgbString() }}></div>
 		</div>
 	);
 }

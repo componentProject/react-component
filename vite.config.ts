@@ -23,11 +23,12 @@ export default defineConfig((mode): UserConfig => {
 	const viteEnv = wrapperEnv(env);
 	const reactPlugins = [
 		react(), // 自动引入
-		AutoImport({
-			imports: ["react"],
-			resolvers: [],
-			dts: path.resolve(__dirname, "./src/typings/auto-imports.d.ts"),
-		}),
+		mode.mode === "development" &&
+			AutoImport({
+				imports: ["react"],
+				resolvers: [],
+				dts: path.resolve(__dirname, "./src/typings/auto-imports.d.ts"),
+			}),
 	];
 	// CDN加速
 	const importToCDNPlugins = viteEnv.VITE_USE_CDN
