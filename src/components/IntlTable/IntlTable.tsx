@@ -54,7 +54,9 @@ interface TableRowData {
 
 /**
  * @component IntlTable
- * @description 这是一个国际化表格组件，功能是管理多语言资源，支持导入导出Excel，编辑和保存多语言内容
+ * @description 这是一个国际化表格组件，功能是管理多语言资源，支持导入导出Excel，编辑和保存多语言内容,
+ *
+ * 依赖node服务才能同步修改本地src/locales下文件
  */
 const IntlTable: React.FC<IntlTableProps> = (props) => {
 	/** 使用Form.useForm创建表单实例 */

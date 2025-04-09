@@ -36,7 +36,7 @@ import type { propsType } from "./types";
 
 /**
  * @component Upload
- * @description 文件上传组件，支持拖拽上传和普通上传，支持文件列表展示
+ * @description 文件上传组件，支持拖拽上传和普通上传，支持文件列表展示,依赖后端服务才能上传文件
  * @param {UploadProps} props - 组件属性
  * @returns {JSX.Element} 上传组件
  */
