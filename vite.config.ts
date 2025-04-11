@@ -160,7 +160,13 @@ export default defineConfig((mode): UserConfig => {
 			cors: true,
 			// https: false,
 			// 代理跨域（mock 不需要配置，这里只是个事列）
-			proxy: {},
+			proxy: {
+				"/translate": {
+					target: "https://fanyi-api.baidu.com/api/trans/vip/translate",
+					changeOrigin: true,
+					rewrite: (path) => path.replace(/^\/translate/, ""),
+				},
+			},
 		},
 	};
 });

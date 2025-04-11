@@ -6,13 +6,11 @@
 /** 导入React相关依赖 */
 import React, { useState, useEffect } from "react";
 /** 导入antd组件 */
-import { Table, Button, Upload, message, Form, Alert, Space, Modal, Dropdown, Menu, Tooltip, Switch, Select } from "antd";
+import { Table, Button, Upload, message, Form, Alert, Space, Modal, Dropdown, Menu, Tooltip, Select } from "antd";
 /** 导入antd图标 */
 import { UploadOutlined, DownloadOutlined, SaveOutlined, SyncOutlined, TranslationOutlined } from "@ant-design/icons";
 /** 导入exceljs用于处理Excel文件 */
 import { Workbook } from "exceljs";
-/** 导入md5库用于生成签名 */
-import md5 from "md5";
 /** 导入国际化相关工具函数 */
 import {
 	SupportedLocales,
@@ -245,36 +243,30 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 		try {
 			const from = fromLang.slice(0, 2);
 			const to = toLang.slice(0, 2);
-			const response = await Api.translateApi.translate({
+			const data = await Api.translateApi.translate({
 				q: text,
 				from,
 				to,
 			});
-			if (!response.ok) {
-				console.error("翻译API请求失败:", response.status, response.statusText);
-				throw new Error("翻译API调用失败");
-			}
 
-			const data = await response.json();
-			console.log("百度翻译API返回:", data);
-
-			// 根据百度API返回格式提取翻译结果
-			if (data && data.trans_result && data.trans_result.length > 0) {
-				return data.trans_result[0].dst;
-			}
-
+			console.log("data", data);
 			// 如果返回了错误码
 			if (data.error_code) {
 				console.error(`百度翻译API错误: ${data.error_code} - ${data.error_msg}`);
 				throw new Error(`翻译失败: ${data.error_msg}`);
+			} else {
+				console.log("百度翻译API返回:", data);
+				// 根据百度API返回格式提取翻译结果
+				if (data && data.trans_result && data.trans_result.length > 0) {
+					return data.trans_result[0].dst;
+				}
 			}
-
-			return text; // 如果没有翻译结果则返回原文
 		} catch (error: any) {
 			console.error("翻译API调用失败:", error);
 			message.error(`翻译API调用失败: ${error.message || "未知错误"}`);
+			return Promise.reject(error);
 			// 出错时使用模拟翻译
-			return mockTranslateText(text, fromLang, toLang);
+			// return mockTranslateText(text, fromLang, toLang);
 		}
 	};
 
@@ -425,7 +417,9 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 							// }
 							// 调用翻译API
 							const translatedText = await translateText(row[fromLang], fromLang, toLang);
-							row[toLang] = translatedText;
+							if (translatedText) {
+								row[toLang] = translatedText;
+							}
 
 							// 更新语言文件
 							if (updatedLangFiles[toLang]) {

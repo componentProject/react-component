@@ -8,7 +8,7 @@ export default class Translate {
 		// 注意：需要在实际使用时替换为自己的appid和密钥
 		const appid = "20250411002329834"; // 替换为你的百度翻译API appid
 		const key = "ZQZXbeqdMWVvHRxfY0IJ"; // 替换为你的百度翻译API key
-		const salt = new Date().getTime();
+		const salt = Math.floor(Math.random() * 1000000);
 		// 生成签名
 		const str = appid + q + salt + key;
 		// 使用md5库生成签名
@@ -21,10 +21,6 @@ export default class Translate {
 			salt,
 			sign,
 		};
-		return this.request.post("https://fanyi-api.baidu.com/api/trans/vip/translate", data, {
-			headers: {
-				"Content-Type": "application/x-www-form-urlencoded",
-			},
-		});
+		return this.request.post("/translate", data);
 	}
 }

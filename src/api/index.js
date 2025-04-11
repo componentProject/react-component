@@ -4,9 +4,6 @@ class Api {
 	constructor(baseURL) {
 		this.client = axios.create({
 			baseURL,
-			headers: {
-				"Content-Type": "application/json",
-			},
 		});
 		this.client.interceptors.request.use(this.requestInterceptors);
 		this.client.interceptors.response.use(this.responseInterceptors);
@@ -17,23 +14,49 @@ class Api {
 	}
 
 	responseInterceptors(response) {
-		return response;
+		if (response.status === 200) {
+			return response.data;
+		} else {
+			return Promise.reject(response);
+		}
 	}
 
-	get(url, params = {}, config) {
-		return this.client.get(url, { params, ...config });
+	get(url, params = {}, config = {}) {
+		return this.client.get(url, {
+			params,
+			headers: {
+				"Content-Type": "application/json",
+			},
+			...config,
+		});
 	}
 
-	post(url, data = {}, config) {
-		return this.client.post(url, data, config);
+	post(url, data = {}, config = {}) {
+		return this.client.post(url, data, {
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded",
+			},
+			...config,
+		});
 	}
 
-	put(url, data = {}, config) {
-		return this.client.put(url, data, config);
+	put(url, data = {}, config = {}) {
+		return this.client.put(url, data, {
+			headers: {
+				"Content-Type": "application/json",
+			},
+			...config,
+		});
 	}
 
-	delete(url, params = {}, config) {
-		return this.client.delete(url, { params, ...config });
+	delete(url, params = {}, config = {}) {
+		return this.client.delete(url, {
+			params,
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded",
+			},
+			...config,
+		});
 	}
 }
 

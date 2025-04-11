@@ -21,6 +21,13 @@ const config: StorybookConfig = {
 		config.plugins = config.plugins.filter((plugin: PluginOptionType) => {
 			return !existingPlugins.includes(plugin?.name);
 		});
+		config.server.proxy = {
+			"/translate": {
+				target: "https://fanyi-api.baidu.com/api/trans/vip/translate",
+				changeOrigin: true,
+				rewrite: (path) => path.replace(/^\/translate/, ""),
+			},
+		};
 		if (configType === "PRODUCTION") {
 			config.build.rollupOptions.external = config.build.rollupOptions.external.filter(
 				(item: string) => !external.includes(item),
