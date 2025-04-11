@@ -1,6 +1,6 @@
 export default {
-  "hello": "Hello",
-  "welcome": "Welcome to the i18n Resource Manager",
+  "hello": "Hello`",
+  "welcome": "Welcome to the i18n Resource Manager1",
   "save": "Save",
   "cancel": "Cancel",
   "inputYourPassword": "Please input your password!",

@@ -7,4 +7,4 @@ export { default as enUS } from "./en-US";
 export { default as zhCN } from "./zh-CN";
 
 // 导出文件系统服务
-export { getMessages, getLocaleMessages, getSupportedLocales, saveLocaleFile, saveMessagesFile, clearCache } from "./fileSystem";
+export { getMessages, getLocaleMessages, getSupportedLocales, saveLocaleFile, saveMessagesFile, batchSaveFiles, clearCache } from "./fileSystem";

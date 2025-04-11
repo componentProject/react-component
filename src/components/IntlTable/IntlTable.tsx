@@ -6,11 +6,13 @@
 /** 导入React相关依赖 */
 import React, { useState, useEffect } from "react";
 /** 导入antd组件 */
-import { Table, Button, Upload, message, Form, Alert, Space } from "antd";
+import { Table, Button, Upload, message, Form, Alert, Space, Modal, Dropdown, Menu, Tooltip, Switch, Select } from "antd";
 /** 导入antd图标 */
-import { UploadOutlined, DownloadOutlined, SaveOutlined, SyncOutlined } from "@ant-design/icons";
+import { UploadOutlined, DownloadOutlined, SaveOutlined, SyncOutlined, TranslationOutlined } from "@ant-design/icons";
 /** 导入exceljs用于处理Excel文件 */
 import { Workbook } from "exceljs";
+/** 导入md5库用于生成签名 */
+import md5 from "md5";
 /** 导入国际化相关工具函数 */
 import {
 	SupportedLocales,
@@ -18,13 +20,14 @@ import {
 	getMessages,
 	getLocaleMessages,
 	getSupportedLocales,
-	saveLocaleFile,
-	saveMessagesFile,
+	batchSaveFiles,
 	clearCache,
 	MessagesType,
 } from "@/locales";
 /** 导入可编辑单元格组件 */
 import { EditableCell } from "./EditableCell";
+
+import Api from "@/api";
 
 /**
  * @interface IntlTableProps
@@ -32,6 +35,9 @@ import { EditableCell } from "./EditableCell";
  * @property {SupportedLocales[]} [languages] - 支持的语言列表，默认为 ['zh-CN', 'en-US']
  */
 interface IntlTableProps {
+	/**
+	 * 支持的语言列表
+	 */
 	languages?: SupportedLocales[];
 }
 
@@ -49,7 +55,16 @@ interface TableRowData {
 	id: string;
 	defaultMessage: string;
 	description: string;
+
 	[key: string]: string;
+}
+
+/**
+ * 翻译API类型
+ */
+enum TranslationApiType {
+	BAIDU = "baidu",
+	LOCAL = "local",
 }
 
 /**
@@ -81,6 +96,11 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 
 	/** 定义支持的语言列表状态 */
 	const [languages, setLanguages] = useState<SupportedLocales[]>(props.languages || ["zh-CN", "en-US"]);
+
+	/** 定义翻译加载状态 */
+	const [translating, setTranslating] = useState<boolean>(false);
+	/** 定义翻译API类型 */
+	const [translationApiType, setTranslationApiType] = useState<TranslationApiType>(TranslationApiType.BAIDU);
 
 	/** 组件挂载时获取数据 */
 	useEffect(() => {
@@ -207,6 +227,356 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 	};
 
 	/**
+	 * @method translateText
+	 * @description 调用翻译API翻译文本
+	 * @param {string} text - 要翻译的文本
+	 * @param {string} fromLang - 源语言
+	 * @param {string} toLang - 目标语言
+	 * @returns {Promise<string>} - 翻译后的文本
+	 */
+	const translateText = async (text: string, fromLang: string, toLang: string): Promise<string> => {
+		// 使用本地翻译
+		console.log("translationApiType === TranslationApiType.LOCAL", translationApiType === TranslationApiType.LOCAL);
+		if (translationApiType === TranslationApiType.LOCAL) {
+			return mockTranslateText(text, fromLang, toLang);
+		}
+
+		// 使用百度翻译API
+		try {
+			const from = fromLang.slice(0, 2);
+			const to = toLang.slice(0, 2);
+			const response = await Api.translateApi.translate({
+				q: text,
+				from,
+				to,
+			});
+			if (!response.ok) {
+				console.error("翻译API请求失败:", response.status, response.statusText);
+				throw new Error("翻译API调用失败");
+			}
+
+			const data = await response.json();
+			console.log("百度翻译API返回:", data);
+
+			// 根据百度API返回格式提取翻译结果
+			if (data && data.trans_result && data.trans_result.length > 0) {
+				return data.trans_result[0].dst;
+			}
+
+			// 如果返回了错误码
+			if (data.error_code) {
+				console.error(`百度翻译API错误: ${data.error_code} - ${data.error_msg}`);
+				throw new Error(`翻译失败: ${data.error_msg}`);
+			}
+
+			return text; // 如果没有翻译结果则返回原文
+		} catch (error: any) {
+			console.error("翻译API调用失败:", error);
+			message.error(`翻译API调用失败: ${error.message || "未知错误"}`);
+			// 出错时使用模拟翻译
+			return mockTranslateText(text, fromLang, toLang);
+		}
+	};
+
+	// 添加一个示例用的轻量级翻译函数，不依赖外部API
+	const mockTranslateText = async (text: string, fromLang: string, toLang: string): Promise<string> => {
+		// 模拟翻译延迟
+		await new Promise((resolve) => setTimeout(resolve, 300));
+
+		// 简单的中英文互译示例
+		if (fromLang.includes("zh") && toLang.includes("en")) {
+			// 中文 -> 英文的简单映射
+			const zhToEn: Record<string, string> = {
+				你好: "Hello",
+				世界: "World",
+				按钮: "Button",
+				取消: "Cancel",
+				确认: "Confirm",
+				提交: "Submit",
+				保存: "Save",
+				删除: "Delete",
+				编辑: "Edit",
+				查询: "Query",
+				搜索: "Search",
+				用户: "User",
+				密码: "Password",
+				登录: "Login",
+				注册: "Register",
+			};
+
+			// 检查是否有完全匹配
+			if (zhToEn[text]) {
+				return zhToEn[text];
+			}
+
+			// 尝试部分匹配并替换
+			let result = text;
+			Object.keys(zhToEn).forEach((zh) => {
+				if (text.includes(zh)) {
+					result = result.replace(new RegExp(zh, "g"), zhToEn[zh]);
+				}
+			});
+
+			if (result !== text) {
+				return result;
+			}
+
+			// 没有匹配，返回模拟翻译
+			return `${text} (Translated to English)`;
+		}
+
+		if (fromLang.includes("en") && toLang.includes("zh")) {
+			// 英文 -> 中文的简单映射
+			const enToZh: Record<string, string> = {
+				Hello: "你好",
+				World: "世界",
+				Button: "按钮",
+				Cancel: "取消",
+				Confirm: "确认",
+				Submit: "提交",
+				Save: "保存",
+				Delete: "删除",
+				Edit: "编辑",
+				Query: "查询",
+				Search: "搜索",
+				User: "用户",
+				Password: "密码",
+				Login: "登录",
+				Register: "注册",
+			};
+
+			// 检查是否有完全匹配（忽略大小写）
+			const lowerText = text.toLowerCase();
+			for (const en in enToZh) {
+				if (lowerText === en.toLowerCase()) {
+					return enToZh[en];
+				}
+			}
+
+			// 尝试部分匹配并替换
+			let result = text;
+			Object.keys(enToZh).forEach((en) => {
+				const regex = new RegExp(en, "gi");
+				if (regex.test(text)) {
+					result = result.replace(regex, enToZh[en]);
+				}
+			});
+
+			if (result !== text) {
+				return result;
+			}
+
+			// 没有匹配，返回模拟翻译
+			return `${text} (翻译成中文)`;
+		}
+
+		// 其他语言对返回模拟翻译
+		return `${text} (${toLang})`;
+	};
+
+	/**
+	 * @method translateColumn
+	 * @description 翻译整列数据
+	 * @param {SupportedLocales} fromLang - 源语言
+	 * @param {SupportedLocales} toLang - 目标语言
+	 */
+	const translateColumn = async (fromLang: SupportedLocales, toLang: SupportedLocales) => {
+		Modal.confirm({
+			title: "翻译确认",
+			content: (
+				<>
+					<p>
+						确定要将 {fromLang} 列翻译成 {toLang} 吗？这将覆盖 {toLang} 列的现有空白内容。
+					</p>
+					<div style={{ marginTop: 10 }}>
+						<Form.Item label="选择翻译API" style={{ marginBottom: 0 }}>
+							<Select
+								value={translationApiType}
+								onChange={(value) => setTranslationApiType(value)}
+								style={{ width: 200 }}
+								options={[
+									{ value: TranslationApiType.BAIDU, label: "百度翻译API" },
+									{ value: TranslationApiType.LOCAL, label: "本地翻译库" },
+								]}
+							/>
+							{translationApiType === TranslationApiType.BAIDU ? (
+								<div style={{ fontSize: "12px", marginTop: 5 }}>使用百度翻译API（需要配置有效的API密钥）</div>
+							) : (
+								<div style={{ fontSize: "12px", marginTop: 5 }}>使用内置的本地翻译库（仅支持有限的词汇）</div>
+							)}
+						</Form.Item>
+					</div>
+				</>
+			),
+			onOk: async () => {
+				try {
+					setTranslating(true);
+
+					const newData = [...data];
+					const updatedLangFiles = { ...languageFiles };
+
+					// 翻译空白内容
+					for (let i = 0; i < newData.length; i++) {
+						const row = newData[i];
+						console.log("newData", row[fromLang], row[toLang]);
+						if (row[fromLang]) {
+							// if (!row[toLang] || row[toLang] === "") {
+							//
+							// }
+							// 调用翻译API
+							const translatedText = await translateText(row[fromLang], fromLang, toLang);
+							row[toLang] = translatedText;
+
+							// 更新语言文件
+							if (updatedLangFiles[toLang]) {
+								updatedLangFiles[toLang][row.key] = translatedText;
+							}
+						}
+					}
+
+					// 更新状态
+					setData(newData);
+					setLanguageFiles(updatedLangFiles);
+
+					// 提示用户保存更改
+					Modal.confirm({
+						title: "翻译完成",
+						content: "是否立即保存更改到服务器？",
+						onOk: async () => {
+							const success = await saveAllFiles(updatedLangFiles, messagesData);
+							if (success) {
+								message.success(`已将翻译保存到服务器`);
+							}
+						},
+						okText: "保存",
+						cancelText: "稍后保存",
+					});
+
+					message.success(`已将 ${fromLang} 列翻译成 ${toLang}`);
+				} catch (error) {
+					console.error("翻译失败:", error);
+					message.error("翻译失败");
+				} finally {
+					setTranslating(false);
+				}
+			},
+		});
+	};
+
+	/**
+	 * @method translateRow
+	 * @description 翻译单行数据
+	 * @param {string} key - 行 ID
+	 * @param {SupportedLocales} fromLang - 源语言
+	 * @param {SupportedLocales} toLang - 目标语言
+	 */
+	const translateRow = async (key: string, fromLang: SupportedLocales, toLang: SupportedLocales) => {
+		Modal.confirm({
+			title: "翻译确认",
+			content: (
+				<>
+					<p>
+						确定要将此条目从 {fromLang} 翻译成 {toLang} 吗？
+					</p>
+					<div style={{ marginTop: 10 }}>
+						<Form.Item label="选择翻译API" style={{ marginBottom: 0 }}>
+							<Select
+								value={translationApiType}
+								onChange={(value) => setTranslationApiType(value)}
+								style={{ width: 200 }}
+								options={[
+									{ value: TranslationApiType.BAIDU, label: "百度翻译API" },
+									{ value: TranslationApiType.LOCAL, label: "本地翻译库" },
+								]}
+							/>
+							{translationApiType === TranslationApiType.BAIDU ? (
+								<div style={{ fontSize: "12px", marginTop: 5 }}>使用百度翻译API（需要配置有效的API密钥）</div>
+							) : (
+								<div style={{ fontSize: "12px", marginTop: 5 }}>使用内置的本地翻译库（仅支持有限的词汇）</div>
+							)}
+						</Form.Item>
+					</div>
+				</>
+			),
+			onOk: async () => {
+				try {
+					setTranslating(true);
+
+					const newData = [...data];
+					const rowIndex = newData.findIndex((item) => item.key === key);
+
+					if (rowIndex > -1) {
+						const row = newData[rowIndex];
+						if (row[fromLang]) {
+							// if(!row[toLang] || row[toLang] === ""){
+							//
+							// }
+							// 调用翻译API
+							const translatedText = await translateText(row[fromLang], fromLang, toLang);
+							row[toLang] = translatedText;
+
+							// 更新语言文件
+							const updatedLangFiles = { ...languageFiles };
+							if (updatedLangFiles[toLang]) {
+								updatedLangFiles[toLang][key] = translatedText;
+							}
+
+							// 更新状态
+							setData(newData);
+							setLanguageFiles(updatedLangFiles);
+
+							// 由于只是单个条目的翻译，直接显示提示，不弹出额外的保存确认框
+							message.success(`已翻译成 ${toLang}，可点击右上角"保存更改"按钮保存`);
+						} else {
+							message.warning("没有源文本或目标已有翻译");
+						}
+					}
+				} catch (error) {
+					console.error("翻译失败:", error);
+					message.error("翻译失败");
+				} finally {
+					setTranslating(false);
+				}
+			},
+		});
+	};
+
+	/**
+	 * 创建翻译菜单
+	 * @param {SupportedLocales} fromLang - 源语言
+	 * @returns {JSX.Element} - 翻译菜单
+	 */
+	const renderTranslateMenu = (fromLang: SupportedLocales) => {
+		const items = languages
+			.filter((lang) => lang !== fromLang)
+			.map((lang) => ({
+				key: lang,
+				label: `翻译成 ${lang}`,
+				onClick: () => translateColumn(fromLang, lang),
+			}));
+
+		return <Menu items={items} />;
+	};
+
+	/**
+	 * 创建行翻译菜单
+	 * @param {string} rowKey - 行键
+	 * @param {SupportedLocales} fromLang - 源语言
+	 * @returns {JSX.Element} - 翻译菜单
+	 */
+	const renderRowTranslateMenu = (rowKey: string, fromLang: SupportedLocales) => {
+		const items = languages
+			.filter((lang) => lang !== fromLang)
+			.map((lang) => ({
+				key: lang,
+				label: `翻译成 ${lang}`,
+				onClick: () => translateRow(rowKey, fromLang, lang),
+			}));
+
+		return <Menu items={items} />;
+	};
+
+	/**
 	 * @type {Array<ColumnType<TableRowData>>} columns - 表格列定义
 	 */
 	const columns = [
@@ -233,11 +603,36 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 			editable: true,
 		},
 		...languages.map((lang: SupportedLocales) => ({
-			title: lang,
+			title: (
+				<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+					<span>{lang}</span>
+					<Dropdown overlay={renderTranslateMenu(lang)} trigger={["click"]} disabled={translating}>
+						<Tooltip title={`批量翻译 ${lang} 列`}>
+							<Button type="text" size="small" icon={<TranslationOutlined />} loading={translating} />
+						</Tooltip>
+					</Dropdown>
+				</div>
+			),
 			dataIndex: lang,
 			key: lang,
-			width: 200,
+			width: 250,
 			editable: true,
+			render: (text: string, record: TableRowData) => {
+				return (
+					<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+						<span>{text}</span>
+						{text && !isEditing(record) && (
+							<Dropdown
+								overlay={renderRowTranslateMenu(record.key, lang)}
+								trigger={["click"]}
+								disabled={translating || editingKey !== ""}
+							>
+								<Button type="text" size="small" icon={<TranslationOutlined />} loading={translating} />
+							</Dropdown>
+						)}
+					</div>
+				);
+			},
 		})),
 		{
 			title: "操作",
@@ -419,17 +814,10 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 	): Promise<boolean> => {
 		try {
 			setLoading(true);
-			// 保存每个语言文件
-			const savePromises = languages.map((lang: SupportedLocales) => saveLocaleFile(lang, langFiles[lang]));
 
-			// 保存消息定义文件
-			savePromises.push(saveMessagesFile(messagesData));
+			// 使用批量保存API，一次性保存所有文件
+			const success = await batchSaveFiles(messagesData, langFiles);
 
-			// 等待所有保存完成
-			const results = await Promise.all(savePromises);
-
-			// 检查是否有保存失败的情况
-			const success = results.every((result: boolean) => result === true);
 			setLoading(false);
 			return success;
 		} catch (error) {

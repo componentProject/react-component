@@ -1,9 +1,12 @@
 {
 	"name": "react-component-server",
-	"packageManager": "pnpm@8.6.0",
 	"version": "1.0.0",
 	"description": "React Component Server",
 	"type": "module",
+	"packageManager": "pnpm@10.8.0",
+	"engines": {
+		"node": ">=20.0.0"
+	},
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"uploadFile": "node uploadFile.js",

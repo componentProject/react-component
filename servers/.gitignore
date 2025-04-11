@@ -1,7 +1,7 @@
 # 用户
-/server/uploads
+uploads
 .vitepress
-/src/locales_bak
+
 
 # 日志文件
 *.log

@@ -1,6 +1,6 @@
 {
   "name": "storybook",
-  "packageManager": "pnpm@8.6.0",
+  "packageManager": "pnpm@10.8.0",
   "engines": {
     "node": ">=20.0.0"
   },
@@ -23,12 +23,13 @@
     "vitepress:dev": "vitepress dev .docs",
     "vitepress:build": "vitepress build .docs",
     "vitepress:preview": "vitepress preview .docs",
-    "storybook:dev": "storybook dev -p 6007",
+    "storybook:dev": "concurrently \"pnpm run servers:start\" \"storybook dev -p 6007\"",
     "storybook:build": "storybook build -o docs/storybook",
     "installAll": "installAll.sh",
     "prepare": "husky",
     "server:upload": "node ./servers/uploadFile.js",
-    "server:intlServer": "node ./servers/intlServer.js"
+    "server:intlServer": "node ./servers/intlServer.js",
+    "servers:start": "concurrently \"pnpm run server:upload\" \"pnpm run server:intlServer\"  --kill-others-on-fail"
   },
   "dependencies": {
     "@ant-design/icons": "^5.6.1",
@@ -63,6 +64,7 @@
     "@radix-ui/react-tooltip": "^1.1.8",
     "@react-spring/web": "^9.7.5",
     "@storybook/addon-storysource": "^8.4.4",
+    "@types/md5": "^2.3.5",
     "ahooks": "^3.8.1",
     "antd": "^5.24.1",
     "async-validator": "^4.2.5",
@@ -83,6 +85,7 @@
     "js-cookie": "^3.0.5",
     "lodash-es": "^4.17.21",
     "lucide-react": "^0.475.0",
+    "md5": "^2.3.0",
     "next-themes": "^0.4.6",
     "radash": "^12.1.0",
     "react": "^18.3.1",
@@ -135,6 +138,7 @@
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.9",
     "commitizen": "^4.3.1",
+    "concurrently": "^9.1.2",
     "cz-conventional-changelog": "^3.3.0",
     "cz-customizable": "^7.4.0",
     "dayjs": "^1.11.10",

@@ -125,6 +125,42 @@ export const saveMessagesFile = async (data: MessagesType): Promise<boolean> => 
 };
 
 /**
+ * 批量保存所有翻译文件和消息定义
+ * 使用单一API调用减少服务器备份次数
+ */
+export const batchSaveFiles = async (
+  messagesData: MessagesType, 
+  translationsData: Record<SupportedLocales, TranslationType>
+): Promise<boolean> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/batch-save`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: messagesData,
+        translations: translationsData
+      })
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || '批量保存失败');
+    }
+    
+    // 更新缓存
+    cachedMessages = messagesData;
+    Object.keys(translationsData).forEach(lang => {
+      cachedTranslations[lang as SupportedLocales] = translationsData[lang as SupportedLocales];
+    });
+    
+    return true;
+  } catch (error) {
+    console.error('批量保存文件失败:', error);
+    return false;
+  }
+};
+
+/**
  * 清除缓存，强制从服务器重新加载
  */
 export const clearCache = (): void => {
