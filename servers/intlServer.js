@@ -83,9 +83,6 @@ const backupFile = (filePath) => {
 // 安全解析TypeScript文件
 const parseTypeScriptFile = (content) => {
 	try {
-		// 移除注释
-		content = content.replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, "");
-
 		// 提取 export default 后面的内容
 		const match = content.match(/export\s+default\s+(\{[\s\S]*?\});/);
 		if (!match || !match[1]) {
@@ -93,11 +90,15 @@ const parseTypeScriptFile = (content) => {
 		}
 
 		// 处理键名，确保是有效的 JSON
-		let jsonStr = match[1]
+		// 暂时移除注释，以便正确解析JSON
+		let processedContent = match[1].replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, "");
+
+		// 处理键名
+		let jsonStr = processedContent
 			// 处理单引号
 			.replace(/'/g, '"')
 			// 处理没有引号的键名
-			.replace(/([{,]\s*)([a-zA-Z0-9_]+)(\s*:)/g, '$1"$2"$3')
+			.replace(/([{,]\s*)([a-zA-Z0-9_\.\u4e00-\u9fa5]+)(\s*:)/g, '$1"$2"$3')
 			// 处理尾随逗号
 			.replace(/,(\s*[}\]])/g, "$1")
 			// 处理多行字符串
@@ -153,6 +154,7 @@ router.get("/locales/:locale", (req, res) => {
 
 		const content = fs.readFileSync(filePath, "utf8");
 		const data = parseTypeScriptFile(content);
+		console.log("翻译文件数据:", data);
 		return res.json(data);
 	} catch (error) {
 		console.error("读取翻译文件失败:", error);
@@ -170,7 +172,22 @@ router.post("/messages", (req, res) => {
 		// 备份整个locales目录
 		backupLocalesDir();
 
-		const content = `export default ${JSON.stringify(messagesData, null, 2)};`;
+		// 保持原始文件格式
+		let content = "";
+		if (fs.existsSync(filePath)) {
+			const originalContent = fs.readFileSync(filePath, "utf8");
+			const exportMatch = originalContent.match(/export\s+default\s+\{/);
+			if (exportMatch) {
+				// 保留文件开头部分包括注释
+				const prefix = originalContent.substring(0, exportMatch.index);
+				content = prefix + "export default " + JSON.stringify(messagesData, null, 2) + ";";
+			} else {
+				content = `export default ${JSON.stringify(messagesData, null, 2)};`;
+			}
+		} else {
+			content = `export default ${JSON.stringify(messagesData, null, 2)};`;
+		}
+
 		fs.writeFileSync(filePath, content, "utf8");
 		console.log("消息定义文件已更新");
 		res.json({ success: true });
@@ -195,7 +212,22 @@ router.post("/locales/:locale", (req, res) => {
 		// 备份整个locales目录
 		backupLocalesDir();
 
-		const content = `export default ${JSON.stringify(translationData, null, 2)};`;
+		// 保持原始文件格式
+		let content = "";
+		if (fs.existsSync(filePath)) {
+			const originalContent = fs.readFileSync(filePath, "utf8");
+			const exportMatch = originalContent.match(/export\s+default\s+\{/);
+			if (exportMatch) {
+				// 保留文件开头部分包括注释
+				const prefix = originalContent.substring(0, exportMatch.index);
+				content = prefix + "export default " + JSON.stringify(translationData, null, 2) + ";";
+			} else {
+				content = `export default ${JSON.stringify(translationData, null, 2)};`;
+			}
+		} else {
+			content = `export default ${JSON.stringify(translationData, null, 2)};`;
+		}
+
 		fs.writeFileSync(filePath, content, "utf8");
 		console.log(`${locale}翻译文件已更新`);
 		res.json({ success: true });
@@ -227,7 +259,23 @@ router.post("/batch-save", (req, res) => {
 		if (messages) {
 			const messagesFilePath = path.join(localesDir, "messages.ts");
 			console.log("批量保存: 保存messages到", messagesFilePath);
-			const messagesContent = `export default ${JSON.stringify(messages, null, 2)};`;
+
+			// 保持原始文件格式
+			let messagesContent = "";
+			if (fs.existsSync(messagesFilePath)) {
+				const originalContent = fs.readFileSync(messagesFilePath, "utf8");
+				const exportMatch = originalContent.match(/export\s+default\s+\{/);
+				if (exportMatch) {
+					// 保留文件开头部分包括注释
+					const prefix = originalContent.substring(0, exportMatch.index);
+					messagesContent = prefix + "export default " + JSON.stringify(messages, null, 2) + ";";
+				} else {
+					messagesContent = `export default ${JSON.stringify(messages, null, 2)};`;
+				}
+			} else {
+				messagesContent = `export default ${JSON.stringify(messages, null, 2)};`;
+			}
+
 			fs.writeFileSync(messagesFilePath, messagesContent, "utf8");
 			console.log("消息定义文件已更新");
 		}
@@ -239,7 +287,23 @@ router.post("/batch-save", (req, res) => {
 					const translationData = translations[locale];
 					const filePath = path.join(localesDir, `${locale}.ts`);
 					console.log(`批量保存: 保存${locale}翻译到`, filePath);
-					const content = `export default ${JSON.stringify(translationData, null, 2)};`;
+
+					// 保持原始文件格式
+					let content = "";
+					if (fs.existsSync(filePath)) {
+						const originalContent = fs.readFileSync(filePath, "utf8");
+						const exportMatch = originalContent.match(/export\s+default\s+\{/);
+						if (exportMatch) {
+							// 保留文件开头部分包括注释
+							const prefix = originalContent.substring(0, exportMatch.index);
+							content = prefix + "export default " + JSON.stringify(translationData, null, 2) + ";";
+						} else {
+							content = `export default ${JSON.stringify(translationData, null, 2)};`;
+						}
+					} else {
+						content = `export default ${JSON.stringify(translationData, null, 2)};`;
+					}
+
 					fs.writeFileSync(filePath, content, "utf8");
 					console.log(`${locale}翻译文件已更新`);
 				}

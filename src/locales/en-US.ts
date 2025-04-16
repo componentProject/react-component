@@ -41,6 +41,7 @@ export default {
 	"intl.button.export.excel": "Export Excel",
 	"intl.button.save.changes": "Save Changes",
 	"intl.button.refresh.data": "Refresh Data",
+	"intl.button.add.item": "Add Item",
 	"intl.message.save.success": "All changes have been saved to source code files",
 	"intl.message.refresh.success": "Data has been reloaded from source files",
 	国际化资源管理: "Internationalization Resource Management",

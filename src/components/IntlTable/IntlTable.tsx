@@ -205,6 +205,7 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 
 			// 获取消息定义
 			const messages = await getMessages();
+			console.log("messages", messages);
 			setMessagesData(messages);
 
 			// 获取各语言翻译
@@ -222,23 +223,59 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 
 			setLanguageFiles(langFiles);
 
+			// 收集所有语言文件中出现的ID，确保不遗漏任何ID
+			const allKeys = new Set<string>();
+
+			// 先添加messages中定义的所有key
+			Object.keys(messages).forEach((key) => allKeys.add(key));
+
+			// 然后添加各语言文件中可能存在但未在messages中定义的key
+			supportedLocales.forEach((locale) => {
+				Object.keys(langFiles[locale]).forEach((key) => allKeys.add(key));
+			});
+
 			// 组装表格数据
 			const tableData: TableRowData[] = [];
-			Object.keys(messages).forEach((key) => {
+			allKeys.forEach((key) => {
+				// 对于每个ID，创建一个行数据对象
 				const rowData: TableRowData = {
 					key,
 					id: key,
-					defaultMessage: messages[key].defaultMessage,
-					description: messages[key].description,
+					// 如果messages中存在该key，使用其defaultMessage，否则使用空字符串
+					defaultMessage: messages[key]?.defaultMessage || "",
+					// 如果messages中存在该key，使用其description，否则使用空字符串
+					description: messages[key]?.description || "",
 				};
 
+				// 如果该key在messages中不存在，将其添加到messagesData中
+				if (!messages[key]) {
+					// 尝试从语言文件中找到相应的文本作为默认值
+					let defaultText = "";
+					for (const locale of supportedLocales) {
+						if (langFiles[locale][key]) {
+							defaultText = langFiles[locale][key];
+							break;
+						}
+					}
+
+					// 将新的key添加到messagesData
+					setMessagesData((prev) => ({
+						...prev,
+						[key]: {
+							defaultMessage: defaultText,
+							description: "",
+						},
+					}));
+				}
+
+				// 设置每种语言的翻译
 				supportedLocales.forEach((lang) => {
 					rowData[lang] = langFiles[lang][key] || "";
 				});
 
 				tableData.push(rowData);
 			});
-
+			console.log("tableData", tableData);
 			setData(tableData);
 		} catch (error) {
 			console.error("Failed to load data:", error);
@@ -842,6 +879,43 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 		}
 	};
 
+	/**
+	 * 添加新的国际化条目
+	 */
+	const addNewItem = () => {
+		// 生成一个唯一的key，使用时间戳作为后缀
+		const newKey = `new.item.${Date.now()}`;
+
+		// 创建新条目
+		const newItem: TableRowData = {
+			key: newKey,
+			id: newKey,
+			defaultMessage: "",
+			description: "",
+		};
+
+		// 为每种语言添加空翻译
+		languages.forEach((lang) => {
+			newItem[lang] = "";
+		});
+
+		// 更新表格数据
+		const newData = [...data, newItem];
+		setData(newData);
+
+		// 更新消息定义
+		setMessagesData((prev) => ({
+			...prev,
+			[newKey]: {
+				defaultMessage: "",
+				description: "",
+			},
+		}));
+
+		// 立即进入编辑模式
+		setEditingKey(newKey);
+	};
+
 	return (
 		<div className="intl-table">
 			<Alert
@@ -896,9 +970,9 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 					</Button>
 					<Button
 						icon={<SyncOutlined />}
-						onClick={() => {
+						onClick={async () => {
 							clearCache();
-							fetchData();
+							await fetchData();
 							message.success(
 								intl.formatMessage({ id: "intl.message.refresh.success", defaultMessage: "已重新从源文件加载数据" }),
 							);
@@ -906,6 +980,9 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 						type="primary"
 					>
 						<FormattedMessage id="intl.button.refresh.data" defaultMessage="刷新数据" />
+					</Button>
+					<Button type="primary" onClick={addNewItem} disabled={loading || editingKey !== ""}>
+						<FormattedMessage id="intl.button.add.item" defaultMessage="添加条目" />
 					</Button>
 				</Space>
 			</div>

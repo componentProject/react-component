@@ -40,6 +40,7 @@ export default {
 	"intl.button.export.excel": "导出Excel",
 	"intl.button.save.changes": "保存更改",
 	"intl.button.refresh.data": "刷新数据",
+	"intl.button.add.item": "添加条目",
 	"intl.button.edit": "编辑",
 	"intl.button.save": "保存",
 	"intl.button.cancel": "取消",
