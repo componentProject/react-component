@@ -38,7 +38,7 @@
 		".storybook/.stories/**/*",
 	],
 	"exclude": [
-		"./server/*",
+		"./servers/*",
 		"src/**/__tests__/*"
 	]
 }

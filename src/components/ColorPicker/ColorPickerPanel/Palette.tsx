@@ -108,9 +108,7 @@ const Palette: FC<{
 			 */
 			onMouseDown={dragStartHandle}
 		>
-			/**
-			 * 渲染Transform组件
-			 */
+			/** * 渲染Transform组件 */
 			<Transform
 				/**
 				 * ref是Transform组件的ref对象
@@ -121,9 +119,7 @@ const Palette: FC<{
 				 */
 				offset={offset}
 			>
-				/**
-				 * 渲染Handler组件
-				 */
+				/** * 渲染Handler组件 */
 				<Handler color={color.toRgbString()} />
 			</Transform>
 			<div

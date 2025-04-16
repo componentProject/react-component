@@ -6,7 +6,7 @@
 /** 导入React相关依赖 */
 import React, { useState, useEffect } from "react";
 /** 导入antd组件 */
-import { Table, Button, Upload, message, Form, Alert, Space, Modal, Dropdown, Menu, Tooltip, Select } from "antd";
+import { Table, Button, Upload, message, Form, Alert, Space, Modal, Dropdown, Menu, Tooltip, Select, Progress } from "antd";
 /** 导入antd图标 */
 import { UploadOutlined, DownloadOutlined, SaveOutlined, SyncOutlined, TranslationOutlined } from "@ant-design/icons";
 /** 导入exceljs用于处理Excel文件 */
@@ -24,6 +24,8 @@ import {
 } from "@/locales";
 /** 导入可编辑单元格组件 */
 import { EditableCell } from "./EditableCell";
+/** 导入transformers.js */
+import { pipeline } from "@xenova/transformers";
 
 import Api from "@/api";
 
@@ -62,7 +64,7 @@ interface TableRowData {
  */
 enum TranslationApiType {
 	BAIDU = "baidu",
-	LOCAL = "local",
+	TRANSFORMERS = "transformers",
 }
 
 /**
@@ -99,6 +101,22 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 	const [translating, setTranslating] = useState<boolean>(false);
 	/** 定义翻译API类型 */
 	const [translationApiType, setTranslationApiType] = useState<TranslationApiType>(TranslationApiType.BAIDU);
+
+	/** 添加翻译确认弹窗状态 */
+	const [modalVisible, setModalVisible] = useState(false);
+	const [modalTranslationApiType, setModalTranslationApiType] = useState(translationApiType);
+	const [modalType, setModalType] = useState<"column" | "row" | null>(null);
+	const [modalData, setModalData] = useState<{
+		fromLang?: SupportedLocales;
+		toLang?: SupportedLocales;
+		key?: string;
+	}>({});
+	const [downloadProgress, setDownloadProgress] = useState(0);
+	const [isDownloading, setIsDownloading] = useState(false);
+	const [isTranslating, setIsTranslating] = useState(false);
+	const [translationProgress, setTranslationProgress] = useState(0);
+	const [translationTotal, setTranslationTotal] = useState(0);
+	const [translationCurrent, setTranslationCurrent] = useState(0);
 
 	/** 组件挂载时获取数据 */
 	useEffect(() => {
@@ -225,145 +243,76 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 	};
 
 	/**
-	 * @method translateText
-	 * @description 调用翻译API翻译文本
+	 * @method translateWithTransformers
+	 * @description 使用Transformers.js进行翻译
 	 * @param {string} text - 要翻译的文本
 	 * @param {string} fromLang - 源语言
 	 * @param {string} toLang - 目标语言
 	 * @returns {Promise<string>} - 翻译后的文本
 	 */
-	const translateText = async (text: string, fromLang: string, toLang: string): Promise<string> => {
-		// 使用本地翻译
-		console.log("translationApiType === TranslationApiType.LOCAL", translationApiType === TranslationApiType.LOCAL);
-		if (translationApiType === TranslationApiType.LOCAL) {
-			return mockTranslateText(text, fromLang, toLang);
-		}
-
-		// 使用百度翻译API
+	const translateWithTransformers = async (text: string, fromLang: string, toLang: string): Promise<string> => {
 		try {
-			const from = fromLang.slice(0, 2);
-			const to = toLang.slice(0, 2);
-			const data = await Api.translateApi.translate({
-				q: text,
-				from,
-				to,
-			});
-
-			console.log("data", data);
-			// 如果返回了错误码
-			if (data.error_code) {
-				console.error(`百度翻译API错误: ${data.error_code} - ${data.error_msg}`);
-				throw new Error(`翻译失败: ${data.error_msg}`);
-			} else {
-				console.log("百度翻译API返回:", data);
-				// 根据百度API返回格式提取翻译结果
-				if (data && data.trans_result && data.trans_result.length > 0) {
-					return data.trans_result[0].dst;
-				}
-			}
-		} catch (error: any) {
-			console.error("翻译API调用失败:", error);
-			message.error(`翻译API调用失败: ${error.message || "未知错误"}`);
-			return Promise.reject(error);
-			// 出错时使用模拟翻译
-			// return mockTranslateText(text, fromLang, toLang);
+			setIsDownloading(true);
+			const translator = await pipeline("translation", "Xenova/nllb-200-distilled-600M", {
+				quantized: true,
+				progress_callback: ({ progress }) => {
+					setDownloadProgress(progress);
+				},
+				model_url: "https://huggingface.co/Xenova/nllb-200-distilled-600M/resolve/main/onnx/encoder_model_quantized.onnx",
+				config_url: "https://huggingface.co/Xenova/nllb-200-distilled-600M/resolve/main/config.json",
+				tokenizer_url: "https://huggingface.co/Xenova/nllb-200-distilled-600M/resolve/main/tokenizer.json",
+			} as any);
+			const result = await translator(text, {
+				src_lang: fromLang.toUpperCase(),
+				tgt_lang: toLang.toUpperCase(),
+			} as any);
+			return (result as any)[0].translation_text;
+		} catch (error) {
+			console.error("Transformers.js translation failed:", error);
+			throw error;
+		} finally {
+			setIsDownloading(false);
+			setDownloadProgress(0);
 		}
 	};
 
-	// 添加一个示例用的轻量级翻译函数，不依赖外部API
-	const mockTranslateText = async (text: string, fromLang: string, toLang: string): Promise<string> => {
-		// 模拟翻译延迟
-		await new Promise((resolve) => setTimeout(resolve, 300));
+	/**
+	 * @method handleBaiduApiError
+	 * @description 处理百度翻译API错误，显示确认弹窗
+	 * @param {string} text - 要翻译的文本
+	 * @param {string} fromLang - 源语言
+	 * @param {string} toLang - 目标语言
+	 * @param {string} errorMsg - 错误信息
+	 * @returns {Promise<string>} - 翻译后的文本
+	 */
+	const handleBaiduApiError = (text: string, fromLang: string, toLang: string, errorMsg: string): Promise<string> => {
+		console.error("百度翻译API错误:", errorMsg);
 
-		// 简单的中英文互译示例
-		if (fromLang.includes("zh") && toLang.includes("en")) {
-			// 中文 -> 英文的简单映射
-			const zhToEn: Record<string, string> = {
-				你好: "Hello",
-				世界: "World",
-				按钮: "Button",
-				取消: "Cancel",
-				确认: "Confirm",
-				提交: "Submit",
-				保存: "Save",
-				删除: "Delete",
-				编辑: "Edit",
-				查询: "Query",
-				搜索: "Search",
-				用户: "User",
-				密码: "Password",
-				登录: "Login",
-				注册: "Register",
-			};
-
-			// 检查是否有完全匹配
-			if (zhToEn[text]) {
-				return zhToEn[text];
-			}
-
-			// 尝试部分匹配并替换
-			let result = text;
-			Object.keys(zhToEn).forEach((zh) => {
-				if (text.includes(zh)) {
-					result = result.replace(new RegExp(zh, "g"), zhToEn[zh]);
-				}
+		return new Promise((resolve, reject) => {
+			Modal.confirm({
+				title: "翻译API调用失败",
+				content: (
+					<div>
+						<p>百度翻译API调用失败，是否使用Transformers.js进行离线翻译？</p>
+						<p style={{ color: "#ff4d4f" }}>注意：首次使用需要下载模型，可能需要一些时间。</p>
+						<p style={{ color: "#ff4d4f" }}>错误信息: {errorMsg}</p>
+					</div>
+				),
+				okText: "使用Transformers.js",
+				cancelText: "取消",
+				onOk: async () => {
+					try {
+						const result = await translateWithTransformers(text, fromLang, toLang);
+						resolve(result);
+					} catch (error) {
+						reject(error);
+					}
+				},
+				onCancel: () => {
+					reject(new Error("用户取消使用Transformers.js翻译"));
+				},
 			});
-
-			if (result !== text) {
-				return result;
-			}
-
-			// 没有匹配，返回模拟翻译
-			return `${text} (Translated to English)`;
-		}
-
-		if (fromLang.includes("en") && toLang.includes("zh")) {
-			// 英文 -> 中文的简单映射
-			const enToZh: Record<string, string> = {
-				Hello: "你好",
-				World: "世界",
-				Button: "按钮",
-				Cancel: "取消",
-				Confirm: "确认",
-				Submit: "提交",
-				Save: "保存",
-				Delete: "删除",
-				Edit: "编辑",
-				Query: "查询",
-				Search: "搜索",
-				User: "用户",
-				Password: "密码",
-				Login: "登录",
-				Register: "注册",
-			};
-
-			// 检查是否有完全匹配（忽略大小写）
-			const lowerText = text.toLowerCase();
-			for (const en in enToZh) {
-				if (lowerText === en.toLowerCase()) {
-					return enToZh[en];
-				}
-			}
-
-			// 尝试部分匹配并替换
-			let result = text;
-			Object.keys(enToZh).forEach((en) => {
-				const regex = new RegExp(en, "gi");
-				if (regex.test(text)) {
-					result = result.replace(regex, enToZh[en]);
-				}
-			});
-
-			if (result !== text) {
-				return result;
-			}
-
-			// 没有匹配，返回模拟翻译
-			return `${text} (翻译成中文)`;
-		}
-
-		// 其他语言对返回模拟翻译
-		return `${text} (${toLang})`;
+		});
 	};
 
 	/**
@@ -372,89 +321,11 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 	 * @param {SupportedLocales} fromLang - 源语言
 	 * @param {SupportedLocales} toLang - 目标语言
 	 */
-	const translateColumn = async (fromLang: SupportedLocales, toLang: SupportedLocales) => {
-		Modal.confirm({
-			title: "翻译确认",
-			content: (
-				<>
-					<p>
-						确定要将 {fromLang} 列翻译成 {toLang} 吗？这将覆盖 {toLang} 列的现有空白内容。
-					</p>
-					<div style={{ marginTop: 10 }}>
-						<Form.Item label="选择翻译API" style={{ marginBottom: 0 }}>
-							<Select
-								value={translationApiType}
-								onChange={(value) => setTranslationApiType(value)}
-								style={{ width: 200 }}
-								options={[
-									{ value: TranslationApiType.BAIDU, label: "百度翻译API" },
-									{ value: TranslationApiType.LOCAL, label: "本地翻译库" },
-								]}
-							/>
-							{translationApiType === TranslationApiType.BAIDU ? (
-								<div style={{ fontSize: "12px", marginTop: 5 }}>使用百度翻译API（需要配置有效的API密钥）</div>
-							) : (
-								<div style={{ fontSize: "12px", marginTop: 5 }}>使用内置的本地翻译库（仅支持有限的词汇）</div>
-							)}
-						</Form.Item>
-					</div>
-				</>
-			),
-			onOk: async () => {
-				try {
-					setTranslating(true);
-
-					const newData = [...data];
-					const updatedLangFiles = { ...languageFiles };
-
-					// 翻译空白内容
-					for (let i = 0; i < newData.length; i++) {
-						const row = newData[i];
-						console.log("newData", row[fromLang], row[toLang]);
-						if (row[fromLang]) {
-							// if (!row[toLang] || row[toLang] === "") {
-							//
-							// }
-							// 调用翻译API
-							const translatedText = await translateText(row[fromLang], fromLang, toLang);
-							if (translatedText) {
-								row[toLang] = translatedText;
-							}
-
-							// 更新语言文件
-							if (updatedLangFiles[toLang]) {
-								updatedLangFiles[toLang][row.key] = translatedText;
-							}
-						}
-					}
-
-					// 更新状态
-					setData(newData);
-					setLanguageFiles(updatedLangFiles);
-
-					// 提示用户保存更改
-					Modal.confirm({
-						title: "翻译完成",
-						content: "是否立即保存更改到服务器？",
-						onOk: async () => {
-							const success = await saveAllFiles(updatedLangFiles, messagesData);
-							if (success) {
-								message.success(`已将翻译保存到服务器`);
-							}
-						},
-						okText: "保存",
-						cancelText: "稍后保存",
-					});
-
-					message.success(`已将 ${fromLang} 列翻译成 ${toLang}`);
-				} catch (error) {
-					console.error("翻译失败:", error);
-					message.error("翻译失败");
-				} finally {
-					setTranslating(false);
-				}
-			},
-		});
+	const translateColumn = (fromLang: SupportedLocales, toLang: SupportedLocales) => {
+		setModalType("column");
+		setModalData({ fromLang, toLang });
+		setModalTranslationApiType(translationApiType);
+		setModalVisible(true);
 	};
 
 	/**
@@ -464,75 +335,193 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 	 * @param {SupportedLocales} fromLang - 源语言
 	 * @param {SupportedLocales} toLang - 目标语言
 	 */
-	const translateRow = async (key: string, fromLang: SupportedLocales, toLang: SupportedLocales) => {
-		Modal.confirm({
-			title: "翻译确认",
-			content: (
-				<>
-					<p>
-						确定要将此条目从 {fromLang} 翻译成 {toLang} 吗？
-					</p>
-					<div style={{ marginTop: 10 }}>
-						<Form.Item label="选择翻译API" style={{ marginBottom: 0 }}>
-							<Select
-								value={translationApiType}
-								onChange={(value) => setTranslationApiType(value)}
-								style={{ width: 200 }}
-								options={[
-									{ value: TranslationApiType.BAIDU, label: "百度翻译API" },
-									{ value: TranslationApiType.LOCAL, label: "本地翻译库" },
-								]}
-							/>
-							{translationApiType === TranslationApiType.BAIDU ? (
-								<div style={{ fontSize: "12px", marginTop: 5 }}>使用百度翻译API（需要配置有效的API密钥）</div>
-							) : (
-								<div style={{ fontSize: "12px", marginTop: 5 }}>使用内置的本地翻译库（仅支持有限的词汇）</div>
-							)}
-						</Form.Item>
-					</div>
-				</>
-			),
-			onOk: async () => {
-				try {
-					setTranslating(true);
+	const translateRow = (key: string, fromLang: SupportedLocales, toLang: SupportedLocales) => {
+		setModalType("row");
+		setModalData({ key, fromLang, toLang });
+		setModalTranslationApiType(translationApiType);
+		setModalVisible(true);
+	};
 
-					const newData = [...data];
-					const rowIndex = newData.findIndex((item) => item.key === key);
+	const handleModalOk = async () => {
+		try {
+			if (modalTranslationApiType === TranslationApiType.TRANSFORMERS) {
+				setIsDownloading(true);
+				setIsTranslating(true);
+			} else {
+				setIsTranslating(true);
+			}
+			if (modalType === "column" && modalData.fromLang && modalData.toLang) {
+				const newData = [...data];
+				const updatedLangFiles = { ...languageFiles };
+				const totalItems = newData.filter((row) => row[modalData.fromLang!]).length;
+				setTranslationTotal(totalItems);
+				setTranslationCurrent(0);
 
-					if (rowIndex > -1) {
-						const row = newData[rowIndex];
-						if (row[fromLang]) {
-							// if(!row[toLang] || row[toLang] === ""){
-							//
-							// }
-							// 调用翻译API
-							const translatedText = await translateText(row[fromLang], fromLang, toLang);
-							row[toLang] = translatedText;
-
-							// 更新语言文件
-							const updatedLangFiles = { ...languageFiles };
-							if (updatedLangFiles[toLang]) {
-								updatedLangFiles[toLang][key] = translatedText;
-							}
-
-							// 更新状态
-							setData(newData);
-							setLanguageFiles(updatedLangFiles);
-
-							// 由于只是单个条目的翻译，直接显示提示，不弹出额外的保存确认框
-							message.success(`已翻译成 ${toLang}，可点击右上角"保存更改"按钮保存`);
-						} else {
-							message.warning("没有源文本或目标已有翻译");
+				// 翻译空白内容
+				for (let i = 0; i < newData.length; i++) {
+					const row = newData[i];
+					if (row[modalData.fromLang!]) {
+						const translatedText = await translateText(
+							row[modalData.fromLang!],
+							modalData.fromLang!,
+							modalData.toLang!,
+							modalTranslationApiType,
+						);
+						if (translatedText) {
+							row[modalData.toLang!] = translatedText;
 						}
+
+						// 更新语言文件
+						if (updatedLangFiles[modalData.toLang!]) {
+							updatedLangFiles[modalData.toLang!][row.key] = translatedText;
+						}
+
+						setTranslationCurrent((prev) => prev + 1);
+						setTranslationProgress(Math.round(((i + 1) / totalItems) * 100));
 					}
-				} catch (error) {
-					console.error("翻译失败:", error);
-					message.error("翻译失败");
-				} finally {
-					setTranslating(false);
 				}
-			},
-		});
+
+				// 更新状态
+				setData(newData);
+				setLanguageFiles(updatedLangFiles);
+
+				// 翻译完成后提示
+				Modal.confirm({
+					title: "翻译完成",
+					content: "是否立即保存更改到服务器？",
+					onOk: async () => {
+						const success = await saveAllFiles(updatedLangFiles, messagesData);
+						if (success) {
+							message.success(`已将翻译保存到服务器`);
+						}
+						setModalVisible(false);
+					},
+					onCancel: () => {
+						setModalVisible(false);
+					},
+					okText: "保存并关闭",
+					cancelText: "仅关闭",
+				});
+
+				message.success(`已将 ${modalData.fromLang} 列翻译成 ${modalData.toLang}`);
+			} else if (modalType === "row" && modalData.key && modalData.fromLang && modalData.toLang) {
+				const newData = [...data];
+				const rowIndex = newData.findIndex((item) => item.key === modalData.key);
+
+				if (rowIndex > -1) {
+					const row = newData[rowIndex];
+					if (row[modalData.fromLang]) {
+						setTranslationTotal(1);
+						setTranslationCurrent(0);
+						setTranslationProgress(0);
+
+						const translatedText = await translateText(
+							row[modalData.fromLang],
+							modalData.fromLang,
+							modalData.toLang,
+							modalTranslationApiType,
+						);
+						row[modalData.toLang] = translatedText;
+
+						setTranslationCurrent(1);
+						setTranslationProgress(100);
+
+						// 更新语言文件
+						const updatedLangFiles = { ...languageFiles };
+						if (updatedLangFiles[modalData.toLang]) {
+							updatedLangFiles[modalData.toLang][modalData.key] = translatedText;
+						}
+
+						// 更新状态
+						setData(newData);
+						setLanguageFiles(updatedLangFiles);
+
+						// 翻译完成后提示
+						Modal.confirm({
+							title: "翻译完成",
+							content: "是否立即保存更改到服务器？",
+							onOk: async () => {
+								const success = await saveAllFiles(updatedLangFiles, messagesData);
+								if (success) {
+									message.success(`已将翻译保存到服务器`);
+								}
+								setModalVisible(false);
+							},
+							onCancel: () => {
+								setModalVisible(false);
+							},
+							okText: "保存并关闭",
+							cancelText: "仅关闭",
+						});
+
+						message.success(`已翻译成 ${modalData.toLang}`);
+					} else {
+						message.warning("没有源文本或目标已有翻译");
+						setModalVisible(false);
+					}
+				}
+			}
+		} catch (error) {
+			console.error("翻译失败:", error);
+			message.error("翻译失败");
+			setModalVisible(false);
+		} finally {
+			setIsDownloading(false);
+			setIsTranslating(false);
+			setDownloadProgress(0);
+			setTranslationProgress(0);
+			setTranslationCurrent(0);
+			setTranslationTotal(0);
+		}
+	};
+
+	/**
+	 * @method translateText
+	 * @description 调用翻译API翻译文本
+	 * @param {string} text - 要翻译的文本
+	 * @param {string} fromLang - 源语言
+	 * @param {string} toLang - 目标语言
+	 * @param {TranslationApiType} apiType - 翻译API类型
+	 * @returns {Promise<string>} - 翻译后的文本
+	 */
+	const translateText = async (
+		text: string,
+		fromLang: string,
+		toLang: string,
+		apiType: TranslationApiType = translationApiType,
+	): Promise<string> => {
+		// 使用百度翻译API
+		if (apiType === TranslationApiType.BAIDU) {
+			try {
+				const from = fromLang.slice(0, 2);
+				const to = toLang.slice(0, 2);
+				const data = await Api.translateApi.translate({
+					q: text,
+					from,
+					to,
+				});
+
+				// 如果返回了错误码
+				if (data.error_code) {
+					return handleBaiduApiError(text, fromLang, toLang, `${data.error_code} - ${data.error_msg}`);
+				}
+
+				if (data && data.trans_result && data.trans_result.length > 0) {
+					return data.trans_result[0].dst;
+				}
+
+				return handleBaiduApiError(text, fromLang, toLang, "翻译结果为空");
+			} catch (error: any) {
+				return handleBaiduApiError(text, fromLang, toLang, error.message || "未知错误");
+			}
+		}
+
+		// 使用Transformers.js翻译
+		if (apiType === TranslationApiType.TRANSFORMERS) {
+			return translateWithTransformers(text, fromLang, toLang);
+		}
+
+		throw new Error("未知的翻译API类型");
 	};
 
 	/**
@@ -837,7 +826,10 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 				style={{ marginBottom: 16 }}
 			/>
 
-			<div className="intl-table-header" style={{ marginBottom: 16, display: "flex", justifyContent: "flex-end" }}>
+			<div
+				className="intl-table-header"
+				style={{ marginBottom: 16, display: "flex", justifyContent: "space-between", alignItems: "center" }}
+			>
 				<Space>
 					<Upload beforeUpload={importFromExcel} showUploadList={false} accept=".xlsx,.xls">
 						<Button icon={<UploadOutlined />} loading={loading}>
@@ -889,6 +881,72 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 					rowClassName="editable-row"
 				/>
 			</Form>
+
+			{/* 添加翻译确认弹窗 */}
+			<Modal
+				title="翻译确认"
+				open={modalVisible}
+				onOk={handleModalOk}
+				onCancel={() => {
+					if (!isTranslating && !isDownloading) {
+						setModalVisible(false);
+						setDownloadProgress(0);
+						setIsDownloading(false);
+						setIsTranslating(false);
+						setTranslationProgress(0);
+						setTranslationCurrent(0);
+						setTranslationTotal(0);
+					} else {
+						message.warning("正在翻译中，请等待完成");
+					}
+				}}
+				okText={isTranslating || isDownloading ? "处理中..." : "确定"}
+				cancelText="取消"
+				okButtonProps={{ disabled: isTranslating || isDownloading }}
+			>
+				<p>
+					{modalType === "column"
+						? `确定要将 ${modalData.fromLang} 列翻译成 ${modalData.toLang} 吗？这将覆盖 ${modalData.toLang} 列的现有空白内容。`
+						: `确定要将此条目从 ${modalData.fromLang} 翻译成 ${modalData.toLang} 吗？`}
+				</p>
+				<div style={{ marginTop: 10 }}>
+					<Form.Item label="选择翻译API" style={{ marginBottom: 0 }}>
+						<Select
+							value={modalTranslationApiType}
+							onChange={(value) => {
+								if (value === TranslationApiType.BAIDU || value === TranslationApiType.TRANSFORMERS) {
+									setModalTranslationApiType(value);
+								}
+							}}
+							style={{ width: 200 }}
+							options={[
+								{ value: TranslationApiType.BAIDU, label: "百度翻译API" },
+								{ value: TranslationApiType.TRANSFORMERS, label: "Transformers.js" },
+							]}
+							disabled={isTranslating || isDownloading}
+						/>
+						{modalTranslationApiType === TranslationApiType.BAIDU ? (
+							<div style={{ fontSize: "12px", marginTop: 5 }}>使用百度翻译API（需要配置有效的API密钥）</div>
+						) : (
+							<div style={{ fontSize: "12px", marginTop: 5 }}>使用Transformers.js离线翻译（首次使用需要下载模型）</div>
+						)}
+					</Form.Item>
+					{modalTranslationApiType === TranslationApiType.TRANSFORMERS && isDownloading && (
+						<div style={{ marginTop: 10 }}>
+							<div>正在下载模型...</div>
+							<Progress percent={downloadProgress} status="active" />
+						</div>
+					)}
+					{isTranslating && (
+						<div style={{ marginTop: 10 }}>
+							<div>
+								正在翻译... ({translationCurrent}/{translationTotal})
+							</div>
+							<Progress percent={translationProgress} status="active" />
+						</div>
+					)}
+				</div>
+			</Modal>
 		</div>
 	);
 };

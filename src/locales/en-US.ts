@@ -1,12 +1,12 @@
 export default {
-  "hello": "Hello`",
-  "welcome": "Welcome to the i18n Resource Manager1",
-  "save": "Save",
-  "cancel": "Cancel",
-  "inputYourPassword": "Please input your password!",
-  "inputYourUsername": "Please input your username!",
-  "password": "Password",
-  "rememberMe": "Remember Me",
-  "submit": "Submit",
-  "username": "Username <bbb>{name}</bbb>"
+	hello: "Hello`",
+	welcome: "Welcome to i18n Resource Manager 1",
+	save: "save",
+	cancel: "cancel",
+	inputYourPassword: "Please enter your password!",
+	inputYourUsername: "Please enter your username!",
+	password: "password",
+	rememberMe: "forget-me-not",
+	submit: "submit",
+	username: "Username<bbb>{name}</bbb>",
 };

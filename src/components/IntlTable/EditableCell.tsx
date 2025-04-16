@@ -3,8 +3,8 @@
  * @description 可编辑表格单元格组件
  */
 
-import React from 'react';
-import { Form, Input } from 'antd';
+import React from "react";
+import { Form, Input } from "antd";
 
 /**
  * @interface EditableCellProps
@@ -18,12 +18,12 @@ import { Form, Input } from 'antd';
  * @property {React.ReactNode} children - 子节点
  */
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
-  editing: boolean;
-  dataIndex: string;
-  title: string;
-  record: any;
-  index: number;
-  children: React.ReactNode;
+	editing: boolean;
+	dataIndex: string;
+	title: string;
+	record: any;
+	index: number;
+	children: React.ReactNode;
 }
 
 /**
@@ -33,34 +33,32 @@ interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
  * @returns {React.FC} 返回可编辑单元格组件
  */
 export const EditableCell: React.FC<EditableCellProps> = ({
-  editing,
-  dataIndex,
-  title,
-  record,
-  index,
-  children,
-  ...restProps
+	editing,
+	dataIndex,
+	title,
+	record,
+	index,
+	children,
+	...restProps
 }) => {
-  return (
-    <td {...restProps}>
-      {editing ? (
-        <Form.Item
-          name={dataIndex}
-          style={{ margin: 0 }}
-          rules={[
-            {
-              required: dataIndex === 'id',
-              message: `请输入 ${title}!`,
-            },
-          ]}
-        >
-          <Input.TextArea 
-            autoSize={{ minRows: 1, maxRows: 6 }}
-          />
-        </Form.Item>
-      ) : (
-        children
-      )}
-    </td>
-  );
-}; 
+	return (
+		<td {...restProps}>
+			{editing ? (
+				<Form.Item
+					name={dataIndex}
+					style={{ margin: 0 }}
+					rules={[
+						{
+							required: dataIndex === "id",
+							message: `请输入 ${title}!`,
+						},
+					]}
+				>
+					<Input.TextArea autoSize={{ minRows: 1, maxRows: 6 }} />
+				</Form.Item>
+			) : (
+				children
+			)}
+		</td>
+	);
+};

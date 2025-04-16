@@ -26,12 +26,12 @@ import type { propsType } from "./types";
 const CopyToClipboard: FC<PropsWithChildren<propsType>> = (props) => {
 	/** 解构props */
 	const {
-		text = "", /** 需要复制到剪贴板的文本 */
-		onCopy, /** 复制完成后的回调函数 */
-		debug, /** 是否在控制台中打印调试信息 */
-		message, /** 复制完成后的提示信息 */
-		format, /** 需要复制的格式 */
-		children, /** 传入的子元素 */
+		text = "" /** 需要复制到剪贴板的文本 */,
+		onCopy /** 复制完成后的回调函数 */,
+		debug /** 是否在控制台中打印调试信息 */,
+		message /** 复制完成后的提示信息 */,
+		format /** 需要复制的格式 */,
+		children /** 传入的子元素 */,
 	} = props;
 
 	/** 获取唯一的子元素 */

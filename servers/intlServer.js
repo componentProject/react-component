@@ -37,28 +37,28 @@ if (!fs.existsSync(localesDir)) {
 const backupLocalesDir = () => {
 	const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
 	const backupDir = path.join(backupBaseDir, `locales_bak_${timestamp}`);
-	
+
 	if (!fs.existsSync(backupDir)) {
 		fs.mkdirSync(backupDir, { recursive: true });
 	}
-	
+
 	if (fs.existsSync(localesDir)) {
 		// 读取locales目录中的所有文件
 		const files = fs.readdirSync(localesDir);
-		
+
 		// 复制每个文件到备份目录
 		for (const file of files) {
-			if (file.endsWith('.ts')) {
+			if (file.endsWith(".ts")) {
 				const srcPath = path.join(localesDir, file);
 				const destPath = path.join(backupDir, file);
 				fs.copyFileSync(srcPath, destPath);
 			}
 		}
-		
+
 		console.log(`已备份locales目录至: ${backupDir}`);
 		return backupDir;
 	}
-	
+
 	return null;
 };
 
@@ -67,11 +67,11 @@ const backupFile = (filePath) => {
 	// 创建带时间戳的备份目录
 	const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
 	const backupDir = path.join(backupBaseDir, `locales_bak_${timestamp}`);
-	
+
 	if (!fs.existsSync(backupDir)) {
 		fs.mkdirSync(backupDir, { recursive: true });
 	}
-	
+
 	if (fs.existsSync(filePath)) {
 		const fileName = path.basename(filePath);
 		const backupPath = path.join(backupDir, fileName);
@@ -82,15 +82,40 @@ const backupFile = (filePath) => {
 
 // 安全解析TypeScript文件
 const parseTypeScriptFile = (content) => {
-	const match = content.match(/export default (\{[\s\S]*?\});/);
-	if (match && match[1]) {
-		try {
-			return JSON.parse(match[1].replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":'));
-		} catch (error) {
-			throw new Error("解析文件失败");
+	try {
+		// 移除注释
+		content = content.replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, "");
+
+		// 提取 export default 后面的内容
+		const match = content.match(/export\s+default\s+(\{[\s\S]*?\});/);
+		if (!match || !match[1]) {
+			throw new Error("无法找到 export default 对象");
 		}
+
+		// 处理键名，确保是有效的 JSON
+		let jsonStr = match[1]
+			// 处理单引号
+			.replace(/'/g, '"')
+			// 处理没有引号的键名
+			.replace(/([{,]\s*)([a-zA-Z0-9_]+)(\s*:)/g, '$1"$2"$3')
+			// 处理尾随逗号
+			.replace(/,(\s*[}\]])/g, "$1")
+			// 处理多行字符串
+			.replace(/`([^`]*)`/g, '"$1"');
+
+		// 尝试解析 JSON
+		try {
+			return JSON.parse(jsonStr);
+		} catch (jsonError) {
+			console.error("JSON 解析错误:", jsonError);
+			console.error("解析的字符串:", jsonStr);
+			throw new Error("JSON 解析失败");
+		}
+	} catch (error) {
+		console.error("文件解析错误:", error);
+		console.error("文件内容:", content);
+		throw new Error("解析文件失败: " + error.message);
 	}
-	throw new Error("无法提取数据");
 };
 
 // 创建Express路由
@@ -194,10 +219,10 @@ router.get("/locales", (req, res) => {
 router.post("/batch-save", (req, res) => {
 	try {
 		const { messages, translations } = req.body;
-		
+
 		// 首先执行一次备份，确保在所有更改之前备份
 		backupLocalesDir();
-		
+
 		// 保存messages数据（如果提供了）
 		if (messages) {
 			const messagesFilePath = path.join(localesDir, "messages.ts");
@@ -206,9 +231,9 @@ router.post("/batch-save", (req, res) => {
 			fs.writeFileSync(messagesFilePath, messagesContent, "utf8");
 			console.log("消息定义文件已更新");
 		}
-		
+
 		// 保存各语言的翻译数据（如果提供了）
-		if (translations && typeof translations === 'object') {
+		if (translations && typeof translations === "object") {
 			for (const locale in translations) {
 				if (Object.prototype.hasOwnProperty.call(translations, locale) && locale.match(/^[a-zA-Z0-9-]+$/)) {
 					const translationData = translations[locale];
@@ -220,7 +245,7 @@ router.post("/batch-save", (req, res) => {
 				}
 			}
 		}
-		
+
 		res.json({ success: true });
 	} catch (error) {
 		console.error("批量保存翻译文件失败:", error);
