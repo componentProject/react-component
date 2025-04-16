@@ -6,7 +6,8 @@
 /** 导入React相关依赖 */
 import React, { useState, useEffect } from "react";
 /** 导入antd组件 */
-import { Table, Button, Upload, message, Form, Alert, Space, Modal, Dropdown, Menu, Tooltip, Select, Progress } from "antd";
+import { Table, Button, Upload, message, Form, Alert, Space, Modal, Dropdown, Tooltip, Select, Progress } from "antd";
+import type { MenuProps } from "antd";
 /** 导入antd图标 */
 import { UploadOutlined, DownloadOutlined, SaveOutlined, SyncOutlined, TranslationOutlined } from "@ant-design/icons";
 /** 导入exceljs用于处理Excel文件 */
@@ -26,7 +27,7 @@ import {
 import { EditableCell } from "./EditableCell";
 /** 导入transformers.js */
 import { pipeline } from "@xenova/transformers";
-
+import { useIntl, FormattedMessage } from "react-intl";
 import Api from "@/api";
 
 /**
@@ -48,7 +49,7 @@ interface IntlTableProps {
  * @property {string} id - 消息ID
  * @property {string} defaultMessage - 默认消息文本
  * @property {string} description - 消息描述
- * @property {string} [key: string] - 动态语言键值对
+ * @property {string} key - 动态语言键值对
  */
 interface TableRowData {
 	key: string;
@@ -74,6 +75,13 @@ enum TranslationApiType {
  * 依赖node服务才能同步修改本地src/locales下文件
  */
 const IntlTable: React.FC<IntlTableProps> = (props) => {
+	const intl = useIntl();
+
+	// 翻译函数
+	const formatMessage = (id: string, defaultMessage: string, values?: Record<string, any>) => {
+		return intl.formatMessage({ id, defaultMessage }, values);
+	};
+
 	/** 使用Form.useForm创建表单实例 */
 	const [form] = Form.useForm();
 
@@ -97,14 +105,12 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 	/** 定义支持的语言列表状态 */
 	const [languages, setLanguages] = useState<SupportedLocales[]>(props.languages || ["zh-CN", "en-US"]);
 
-	/** 定义翻译加载状态 */
-	const [translating, setTranslating] = useState<boolean>(false);
-	/** 定义翻译API类型 */
-	const [translationApiType, setTranslationApiType] = useState<TranslationApiType>(TranslationApiType.BAIDU);
+	/** 定义翻译API类型的默认值 */
+	const defaultApiType = TranslationApiType.BAIDU;
 
 	/** 添加翻译确认弹窗状态 */
 	const [modalVisible, setModalVisible] = useState(false);
-	const [modalTranslationApiType, setModalTranslationApiType] = useState(translationApiType);
+	const [modalTranslationApiType, setModalTranslationApiType] = useState(defaultApiType);
 	const [modalType, setModalType] = useState<"column" | "row" | null>(null);
 	const [modalData, setModalData] = useState<{
 		fromLang?: SupportedLocales;
@@ -173,7 +179,7 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 
 				// 保存到服务器
 				await saveAllFiles(updatedLangFiles, updatedMessagesData);
-				message.success("更新成功");
+				message.success(formatMessage("intl.message.update.success", "更新成功"));
 			} else {
 				newData.push(row);
 				setData(newData);
@@ -181,7 +187,7 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 			}
 		} catch (errInfo) {
 			console.log("Validate Failed:", errInfo);
-			message.error("保存失败");
+			message.error(formatMessage("intl.message.save.failed", "保存失败"));
 		}
 	};
 
@@ -236,7 +242,7 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 			setData(tableData);
 		} catch (error) {
 			console.error("Failed to load data:", error);
-			message.error("加载数据失败");
+			message.error(formatMessage("intl.message.load.failed", "加载数据失败"));
 		} finally {
 			setLoading(false);
 		}
@@ -269,7 +275,8 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 			return (result as any)[0].translation_text;
 		} catch (error) {
 			console.error("Transformers.js translation failed:", error);
-			throw error;
+			message.error(formatMessage("intl.message.transformers.error", "Transformers.js 翻译失败"));
+			return text; // 翻译失败时返回原文本
 		} finally {
 			setIsDownloading(false);
 			setDownloadProgress(0);
@@ -290,26 +297,34 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 
 		return new Promise((resolve, reject) => {
 			Modal.confirm({
-				title: "翻译API调用失败",
+				title: formatMessage("intl.modal.baidu.api.error.title", "翻译API调用失败"),
 				content: (
 					<div>
-						<p>百度翻译API调用失败，是否使用Transformers.js进行离线翻译？</p>
-						<p style={{ color: "#ff4d4f" }}>注意：首次使用需要下载模型，可能需要一些时间。</p>
-						<p style={{ color: "#ff4d4f" }}>错误信息: {errorMsg}</p>
+						<p>
+							{formatMessage("intl.modal.baidu.api.error.content", "百度翻译API调用失败，是否使用Transformers.js进行离线翻译？")}
+						</p>
+						<p style={{ color: "#ff4d4f" }}>
+							{formatMessage("intl.modal.baidu.api.error.warning", "注意：首次使用需要下载模型，可能需要一些时间。")}
+						</p>
+						<p style={{ color: "#ff4d4f" }}>
+							{formatMessage("intl.modal.baidu.api.error.message", "错误信息: {errorMsg}", { errorMsg })}
+						</p>
 					</div>
 				),
-				okText: "使用Transformers.js",
-				cancelText: "取消",
+				okText: formatMessage("intl.modal.baidu.api.error.use.transformers", "使用Transformers.js"),
+				cancelText: formatMessage("intl.button.cancel", "取消"),
 				onOk: async () => {
 					try {
 						const result = await translateWithTransformers(text, fromLang, toLang);
 						resolve(result);
 					} catch (error) {
+						message.error(formatMessage("intl.message.transformers.error", "Transformers.js 翻译失败"));
 						reject(error);
 					}
 				},
 				onCancel: () => {
-					reject(new Error("用户取消使用Transformers.js翻译"));
+					message.info(formatMessage("intl.modal.baidu.api.error.user.cancel", "用户取消使用Transformers.js翻译"));
+					reject(formatMessage("intl.modal.baidu.api.error.user.cancel", "用户取消使用Transformers.js翻译"));
 				},
 			});
 		});
@@ -324,7 +339,7 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 	const translateColumn = (fromLang: SupportedLocales, toLang: SupportedLocales) => {
 		setModalType("column");
 		setModalData({ fromLang, toLang });
-		setModalTranslationApiType(translationApiType);
+		setModalTranslationApiType(modalTranslationApiType);
 		setModalVisible(true);
 	};
 
@@ -338,7 +353,7 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 	const translateRow = (key: string, fromLang: SupportedLocales, toLang: SupportedLocales) => {
 		setModalType("row");
 		setModalData({ key, fromLang, toLang });
-		setModalTranslationApiType(translationApiType);
+		setModalTranslationApiType(modalTranslationApiType);
 		setModalVisible(true);
 	};
 
@@ -387,23 +402,28 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 
 				// 翻译完成后提示
 				Modal.confirm({
-					title: "翻译完成",
-					content: "是否立即保存更改到服务器？",
+					title: formatMessage("intl.modal.translate.completed", "翻译完成"),
+					content: formatMessage("intl.modal.translate.save.confirm", "是否立即保存更改到服务器？"),
 					onOk: async () => {
 						const success = await saveAllFiles(updatedLangFiles, messagesData);
 						if (success) {
-							message.success(`已将翻译保存到服务器`);
+							message.success(formatMessage("intl.message.translate.save.success", "已将翻译保存到服务器"));
 						}
 						setModalVisible(false);
 					},
 					onCancel: () => {
 						setModalVisible(false);
 					},
-					okText: "保存并关闭",
-					cancelText: "仅关闭",
+					okText: formatMessage("intl.modal.save.and.close", "保存并关闭"),
+					cancelText: formatMessage("intl.modal.close.only", "仅关闭"),
 				});
 
-				message.success(`已将 ${modalData.fromLang} 列翻译成 ${modalData.toLang}`);
+				message.success(
+					formatMessage("intl.message.translate.column.success", "已将 {fromLang} 列翻译成 {toLang}", {
+						fromLang: modalData.fromLang,
+						toLang: modalData.toLang,
+					}),
+				);
 			} else if (modalType === "row" && modalData.key && modalData.fromLang && modalData.toLang) {
 				const newData = [...data];
 				const rowIndex = newData.findIndex((item) => item.key === modalData.key);
@@ -438,32 +458,34 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 
 						// 翻译完成后提示
 						Modal.confirm({
-							title: "翻译完成",
-							content: "是否立即保存更改到服务器？",
+							title: formatMessage("intl.modal.translate.completed", "翻译完成"),
+							content: formatMessage("intl.modal.translate.save.confirm", "是否立即保存更改到服务器？"),
 							onOk: async () => {
 								const success = await saveAllFiles(updatedLangFiles, messagesData);
 								if (success) {
-									message.success(`已将翻译保存到服务器`);
+									message.success(formatMessage("intl.message.translate.save.success", "已将翻译保存到服务器"));
 								}
 								setModalVisible(false);
 							},
 							onCancel: () => {
 								setModalVisible(false);
 							},
-							okText: "保存并关闭",
-							cancelText: "仅关闭",
+							okText: formatMessage("intl.modal.save.and.close", "保存并关闭"),
+							cancelText: formatMessage("intl.modal.close.only", "仅关闭"),
 						});
 
-						message.success(`已翻译成 ${modalData.toLang}`);
+						message.success(
+							formatMessage("intl.message.translate.row.success", "已翻译成 {toLang}", { toLang: modalData.toLang }),
+						);
 					} else {
-						message.warning("没有源文本或目标已有翻译");
+						message.warning(formatMessage("intl.message.translate.no.source", "没有源文本或目标已有翻译"));
 						setModalVisible(false);
 					}
 				}
 			}
 		} catch (error) {
 			console.error("翻译失败:", error);
-			message.error("翻译失败");
+			message.error(formatMessage("intl.message.translate.failed", "翻译失败"));
 			setModalVisible(false);
 		} finally {
 			setIsDownloading(false);
@@ -488,7 +510,7 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 		text: string,
 		fromLang: string,
 		toLang: string,
-		apiType: TranslationApiType = translationApiType,
+		apiType: TranslationApiType = defaultApiType,
 	): Promise<string> => {
 		// 使用百度翻译API
 		if (apiType === TranslationApiType.BAIDU) {
@@ -521,50 +543,52 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 			return translateWithTransformers(text, fromLang, toLang);
 		}
 
-		throw new Error("未知的翻译API类型");
+		// 如果传入了未知的API类型
+		message.error(formatMessage("intl.error.unknown.api.type", "未知的翻译API类型"));
+		return text; // 返回原文本
 	};
 
 	/**
 	 * 创建翻译菜单
 	 * @param {SupportedLocales} fromLang - 源语言
-	 * @returns {JSX.Element} - 翻译菜单
+	 * @returns {MenuProps} - 翻译菜单配置
 	 */
-	const renderTranslateMenu = (fromLang: SupportedLocales) => {
-		const items = languages
+	const renderTranslateMenu = (fromLang: SupportedLocales): MenuProps => {
+		const menuItems = languages
 			.filter((lang) => lang !== fromLang)
 			.map((lang) => ({
 				key: lang,
-				label: `翻译成 ${lang}`,
+				label: intl.formatMessage({ id: "intl.menu.translate.to", defaultMessage: "翻译成 {lang}" }, { lang }),
 				onClick: () => translateColumn(fromLang, lang),
 			}));
 
-		return <Menu items={items} />;
+		return { items: menuItems };
 	};
 
 	/**
 	 * 创建行翻译菜单
 	 * @param {string} rowKey - 行键
 	 * @param {SupportedLocales} fromLang - 源语言
-	 * @returns {JSX.Element} - 翻译菜单
+	 * @returns {MenuProps} - 翻译菜单配置
 	 */
-	const renderRowTranslateMenu = (rowKey: string, fromLang: SupportedLocales) => {
-		const items = languages
+	const renderRowTranslateMenu = (rowKey: string, fromLang: SupportedLocales): MenuProps => {
+		const menuItems = languages
 			.filter((lang) => lang !== fromLang)
 			.map((lang) => ({
 				key: lang,
-				label: `翻译成 ${lang}`,
+				label: intl.formatMessage({ id: "intl.menu.translate.to", defaultMessage: "翻译成 {lang}" }, { lang }),
 				onClick: () => translateRow(rowKey, fromLang, lang),
 			}));
 
-		return <Menu items={items} />;
+		return { items: menuItems };
 	};
 
 	/**
-	 * @type {Array<ColumnType<TableRowData>>} columns - 表格列定义
+	 * @type {Array<any>} columns - 表格列定义，扩展了antd列类型，添加了editable属性
 	 */
-	const columns = [
+	const columns: any[] = [
 		{
-			title: "ID",
+			title: <FormattedMessage id="intl.table.column.id" defaultMessage="ID" />,
 			dataIndex: "id",
 			key: "id",
 			width: 200,
@@ -572,14 +596,14 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 			sorter: (a: TableRowData, b: TableRowData) => a.id.localeCompare(b.id),
 		},
 		{
-			title: "默认文本",
+			title: <FormattedMessage id="intl.table.column.defaultMessage" defaultMessage="默认文本" />,
 			dataIndex: "defaultMessage",
 			key: "defaultMessage",
 			width: 200,
 			editable: true,
 		},
 		{
-			title: "描述",
+			title: <FormattedMessage id="intl.table.column.description" defaultMessage="描述" />,
 			dataIndex: "description",
 			key: "description",
 			width: 300,
@@ -589,9 +613,14 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 			title: (
 				<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
 					<span>{lang}</span>
-					<Dropdown overlay={renderTranslateMenu(lang)} trigger={["click"]} disabled={translating}>
-						<Tooltip title={`批量翻译 ${lang} 列`}>
-							<Button type="text" size="small" icon={<TranslationOutlined />} loading={translating} />
+					<Dropdown menu={renderTranslateMenu(lang)} trigger={["click"]} disabled={isTranslating}>
+						<Tooltip
+							title={intl.formatMessage(
+								{ id: "intl.table.column.translate.tooltip", defaultMessage: "批量翻译 {lang} 列" },
+								{ lang },
+							)}
+						>
+							<Button type="text" size="small" icon={<TranslationOutlined />} loading={isTranslating} />
 						</Tooltip>
 					</Dropdown>
 				</div>
@@ -606,11 +635,11 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 						<span>{text}</span>
 						{text && !isEditing(record) && (
 							<Dropdown
-								overlay={renderRowTranslateMenu(record.key, lang)}
+								menu={renderRowTranslateMenu(record.key, lang)}
 								trigger={["click"]}
-								disabled={translating || editingKey !== ""}
+								disabled={isTranslating || editingKey !== ""}
 							>
-								<Button type="text" size="small" icon={<TranslationOutlined />} loading={translating} />
+								<Button type="text" size="small" icon={<TranslationOutlined />} loading={isTranslating} />
 							</Dropdown>
 						)}
 					</div>
@@ -618,7 +647,7 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 			},
 		})),
 		{
-			title: "操作",
+			title: <FormattedMessage id="intl.table.column.operation" defaultMessage="操作" />,
 			dataIndex: "operation",
 			width: 150,
 			render: (_: any, record: TableRowData) => {
@@ -626,15 +655,15 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 				return editable ? (
 					<span>
 						<Button type="link" onClick={() => save(record.key)} style={{ marginRight: 8 }}>
-							保存
+							<FormattedMessage id="intl.button.save" defaultMessage="保存" />
 						</Button>
 						<Button type="link" onClick={cancel}>
-							取消
+							<FormattedMessage id="intl.button.cancel" defaultMessage="取消" />
 						</Button>
 					</span>
 				) : (
 					<Button type="link" disabled={editingKey !== ""} onClick={() => edit(record)}>
-						编辑
+						<FormattedMessage id="intl.button.edit" defaultMessage="编辑" />
 					</Button>
 				);
 			},
@@ -642,9 +671,9 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 	];
 
 	/**
-	 * @type {Array<ColumnType<TableRowData>>} mergedColumns - 合并后的表格列定义
+	 * @type {Array<any>} mergedColumns - 合并后的表格列定义
 	 */
-	const mergedColumns = columns.map((col: any) => {
+	const mergedColumns: any[] = columns.map((col: any) => {
 		if (!col.editable) {
 			return col;
 		}
@@ -667,13 +696,13 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 		try {
 			setLoading(true);
 			const workbook = new Workbook();
-			const worksheet = workbook.addWorksheet("国际化数据");
+			const excelWorksheet = workbook.addWorksheet(formatMessage("intl.excel.sheet.name", "国际化数据"));
 
 			// 设置列标题
-			worksheet.columns = [
-				{ header: "ID", key: "id", width: 30 },
-				{ header: "默认文本", key: "defaultMessage", width: 30 },
-				{ header: "描述", key: "description", width: 50 },
+			excelWorksheet.columns = [
+				{ header: formatMessage("intl.table.column.id", "ID"), key: "id", width: 30 },
+				{ header: formatMessage("intl.table.column.defaultMessage", "默认文本"), key: "defaultMessage", width: 30 },
+				{ header: formatMessage("intl.table.column.description", "描述"), key: "description", width: 50 },
 				...languages.map((lang) => ({
 					header: lang,
 					key: lang,
@@ -682,10 +711,10 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 			];
 
 			// 添加数据行
-			worksheet.addRows(data);
+			excelWorksheet.addRows(data);
 
 			// 设置表头样式
-			const headerRow = worksheet.getRow(1);
+			const headerRow = excelWorksheet.getRow(1);
 			headerRow.eachCell((cell) => {
 				cell.font = { bold: true };
 				cell.fill = {
@@ -701,12 +730,12 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 			const url = window.URL.createObjectURL(blob);
 			const link = document.createElement("a");
 			link.href = url;
-			link.download = "国际化数据.xlsx";
+			link.download = formatMessage("intl.excel.file.name", "国际化数据.xlsx");
 			link.click();
 			window.URL.revokeObjectURL(url);
 		} catch (error) {
-			console.error("导出Excel失败:", error);
-			message.error("导出Excel失败");
+			console.error(formatMessage("intl.error.export.excel", "导出Excel失败:"), error);
+			message.error(formatMessage("intl.message.export.failed", "导出Excel失败"));
 		} finally {
 			setLoading(false);
 		}
@@ -723,21 +752,23 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 			const workbook = new Workbook();
 			const arrayBuffer = await file.arrayBuffer();
 			await workbook.xlsx.load(arrayBuffer);
-			const worksheet = workbook.getWorksheet(1);
+			const excelWorksheet = workbook.getWorksheet(1);
 
-			if (!worksheet) {
-				throw new Error("无法读取Excel文件");
+			if (!excelWorksheet) {
+				message.error(formatMessage("intl.error.excel.read", "无法读取Excel文件"));
+				return;
 			}
 
 			// 获取列标题
-			const headers = worksheet.getRow(1).values as string[];
+			const headers = excelWorksheet.getRow(1).values as string[];
 			const idIndex = headers.indexOf("ID");
 			const defaultMessageIndex = headers.indexOf("默认文本");
 			const descriptionIndex = headers.indexOf("描述");
 			const langIndices = languages.map((lang) => headers.indexOf(lang));
 
 			if (idIndex === -1 || defaultMessageIndex === -1) {
-				throw new Error("Excel文件格式不正确");
+				message.error(formatMessage("intl.error.excel.format", "Excel文件格式不正确"));
+				return;
 			}
 
 			// 解析数据
@@ -747,7 +778,7 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 				newLangFiles[lang] = {};
 			});
 
-			worksheet.eachRow((row, rowNumber) => {
+			excelWorksheet.eachRow((row, rowNumber) => {
 				if (rowNumber === 1) return; // 跳过表头
 
 				const values = row.values as string[];
@@ -774,11 +805,11 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 
 			// 保存数据
 			await saveAllFiles(newLangFiles, newMessagesData);
-			message.success("导入成功");
+			message.success(formatMessage("intl.message.import.success", "导入成功"));
 			await fetchData();
 		} catch (error) {
-			console.error("导入Excel失败:", error);
-			message.error("导入Excel失败");
+			console.error(formatMessage("intl.error.import.excel", "导入Excel失败:"), error);
+			message.error(formatMessage("intl.message.import.failed", "导入Excel失败"));
 		} finally {
 			setLoading(false);
 		}
@@ -804,8 +835,8 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 			setLoading(false);
 			return success;
 		} catch (error) {
-			console.error("Failed to save files:", error);
-			message.error("保存文件失败");
+			console.error(formatMessage("intl.error.save.files", "保存文件失败:"), error);
+			message.error(formatMessage("intl.message.save.files.failed", "保存文件失败"));
 			setLoading(false);
 			return false;
 		}
@@ -814,11 +845,21 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 	return (
 		<div className="intl-table">
 			<Alert
-				message="国际化资源管理"
+				message={<FormattedMessage id="intl.management.title" defaultMessage="国际化资源管理" />}
 				description={
 					<div>
-						<p>通过此表格可以管理多语言翻译资源，支持编辑、导入、导出功能。</p>
-						<p>修改会保存到对应的语言文件中，以便在应用中使用。</p>
+						<p>
+							<FormattedMessage
+								id="intl.management.description"
+								defaultMessage="通过此表格可以管理多语言翻译资源，支持编辑、导入、导出功能。"
+							/>
+						</p>
+						<p>
+							<FormattedMessage
+								id="intl.management.save.description"
+								defaultMessage="修改会保存到对应的语言文件中，以便在应用中使用。"
+							/>
+						</p>
 					</div>
 				}
 				type="info"
@@ -833,34 +874,38 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 				<Space>
 					<Upload beforeUpload={importFromExcel} showUploadList={false} accept=".xlsx,.xls">
 						<Button icon={<UploadOutlined />} loading={loading}>
-							导入Excel
+							<FormattedMessage id="intl.button.import.excel" defaultMessage="导入Excel" />
 						</Button>
 					</Upload>
 					<Button icon={<DownloadOutlined />} onClick={exportToExcel} loading={loading}>
-						导出Excel
+						<FormattedMessage id="intl.button.export.excel" defaultMessage="导出Excel" />
 					</Button>
 					<Button
 						icon={<SaveOutlined />}
 						onClick={async () => {
 							const success = await saveAllFiles(languageFiles, messagesData);
 							if (success) {
-								message.success("已保存所有更改到源代码文件");
+								message.success(
+									intl.formatMessage({ id: "intl.message.save.success", defaultMessage: "已保存所有更改到源代码文件" }),
+								);
 							}
 						}}
 						disabled={loading}
 					>
-						保存更改
+						<FormattedMessage id="intl.button.save.changes" defaultMessage="保存更改" />
 					</Button>
 					<Button
 						icon={<SyncOutlined />}
 						onClick={() => {
 							clearCache();
 							fetchData();
-							message.success("已重新从源文件加载数据");
+							message.success(
+								intl.formatMessage({ id: "intl.message.refresh.success", defaultMessage: "已重新从源文件加载数据" }),
+							);
 						}}
 						type="primary"
 					>
-						刷新数据
+						<FormattedMessage id="intl.button.refresh.data" defaultMessage="刷新数据" />
 					</Button>
 				</Space>
 			</div>
@@ -884,7 +929,7 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 
 			{/* 添加翻译确认弹窗 */}
 			<Modal
-				title="翻译确认"
+				title={<FormattedMessage id="intl.modal.translate.confirm.title" defaultMessage="翻译确认" />}
 				open={modalVisible}
 				onOk={handleModalOk}
 				onCancel={() => {
@@ -897,20 +942,38 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 						setTranslationCurrent(0);
 						setTranslationTotal(0);
 					} else {
-						message.warning("正在翻译中，请等待完成");
+						message.warning(intl.formatMessage({ id: "intl.modal.translate.warning", defaultMessage: "正在翻译中，请等待完成" }));
 					}
 				}}
-				okText={isTranslating || isDownloading ? "处理中..." : "确定"}
-				cancelText="取消"
+				okText={
+					isTranslating || isDownloading ? (
+						<FormattedMessage id="intl.modal.translate.button.processing" defaultMessage="处理中..." />
+					) : (
+						<FormattedMessage id="intl.modal.translate.button.confirm" defaultMessage="确定" />
+					)
+				}
+				cancelText={<FormattedMessage id="intl.modal.translate.button.cancel" defaultMessage="取消" />}
 				okButtonProps={{ disabled: isTranslating || isDownloading }}
 			>
 				<p>
 					{modalType === "column"
-						? `确定要将 ${modalData.fromLang} 列翻译成 ${modalData.toLang} 吗？这将覆盖 ${modalData.toLang} 列的现有空白内容。`
-						: `确定要将此条目从 ${modalData.fromLang} 翻译成 ${modalData.toLang} 吗？`}
+						? intl.formatMessage(
+								{
+									id: "intl.modal.translate.column.confirm",
+									defaultMessage: "确定要将 {fromLang} 列翻译成 {toLang} 吗？这将覆盖 {toLang} 列的现有空白内容。",
+								},
+								{ fromLang: modalData.fromLang, toLang: modalData.toLang },
+							)
+						: intl.formatMessage(
+								{ id: "intl.modal.translate.row.confirm", defaultMessage: "确定要将此条目从 {fromLang} 翻译成 {toLang} 吗？" },
+								{ fromLang: modalData.fromLang, toLang: modalData.toLang },
+							)}
 				</p>
 				<div style={{ marginTop: 10 }}>
-					<Form.Item label="选择翻译API" style={{ marginBottom: 0 }}>
+					<Form.Item
+						label={intl.formatMessage({ id: "intl.modal.translate.api.select", defaultMessage: "选择翻译API" })}
+						style={{ marginBottom: 0 }}
+					>
 						<Select
 							value={modalTranslationApiType}
 							onChange={(value) => {
@@ -920,27 +983,49 @@ const IntlTable: React.FC<IntlTableProps> = (props) => {
 							}}
 							style={{ width: 200 }}
 							options={[
-								{ value: TranslationApiType.BAIDU, label: "百度翻译API" },
-								{ value: TranslationApiType.TRANSFORMERS, label: "Transformers.js" },
+								{
+									value: TranslationApiType.BAIDU,
+									label: intl.formatMessage({ id: "intl.modal.translate.api.baidu", defaultMessage: "百度翻译API" }),
+								},
+								{
+									value: TranslationApiType.TRANSFORMERS,
+									label: intl.formatMessage({ id: "intl.modal.translate.api.transformers", defaultMessage: "Transformers.js" }),
+								},
 							]}
 							disabled={isTranslating || isDownloading}
 						/>
 						{modalTranslationApiType === TranslationApiType.BAIDU ? (
-							<div style={{ fontSize: "12px", marginTop: 5 }}>使用百度翻译API（需要配置有效的API密钥）</div>
+							<div style={{ fontSize: "12px", marginTop: 5 }}>
+								<FormattedMessage
+									id="intl.modal.translate.api.baidu.desc"
+									defaultMessage="使用百度翻译API（需要配置有效的API密钥）"
+								/>
+							</div>
 						) : (
-							<div style={{ fontSize: "12px", marginTop: 5 }}>使用Transformers.js离线翻译（首次使用需要下载模型）</div>
+							<div style={{ fontSize: "12px", marginTop: 5 }}>
+								<FormattedMessage
+									id="intl.modal.translate.api.transformers.desc"
+									defaultMessage="使用Transformers.js离线翻译（首次使用需要下载模型）"
+								/>
+							</div>
 						)}
 					</Form.Item>
 					{modalTranslationApiType === TranslationApiType.TRANSFORMERS && isDownloading && (
 						<div style={{ marginTop: 10 }}>
-							<div>正在下载模型...</div>
+							<div>
+								<FormattedMessage id="intl.modal.translate.downloading" defaultMessage="正在下载模型..." />
+							</div>
 							<Progress percent={downloadProgress} status="active" />
 						</div>
 					)}
 					{isTranslating && (
 						<div style={{ marginTop: 10 }}>
 							<div>
-								正在翻译... ({translationCurrent}/{translationTotal})
+								<FormattedMessage
+									id="intl.modal.translate.progress"
+									defaultMessage="正在翻译... ({current}/{total})"
+									values={{ current: translationCurrent, total: translationTotal }}
+								/>
 							</div>
 							<Progress percent={translationProgress} status="active" />
 						</div>

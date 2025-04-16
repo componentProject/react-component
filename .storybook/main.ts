@@ -29,7 +29,7 @@ const config: StorybookConfig = {
 			},
 		};
 		if (configType === "PRODUCTION") {
-			config.build.rollupOptions.external = config.build.rollupOptions.external.filter(
+			config.build.rollupOptions.external = (config.build.rollupOptions.external as string[]).filter(
 				(item: string) => !external.includes(item),
 			);
 		}

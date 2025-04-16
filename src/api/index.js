@@ -1,6 +1,7 @@
 import axios from "axios";
 
 class Api {
+	client;
 	constructor(baseURL) {
 		this.client = axios.create({
 			baseURL,

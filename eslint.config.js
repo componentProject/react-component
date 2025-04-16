@@ -36,7 +36,7 @@ export default [
 			"react-hooks": reactHooks,
 			"react-refresh": reactRefresh,
 		},
-		files: ["**/*.{ts,mts,tsx,vue}"],
+		files: ["src/components/*.{ts,mts,tsx,vue}", ".storybook/*.{ts,mts,tsx,vue}"],
 	},
 	...storybook.configs["flat/recommended"],
 	js.configs.recommended,

@@ -26,6 +26,7 @@
 		/* Linting */
 		"noImplicitAny": false,
 		"strict": true,
+		"allowJs": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
 		"noFallthroughCasesInSwitch": true,
@@ -34,8 +35,9 @@
 	"include": [
 		"env.d.ts",
 		"src/**/*",
+		".storybook/preview.tsx",
 		".storybook/.stories/*",
-		".storybook/.stories/**/*",
+		".storybook/.stories/**/*"
 	],
 	"exclude": [
 		"./servers/*",

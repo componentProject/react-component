@@ -1,4 +1,5 @@
-import '../src/assets/styles/main.css'
+import "@/assets/styles/main.css";
+import { LanguageProvider } from "@/locales/LanguageContext";
 
 const preview = {
 	parameters: {
@@ -10,14 +11,21 @@ const preview = {
 		},
 	},
 };
+
 export const decorators = [
-	(Story) => (
-		<div className="flex-col" style={{
-			maxHeight: '100%',
-			overflow: 'hidden'
-		}}>
-			{Story()}
-		</div>
+	(Story: any) => (
+		<LanguageProvider>
+			<div
+				className="flex-col"
+				style={{
+					maxHeight: "100%",
+					overflow: "hidden",
+				}}
+			>
+				{Story()}
+			</div>
+		</LanguageProvider>
 	),
 ];
+
 export default preview;

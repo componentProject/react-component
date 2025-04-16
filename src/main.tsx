@@ -1,3 +1,5 @@
+import "@/locales";
+
 import "@/assets/styles/main.css";
 import App from "./App.tsx";
 // react 18 创建（会导致 antd 菜单折叠时闪烁，等待官方修复）
