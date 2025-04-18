@@ -21,7 +21,7 @@ const meta: Meta<any> = {
 	component: IntlTable,
 	args: {},
 	argTypes: {},
-	// 为这个故事添加专门的装饰器
+	// 为这个故事添加专门的装饰器,全局装饰器只会在初始化的时候更新
 	decorators: [
 		(Story) => (
 			<LanguageProvider>
