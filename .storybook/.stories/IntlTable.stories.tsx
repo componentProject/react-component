@@ -2,7 +2,7 @@
  * @Author: moluoxixi 1983531544@qq.com
  * @Date: 2025-04-09 19:29:42
  * @LastEditors: moluoxixi 1983531544@qq.com
- * @LastEditTime: 2025-04-09 20:21:27
+ * @LastEditTime: 2025-04-17 13:29:57
  * @FilePath: \react-component\.storybook\.stories\IntlTable.stories.tsx
  * @Description:
  *
@@ -21,14 +21,24 @@ const meta: Meta<any> = {
 	component: IntlTable,
 	args: {},
 	argTypes: {},
+	// 为这个故事添加专门的装饰器
+	decorators: [
+		(Story) => (
+			<LanguageProvider>
+				<Story />
+			</LanguageProvider>
+		),
+	],
 };
 export default meta;
 const { Header, Content } = Layout;
 const { Title } = Typography;
 
-// 包装组件使用 useLanguage hook
-const IntlTableWrapper = () => {
+// 使用本地语言上下文
+export const IntlTableWrapper: StoryFn = () => {
+	// 使用本地语言上下文，替代全局语言上下文
 	const { locale, setLocale } = useLanguage();
+	console.log("IntlTableWrapper 渲染 - locale:", locale, typeof setLocale);
 
 	const messages: Record<string, Record<string, string>> = {
 		"zh-CN": zhCN,
@@ -44,7 +54,10 @@ const IntlTableWrapper = () => {
 					</Title>
 					<Select
 						value={locale}
-						onChange={setLocale}
+						onChange={(value) => {
+							console.log("切换语言到:", value);
+							setLocale(value);
+						}}
 						style={{ width: 120 }}
 						options={[
 							{ value: "zh-CN", label: "中文" },
@@ -59,12 +72,12 @@ const IntlTableWrapper = () => {
 		</IntlProvider>
 	);
 };
-
-export const IntlTableDemo: StoryFn = () => {
-	return (
-		<LanguageProvider>
-			<IntlTableWrapper />
-		</LanguageProvider>
-	);
-};
-IntlTableDemo.args = {};
+IntlTableWrapper.args = {};
+// export const IntlTableDemo: StoryFn = () => {
+// 	return (
+// 		<LanguageProvider>
+// 			<IntlTableWrapper />
+// 		</LanguageProvider>
+// 	);
+// };
+// IntlTableDemo.args = {};
