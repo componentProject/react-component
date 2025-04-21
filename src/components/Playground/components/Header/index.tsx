@@ -42,7 +42,7 @@ import { downloadFiles } from "@/components/Playground/utils";
 /**
  * 导入模板定义
  */
-import { templates, TemplateType, loadTemplates } from "@/components/Playground/files";
+import { templates, loadTemplates, TemplateId } from "@/components/Playground/files";
 
 /**
  * Header组件
@@ -71,7 +71,7 @@ export default function Header() {
 	/**
 	 * 模板列表状态
 	 */
-	const [localTemplates, setLocalTemplates] = useState<Record<string, any>>(templates);
+	const [localTemplates, setLocalTemplates] = useState<Record<string, any>>({});
 	const [templatesLoaded, setTemplatesLoaded] = useState(false);
 
 	/**
@@ -81,7 +81,7 @@ export default function Header() {
 		const loadAllTemplates = async () => {
 			try {
 				if (!templatesLoaded) {
-					const loadedTemplates = await loadTemplates();
+					const { templates: loadedTemplates } = await loadTemplates();
 					console.log("loadedTemplates", loadedTemplates);
 					setLocalTemplates(loadedTemplates);
 					setTemplatesLoaded(true);
@@ -118,9 +118,9 @@ export default function Header() {
 
 	/**
 	 * 加载模板方法
-	 * @param templateType 模板类型
+	 * @param templateId 模板ID
 	 */
-	const handleLoadTemplate = async (templateType: TemplateType) => {
+	const handleLoadTemplate = async (templateId: TemplateId) => {
 		Modal.confirm({
 			title: "切换模板",
 			content: "切换模板将会覆盖当前的所有文件，是否继续？",
@@ -128,16 +128,31 @@ export default function Header() {
 			cancelText: "取消",
 			onOk: async () => {
 				try {
+					// 禁用缓存，强制重新加载模板
+					setTemplatesLoaded(false);
+
 					// 确保模板已加载
-					const loadedTemplates = await loadTemplates();
+					const { templates: loadedTemplates } = await loadTemplates();
+					console.log("重新加载的模板:", loadedTemplates);
 					setLocalTemplates(loadedTemplates);
 
-					const templateFiles = { ...loadedTemplates[templateType].files };
+					if (!loadedTemplates[templateId]) {
+						message.error(`模板 ${templateId} 不存在或加载失败`);
+						return;
+					}
+
+					// 深度克隆文件对象，避免引用问题
+					const templateFiles = JSON.parse(JSON.stringify(loadedTemplates[templateId].files));
+
+					// 设置文件并关闭模态框
+					console.log(`正在加载模板: ${templateId}, 文件数量: ${Object.keys(templateFiles).length}`, templateFiles);
 					setFiles(templateFiles);
+
 					// 重置选择的文件为入口文件
-					setSelectedFileName(Object.keys(templateFiles)[0] || "App.tsx");
+					const firstFile = Object.keys(templateFiles)[0] || "App.tsx";
+					setSelectedFileName(firstFile);
 					setIsTemplateModalVisible(false);
-					message.success(`已加载模板: ${loadedTemplates[templateType].name}`);
+					message.success(`已加载模板: ${loadedTemplates[templateId].name}`);
 				} catch (error) {
 					console.error("加载模板失败:", error);
 					message.error("加载模板失败");
@@ -250,9 +265,9 @@ export default function Header() {
 				width={800}
 			>
 				<Row gutter={[16, 16]}>
-					{Object.entries(localTemplates).map(([type, template]) => (
-						<Col span={12} key={type}>
-							<Card title={template.name} hoverable onClick={() => handleLoadTemplate(type as TemplateType)}>
+					{Object.values(localTemplates).map((template) => (
+						<Col span={12} key={template.id}>
+							<Card title={template.name} hoverable onClick={() => handleLoadTemplate(template.id)}>
 								<p>{template.description}</p>
 								<Button type="primary">使用此模板</Button>
 							</Card>

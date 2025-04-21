@@ -9,15 +9,15 @@ import "allotment/dist/style.css";
 /**
  * 导入顶部导航栏组件
  */
-import Header from "./components/Header";
+import Header from "@/components/Playground/components/Header";
 /**
  * 导入代码编辑器组件
  */
-import CodeEditor from "./components/CodeEditor";
+import CodeEditor from "@/components/Playground/components/CodeEditor";
 /**
  * 导入预览组件
  */
-import Preview from "./components/Preview";
+import Preview from "@/components/Playground/components/Preview";
 /**
  * 导入React钩子
  */
@@ -34,7 +34,7 @@ import "./index.scss";
 
 /**
  * Playground组件
- * 
+ *
  * 一个在线代码编辑器和预览工具，提供代码编辑和实时预览功能
  * 使用方法: <Playground />
  */

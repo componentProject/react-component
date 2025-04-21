@@ -109,7 +109,7 @@ const getSnapshots = (): Snapshot[] => {
 		const snapshots = localStorage.getItem(SNAPSHOTS_STORAGE_KEY);
 		return snapshots ? JSON.parse(snapshots) : [];
 	} catch (error) {
-		console.error('读取快照失败:', error);
+		console.error("读取快照失败:", error);
 		return [];
 	}
 };
@@ -122,13 +122,13 @@ const saveSnapshots = (snapshots: Snapshot[]) => {
 	try {
 		localStorage.setItem(SNAPSHOTS_STORAGE_KEY, JSON.stringify(snapshots));
 	} catch (error) {
-		console.error('保存快照失败:', error);
+		console.error("保存快照失败:", error);
 	}
 };
 
 /**
  * Playground提供者组件
- * 
+ *
  * 为应用提供Playground上下文，管理文件、选中文件和主题等状态
  * @param props 子组件
  */
@@ -141,7 +141,7 @@ export const PlaygroundProvider = (props: PropsWithChildren) => {
 	 * 文件列表状态
 	 */
 	const urlFiles = getFilesFromUrl();
-	const [files, setFiles] = useState<Files>(urlFiles && Object.keys(urlFiles).length > 0 ? urlFiles : {...initFiles});
+	const [files, setFiles] = useState<Files>(urlFiles && Object.keys(urlFiles).length > 0 ? urlFiles : { ...initFiles });
 	/**
 	 * 当前选中文件名状态
 	 */
@@ -166,13 +166,13 @@ export const PlaygroundProvider = (props: PropsWithChildren) => {
 		const initialize = async () => {
 			setLoading(true);
 			try {
-				await initializeApp();
-				// 如果URL中没有文件，重新设置为初始文件
-				if (Object.keys(files).length === 0) {
-					console.log('从初始模板加载文件');
-					setFiles({...initFiles});
+				// 如果URL中没有文件，从initializeApp获取初始文件
+				if (!urlFiles || Object.keys(urlFiles).length === 0) {
+					console.log("URL中没有文件，从初始模板加载文件");
+					const initialFiles = await initializeApp();
+					setFiles(initialFiles);
 				}
-				
+
 				// 确保选中的文件存在
 				if (!files[selectedFileName]) {
 					const firstFileName = Object.keys(files)[0] || "App.tsx";
@@ -180,16 +180,16 @@ export const PlaygroundProvider = (props: PropsWithChildren) => {
 					setSelectedFileName(firstFileName);
 				}
 			} catch (error) {
-				console.error('初始化应用失败:', error);
+				console.error("初始化应用失败:", error);
 				// 确保即使失败也有初始文件
 				if (Object.keys(files).length === 0) {
-					setFiles({...initFiles});
+					setFiles({ ...initFiles });
 				}
 			} finally {
 				setLoading(false);
 			}
 		};
-		
+
 		initialize();
 	}, []);
 
@@ -242,14 +242,14 @@ export const PlaygroundProvider = (props: PropsWithChildren) => {
 	 */
 	const createSnapshot = (name: string) => {
 		if (!name.trim()) return;
-		
+
 		const newSnapshot: Snapshot = {
 			id: Date.now().toString(),
 			name,
 			files: { ...files },
-			createdAt: Date.now()
+			createdAt: Date.now(),
 		};
-		
+
 		const updatedSnapshots = [...snapshots, newSnapshot];
 		setSnapshots(updatedSnapshots);
 		saveSnapshots(updatedSnapshots);
@@ -260,7 +260,7 @@ export const PlaygroundProvider = (props: PropsWithChildren) => {
 	 * @param id 快照ID
 	 */
 	const loadSnapshot = (id: string) => {
-		const snapshot = snapshots.find(s => s.id === id);
+		const snapshot = snapshots.find((s) => s.id === id);
 		if (snapshot) {
 			setFiles({ ...snapshot.files });
 			setSelectedFileName(Object.keys(snapshot.files)[0] || "App.tsx");
@@ -272,7 +272,7 @@ export const PlaygroundProvider = (props: PropsWithChildren) => {
 	 * @param id 快照ID
 	 */
 	const deleteSnapshot = (id: string) => {
-		const updatedSnapshots = snapshots.filter(s => s.id !== id);
+		const updatedSnapshots = snapshots.filter((s) => s.id !== id);
 		setSnapshots(updatedSnapshots);
 		saveSnapshots(updatedSnapshots);
 	};
@@ -304,7 +304,7 @@ export const PlaygroundProvider = (props: PropsWithChildren) => {
 				snapshots,
 				createSnapshot,
 				loadSnapshot,
-				deleteSnapshot
+				deleteSnapshot,
 			}}
 		>
 			{children}
@@ -314,7 +314,7 @@ export const PlaygroundProvider = (props: PropsWithChildren) => {
 
 /**
  * PlaygroundProvider组件默认导出
- * 
+ *
  * 使用方法: <PlaygroundProvider>子组件</PlaygroundProvider>
  */
 export default PlaygroundProvider;

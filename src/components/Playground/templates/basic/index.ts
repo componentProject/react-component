@@ -1,7 +1,7 @@
 /**
  * 导入文件类型
  */
-import { Files } from "@/components/Playground/PlaygroundContext.tsx";
+import { Files, TemplateWrapper } from "@/components/Playground/files";
 /**
  * 导入文件名到语言的转换函数
  */
@@ -23,15 +23,18 @@ export const description = "简单的React应用，适合入门学习";
 
 /**
  * 创建基础模板
- * @returns 文件集合
+ * @returns 模板包装对象，包含名称、描述和文件
  */
-export function createTemplate(): Files {
-	// 返回文件集合
+export function createTemplate(): TemplateWrapper {
+	// 返回模板包装对象
 	return {
-		[APP_COMPONENT_FILE_NAME]: {
-			name: APP_COMPONENT_FILE_NAME,
-			language: fileName2Language(APP_COMPONENT_FILE_NAME),
-			value: `import React, { useState } from 'react';
+		name: "基础模板",
+		description: "简单的React应用，适合入门学习",
+		files: {
+			[APP_COMPONENT_FILE_NAME]: {
+				name: APP_COMPONENT_FILE_NAME,
+				language: fileName2Language(APP_COMPONENT_FILE_NAME),
+				value: `import React, { useState } from 'react';
 import './App.css';
 
 export default function App() {
@@ -50,12 +53,12 @@ export default function App() {
 			</div>
 		</div>
 	);
-}`
-		},
-		"App.css": {
-			name: "App.css",
-			language: "css",
-			value: `body {
+}`,
+			},
+			"App.css": {
+				name: "App.css",
+				language: "css",
+				value: `body {
 	margin: 0;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
 		'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
@@ -106,12 +109,12 @@ code {
 	background-color: #f1f1f1;
 	padding: 2px 4px;
 	border-radius: 4px;
-}`
-		},
-		[ENTRY_FILE_NAME]: {
-			name: ENTRY_FILE_NAME,
-			language: fileName2Language(ENTRY_FILE_NAME),
-			value: `import React from 'react';
+}`,
+			},
+			[ENTRY_FILE_NAME]: {
+				name: ENTRY_FILE_NAME,
+				language: fileName2Language(ENTRY_FILE_NAME),
+				value: `import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './App.css';
@@ -120,22 +123,22 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 	<React.StrictMode>
 		<App />
 	</React.StrictMode>
-);`
-		},
-		[IMPORT_MAP_FILE_NAME]: {
-			name: IMPORT_MAP_FILE_NAME,
-			language: "json",
-			value: `{
+);`,
+			},
+			[IMPORT_MAP_FILE_NAME]: {
+				name: IMPORT_MAP_FILE_NAME,
+				language: "json",
+				value: `{
 	"imports": {
 		"react": "https://esm.sh/react@18.2.0",
 		"react-dom/client": "https://esm.sh/react-dom@18.2.0"
 	}
-}`
-		},
-		"index.html": {
-			name: "index.html",
-			language: "html",
-			value: `<!DOCTYPE html>
+}`,
+			},
+			"index.html": {
+				name: "index.html",
+				language: "html",
+				value: `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 	<meta charset="UTF-8" />
@@ -147,7 +150,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 	<div id="root"></div>
 	<script type="module" src="./main.tsx"></script>
 </body>
-</html>`
-		}
+</html>`,
+			},
+		},
 	};
 }

@@ -29,13 +29,13 @@ export default function CodeEditor() {
 	/**
 	 * 从上下文中获取主题、文件列表和相关状态函数
 	 */
-	const { theme, files, setFiles, selectedFileName, setSelectedFileName } = useContext(PlaygroundContext);
+	const { theme, files, setFiles, selectedFileName } = useContext(PlaygroundContext);
 
 	/**
 	 * 获取当前选中的文件
 	 */
 	const file = files[selectedFileName];
-
+	console.log("file", files, file);
 	/**
 	 * 编辑器内容变化时的处理函数
 	 * @param value 变化后的代码内容
