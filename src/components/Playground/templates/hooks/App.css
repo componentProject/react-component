@@ -1,0 +1,143 @@
+:root {
+  --primary: #646cff;
+  --primary-hover: #535bf2;
+  --bg-color: #242424;
+  --text-color: rgb(255 255 255 / 87%);
+  --border-color: #444;
+
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light dark;
+  color: var(--text-color);
+  background-color: var(--bg-color);
+  font-synthesis: none;
+  text-rendering: optimizelegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg-color: #fff;
+    --text-color: #213547;
+    --border-color: #ddd;
+  }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 500px;
+  width: 100%;
+  padding: 2rem;
+  text-align: center;
+}
+
+h1 {
+  font-size: 2rem;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+
+.add-todo {
+  display: flex;
+  margin-bottom: 1rem;
+}
+
+input {
+  padding: 0.5rem;
+  flex: 1;
+  border: 1px solid var(--border-color);
+  border-radius: 4px 0 0 4px;
+  background-color: transparent;
+  color: var(--text-color);
+}
+
+button {
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  background-color: var(--primary);
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.25s;
+}
+
+.add-todo button {
+  border-radius: 0 4px 4px 0;
+}
+
+button:hover {
+  background-color: var(--primary-hover);
+}
+
+.filters {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.filters button {
+  background-color: transparent;
+  color: var(--text-color);
+}
+
+.filters button.active {
+  background-color: var(--primary);
+  color: white;
+}
+
+.todo-list {
+  list-style: none;
+  padding: 0;
+  text-align: left;
+}
+
+.todo-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.todo-list li span {
+  cursor: pointer;
+  flex: 1;
+}
+
+.todo-list li.completed span {
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.todo-list li button {
+  background-color: #f44336;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.todo-list li button:hover {
+  background-color: #d32f2f;
+}
+
+.todo-stats {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #888;
+} 
