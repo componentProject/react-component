@@ -1,23 +1,31 @@
 /**
  * 导入React相关依赖
  */
-import { useEffect, useMemo, useState } from "react";
+import {
+	useEffect,
+	useMemo,
+	useState,
+} from 'react';
 /**
  * 导入React DOM Portal工具
  */
-import { createPortal } from "react-dom";
+import { createPortal } from 'react-dom';
 /**
  * 导入组件状态存储和组件查询工具
  */
-import { getComponentById, useComponetsStore } from "../../stores/components";
+import { Component, getComponentById, useComponetsStore } from '../../stores/components';
 /**
  * 导入Ant Design组件
  */
-import { Dropdown, Popconfirm, Space } from "antd";
+import { Dropdown, Popconfirm, Space } from 'antd';
 /**
  * 导入Ant Design图标
  */
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, DragOutlined } from '@ant-design/icons';
+/**
+ * 导入React DnD拖拽功能
+ */
+import { useDrag } from 'react-dnd';
 
 /**
  * 选中遮罩组件的属性接口
@@ -60,6 +68,33 @@ function SelectedMask({ containerClassName, portalWrapperClassName, componentId 
 	const { components, curComponentId, curComponent, deleteComponent, setCurComponentId } = useComponetsStore();
 
 	/**
+	 * 拖拽状态
+	 */
+	const [isDragging, setIsDragging] = useState(false);
+
+	/**
+	 * 配置拖拽功能
+	 */
+	const [{ opacity }, drag] = useDrag({
+		type: curComponent?.name || '',
+		item: () => {
+			setIsDragging(true);
+			return {
+				type: curComponent?.name,
+				dragType: 'move',
+				id: curComponentId
+			};
+		},
+		end: () => {
+			setIsDragging(false);
+		},
+		collect: (monitor) => ({
+			opacity: monitor.isDragging() ? 0.4 : 1,
+		}),
+		canDrag: () => curComponentId !== 1, // 根组件不能拖拽
+	});
+
+	/**
 	 * 当组件ID变化时更新位置
 	 */
 	useEffect(() => {
@@ -83,9 +118,9 @@ function SelectedMask({ containerClassName, portalWrapperClassName, componentId 
 		const resizeHandler = () => {
 			updatePosition();
 		};
-		window.addEventListener("resize", resizeHandler);
+		window.addEventListener('resize', resizeHandler);
 		return () => {
-			window.removeEventListener("resize", resizeHandler);
+			window.removeEventListener('resize', resizeHandler);
 		};
 	}, []);
 
@@ -126,8 +161,13 @@ function SelectedMask({ containerClassName, portalWrapperClassName, componentId 
 	 * 获取Portal容器元素
 	 */
 	const el = useMemo(() => {
-		return document.querySelector(`.${portalWrapperClassName}`)!;
-	}, []);
+		const portalElement = document.querySelector(`.${portalWrapperClassName}`);
+		if (!portalElement) {
+			console.error(`Portal element with class ${portalWrapperClassName} not found`);
+			return document.body; // 使用body作为后备
+		}
+		return portalElement;
+	}, [portalWrapperClassName]);
 
 	/**
 	 * 获取当前选中的组件对象
@@ -149,17 +189,21 @@ function SelectedMask({ containerClassName, portalWrapperClassName, componentId 
 	 * 获取当前组件的所有父组件列表
 	 * 用于在下拉菜单中显示可选择的父组件
 	 */
-	const parentComponents = useMemo(() => {
-		const parentComponents = [];
+	const parentComponents = useMemo<Component[]>(() => {
+		const parentComponents: Component[] = [];
 		let component = curComponent;
 
 		while (component?.parentId) {
-			component = getComponentById(component.parentId, components)!;
-			parentComponents.push(component);
+			const parentComponent = getComponentById(component.parentId, components);
+			if (parentComponent) {
+				parentComponents.push(parentComponent);
+			}
+			component = parentComponent;
 		}
 
 		return parentComponents;
-	}, [curComponent]);
+
+	}, [curComponent, components]);
 
 	/**
 	 * 通过Portal渲染选中遮罩层和操作菜单
@@ -179,9 +223,34 @@ function SelectedMask({ containerClassName, portalWrapperClassName, componentId 
 					height: position.height,
 					zIndex: 12,
 					borderRadius: 4,
-					boxSizing: "border-box",
+					boxSizing: 'border-box',
 				}}
 			/>
+			{/* 拖拽手柄 - 仅当不是根组件时显示 */}
+			{curComponentId !== 1 && (
+				<div
+					ref={drag}
+					style={{
+						position: "absolute",
+						left: position.left + 4,
+						top: position.top + 4,
+						backgroundColor: "blue",
+						color: "white",
+						width: 24,
+						height: 24,
+						borderRadius: "50%",
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						cursor: "move",
+						zIndex: 13,
+						opacity: isDragging ? 0.5 : 1,
+						boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+					}}
+				>
+					<DragOutlined />
+				</div>
+			)}
 			{/* 组件操作菜单 */}
 			<div
 				style={{
@@ -190,32 +259,32 @@ function SelectedMask({ containerClassName, portalWrapperClassName, componentId 
 					top: position.labelTop,
 					fontSize: "14px",
 					zIndex: 13,
-					display: !position.width || position.width < 10 ? "none" : "inline",
-					transform: "translate(-100%, -100%)",
+					display: (!position.width || position.width < 10) ? "none" : "inline",
+					transform: 'translate(-100%, -100%)',
 				}}
 			>
 				<Space>
 					{/* 父组件选择下拉菜单 */}
 					<Dropdown
 						menu={{
-							items: parentComponents.map((item) => ({
+							items: parentComponents.map(item => ({
 								key: item.id,
 								label: item.desc,
 							})),
 							onClick: ({ key }) => {
 								setCurComponentId(+key);
-							},
+							}
 						}}
 						disabled={parentComponents.length === 0}
 					>
 						<div
 							style={{
-								padding: "0 8px",
-								backgroundColor: "blue",
+								padding: '0 8px',
+								backgroundColor: 'blue',
 								borderRadius: 4,
-								color: "#fff",
+								color: '#fff',
 								cursor: "pointer",
-								whiteSpace: "nowrap",
+								whiteSpace: 'nowrap',
 							}}
 						>
 							{curSelectedComponent?.desc}
@@ -223,9 +292,14 @@ function SelectedMask({ containerClassName, portalWrapperClassName, componentId 
 					</Dropdown>
 					{/* 组件删除按钮，对根组件不显示 */}
 					{curComponentId !== 1 && (
-						<div style={{ padding: "0 8px", backgroundColor: "blue" }}>
-							<Popconfirm title="确认删除？" okText={"确认"} cancelText={"取消"} onConfirm={handleDelete}>
-								<DeleteOutlined style={{ color: "#fff" }} />
+						<div style={{ padding: '0 8px', backgroundColor: 'blue' }}>
+							<Popconfirm
+								title="确认删除？"
+								okText={'确认'}
+								cancelText={'取消'}
+								onConfirm={handleDelete}
+							>
+								<DeleteOutlined style={{ color: '#fff' }}/>
 							</Popconfirm>
 						</div>
 					)}

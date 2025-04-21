@@ -15,6 +15,12 @@ import { createPortal } from "react-dom";
 import { getComponentById, useComponetsStore } from "../../stores/components";
 
 /**
+ * 组件描述前缀常量
+ * 用于生成组件描述元素的ID
+ */
+const COMPONENT_DESCRIPTION_PREFIX = 'component-description-';
+
+/**
  * 悬停遮罩组件的属性接口
  * @interface HoverMaskProps
  */
@@ -96,7 +102,14 @@ function HoverMask({ containerClassName, portalWrapperClassName, componentId }: 
 		const { top: containerTop, left: containerLeft } = container.getBoundingClientRect();
 
 		const labelTop = top - containerTop + container.scrollTop;
-		const labelLeft = left - containerLeft + width;
+		const labelWidth = type
+			? document.getElementById(`${COMPONENT_DESCRIPTION_PREFIX}${type}`)?.offsetWidth ?? 0
+			: 0;
+		
+		const labelLeft = Math.max(
+			Math.min(left - containerLeft + width / 2 - labelWidth / 2, container.clientWidth - labelWidth - 10),
+			10
+		);
 
 		// 确保标签不会超出可视区域顶部
 		const adjustedLabelTop = labelTop <= 0 ? labelTop - -20 : labelTop;
@@ -128,6 +141,12 @@ function HoverMask({ containerClassName, portalWrapperClassName, componentId }: 
 	const curComponent = useMemo(() => {
 		return getComponentById(componentId, components);
 	}, [componentId]);
+
+	/**
+	 * 当前组件的类型
+	 * 用于查找组件描述元素
+	 */
+	const type = curComponent?.name;
 
 	/**
 	 * 通过Portal渲染遮罩层和组件描述标签
