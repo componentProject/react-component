@@ -14,7 +14,7 @@ import { useContext, useState, useEffect } from "react";
 /**
  * 导入Playground上下文
  */
-import { PlaygroundContext, Snapshot } from "../../PlaygroundContext.tsx";
+import { PlaygroundContext, Snapshot } from "@/components/Playground/PlaygroundContext.tsx";
 /**
  * 导入Ant Design图标和组件
  */
@@ -38,11 +38,11 @@ import copy from "copy-to-clipboard";
 /**
  * 导入文件下载工具
  */
-import { downloadFiles } from "../../utils";
+import { downloadFiles } from "@/components/Playground/utils";
 /**
  * 导入模板定义
  */
-import { templates, TemplateType, getTemplates } from "../../files";
+import { templates, TemplateType, loadTemplates } from "@/components/Playground/files";
 
 /**
  * Header组件
@@ -81,7 +81,7 @@ export default function Header() {
 		const loadAllTemplates = async () => {
 			try {
 				if (!templatesLoaded) {
-					const loadedTemplates = await getTemplates();
+					const loadedTemplates = await loadTemplates();
 					console.log("loadedTemplates", loadedTemplates);
 					setLocalTemplates(loadedTemplates);
 					setTemplatesLoaded(true);
@@ -129,7 +129,7 @@ export default function Header() {
 			onOk: async () => {
 				try {
 					// 确保模板已加载
-					const loadedTemplates = await getTemplates();
+					const loadedTemplates = await loadTemplates();
 					setLocalTemplates(loadedTemplates);
 
 					const templateFiles = { ...loadedTemplates[templateType].files };

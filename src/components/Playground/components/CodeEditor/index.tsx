@@ -13,7 +13,7 @@ import FileNameList from "./FileNameList";
 /**
  * 导入Playground上下文
  */
-import { PlaygroundContext } from "../../PlaygroundContext.tsx";
+import { PlaygroundContext } from "@/components/Playground/PlaygroundContext.tsx";
 /**
  * 导入防抖函数
  */
@@ -21,7 +21,7 @@ import { debounce } from "lodash-es";
 
 /**
  * 代码编辑器组件
- * 
+ *
  * 提供文件列表和代码编辑功能，支持多文件编辑
  * 使用方法: <CodeEditor />
  */

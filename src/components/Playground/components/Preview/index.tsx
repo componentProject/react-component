@@ -5,11 +5,8 @@ import { useContext, useEffect, useRef, useState, useMemo } from "react";
 /**
  * 导入Playground上下文
  */
-import { PlaygroundContext } from "../../PlaygroundContext.tsx";
-/**
- * 导入代码编辑器组件
- */
-import Editor from "../CodeEditor/Editor";
+import { PlaygroundContext } from "@/components/Playground/PlaygroundContext.tsx";
+
 /**
  * 导入预览页面HTML模板
  */
@@ -17,11 +14,11 @@ import iframeRaw from "./iframe.html?raw";
 /**
  * 导入导入映射文件名常量
  */
-import { IMPORT_MAP_FILE_NAME, ENTRY_FILE_NAME } from "../../files";
+import { IMPORT_MAP_FILE_NAME } from "@/components/Playground/files";
 /**
  * 导入消息组件
  */
-import { Message } from "../Message";
+import { Message } from "@/components/Playground/components/Message";
 /**
  * 导入编译工作线程
  */
@@ -48,18 +45,18 @@ interface MessageData {
  */
 function computeFilesHash(files: Record<string, any>): string {
 	const fileEntries = Object.entries(files);
-	let hashStr = '';
-	
+	let hashStr = "";
+
 	for (const [name, file] of fileEntries) {
 		if (file.value) {
 			hashStr += `${name}:${file.value.length}:${file.value.substring(0, 100)}`;
 		}
 	}
-	
+
 	// 简单哈希计算
 	let hash = 0;
 	for (let i = 0; i < hashStr.length; i++) {
-		hash = ((hash << 5) - hash) + hashStr.charCodeAt(i);
+		hash = (hash << 5) - hash + hashStr.charCodeAt(i);
 		hash |= 0; // 转为32位整数
 	}
 	return hash.toString(16);
@@ -67,7 +64,7 @@ function computeFilesHash(files: Record<string, any>): string {
 
 /**
  * Preview组件
- * 
+ *
  * 编译代码并在iframe中预览运行结果
  * 使用方法: <Preview />
  */
@@ -134,7 +131,7 @@ export default function Preview() {
 			console.log("编译代码", filesHash);
 			compilerWorkerRef.current?.postMessage(files);
 		}, 500);
-		
+
 		debouncedCompile();
 		return () => {
 			debouncedCompile.cancel();

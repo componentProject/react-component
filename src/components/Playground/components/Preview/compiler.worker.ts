@@ -9,7 +9,7 @@ import { File, Files } from "../../PlaygroundContext.tsx";
 /**
  * 导入入口文件名常量
  */
-import { ENTRY_FILE_NAME } from "../../files";
+import { ENTRY_FILE_NAME } from "@/components/Playground/files";
 /**
  * 导入Babel插件类型
  */
@@ -17,7 +17,7 @@ import { PluginObj } from "@babel/core";
 
 /**
  * 转换前预处理代码
- * 
+ *
  * 为没有导入React的JSX和TSX文件自动添加React导入
  * @param filename 文件名
  * @param code 源代码
@@ -34,7 +34,7 @@ export const beforeTransformCode = (filename: string, code: string) => {
 
 /**
  * 使用Babel转换代码
- * 
+ *
  * 将TypeScript和React代码转换为标准JavaScript
  * @param filename 文件名
  * @param code 源代码
@@ -59,7 +59,7 @@ export const babelTransform = (filename: string, code: string, files: Files) => 
 
 /**
  * 根据模块路径获取对应的文件
- * 
+ *
  * @param files 所有文件
  * @param modulePath 模块路径
  * @returns 找到的文件对象
@@ -83,7 +83,7 @@ const getModuleFile = (files: Files, modulePath: string) => {
 
 /**
  * 将JSON文件转换为JavaScript模块
- * 
+ *
  * @param file JSON文件
  * @returns JavaScript模块URL
  */
@@ -94,7 +94,7 @@ const json2Js = (file: File) => {
 
 /**
  * 将CSS文件转换为JavaScript模块
- * 
+ *
  * 创建并注入样式元素
  * @param file CSS文件
  * @returns JavaScript模块URL
@@ -117,7 +117,7 @@ const css2Js = (file: File) => {
 
 /**
  * 创建自定义模块解析器插件
- * 
+ *
  * 处理相对导入路径，将其替换为转换后的内容URL
  * @param files 所有文件
  * @returns Babel插件对象
@@ -150,7 +150,7 @@ function customResolver(files: Files): PluginObj {
 
 /**
  * 编译所有文件
- * 
+ *
  * 从入口文件开始编译整个项目
  * @param files 所有文件
  * @returns 编译后的代码
@@ -162,7 +162,7 @@ export const compile = (files: Files) => {
 
 /**
  * 监听工作线程消息
- * 
+ *
  * 接收文件列表，返回编译结果
  */
 self.addEventListener("message", async ({ data }) => {

@@ -1,7 +1,9 @@
 /**
  * 导入文件类型
  */
-import { Files } from "./PlaygroundContext.tsx";
+import { Files } from "@/components/Playground/PlaygroundContext.tsx";
+
+import { createTemplate as createFallbackTemplate } from "@/components/Playground/templates/basic";
 
 // 文件名常量
 export const APP_COMPONENT_FILE_NAME = "App.tsx";
@@ -27,179 +29,156 @@ export interface TemplateConfig {
 	files: Files;
 }
 
-// 基础文件，用于在动态加载前提供默认内容
-export const initFiles: Files = {
-	[APP_COMPONENT_FILE_NAME]: {
-		name: APP_COMPONENT_FILE_NAME,
-		language: "typescript",
-		value: `import React from 'react';
-import './App.css';
-
-export default function App() {
-	return (
-		<div className="app">
-			<h1>React Playground</h1>
-			<p>加载中...</p>
-		</div>
-	);
-}`,
-	},
-	"App.css": {
-		name: "App.css",
-		language: "css",
-		value: `body { margin: 0; font-family: sans-serif; }
-.app { padding: 20px; text-align: center; }`,
-	},
-	[ENTRY_FILE_NAME]: {
-		name: ENTRY_FILE_NAME,
-		language: "typescript",
-		value: `import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import './App.css';
-
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);`,
-	},
-	[IMPORT_MAP_FILE_NAME]: {
-		name: IMPORT_MAP_FILE_NAME,
-		language: "json",
-		value: `{
-  "imports": {
-    "react": "https://esm.sh/react@18.2.0",
-    "react-dom/client": "https://esm.sh/react-dom@18.2.0"
-  }
-}`,
-	},
-};
-
 /**
- * 默认的模板配置，包含基本内容以防动态加载失败
+ * 默认的模板配置记录
  */
-export const templates: Record<TemplateType, TemplateConfig> = {
-	[TemplateType.Basic]: {
-		name: "基础模板",
-		description: "简单的React应用，适合入门学习",
-		files: { ...initFiles }, // 使用我们刚刚定义的默认文件作为基础模板
-	},
-	[TemplateType.Hooks]: {
-		name: "React Hooks",
-		description: "展示React Hooks基本用法的Todo应用",
-		files: { ...initFiles },
-	},
-	[TemplateType.Redux]: {
-		name: "Redux状态管理",
-		description: "使用Redux进行状态管理的Todo应用",
-		files: { ...initFiles },
-	},
-	[TemplateType.Router]: {
-		name: "React Router",
-		description: "使用React Router的多页面应用示例",
-		files: { ...initFiles },
-	},
-};
+export let templates: Record<TemplateType, TemplateConfig> = {} as Record<TemplateType, TemplateConfig>;
 
 /**
- * 加载模板
+ * 初始化文件集合
+ */
+export let initFiles: Files = createFallbackTemplate();
+
+/**
+ * 加载所有模板
  * @returns 所有模板的配置
  */
-export async function getTemplates(): Promise<Record<TemplateType, TemplateConfig>> {
+export async function loadTemplates(): Promise<Record<TemplateType, TemplateConfig>> {
+	console.log("开始加载所有模板...");
+
 	// 创建结果对象
-	const templateConfigs: Record<TemplateType, TemplateConfig> = {
-		[TemplateType.Basic]: {
-			name: "基础模板",
-			description: "简单的React应用，适合入门学习",
+	const templateConfigs: Record<TemplateType, TemplateConfig> = {} as Record<TemplateType, TemplateConfig>;
+
+	// 设置默认模板信息，但不设置文件内容
+	Object.values(TemplateType).forEach((type) => {
+		templateConfigs[type] = {
+			name: getDefaultTemplateName(type),
+			description: getDefaultTemplateDescription(type),
 			files: {},
-		},
-		[TemplateType.Hooks]: {
-			name: "React Hooks",
-			description: "展示React Hooks基本用法的Todo应用",
-			files: {},
-		},
-		[TemplateType.Redux]: {
-			name: "Redux状态管理",
-			description: "使用Redux进行状态管理的Todo应用",
-			files: {},
-		},
-		[TemplateType.Router]: {
-			name: "React Router",
-			description: "使用React Router的多页面应用示例",
-			files: {},
-		},
-	};
+		};
+	});
 
 	try {
-		// 动态加载Basic模板
-		try {
-			const basicModule = await import("./templates/basic/index");
-			if (basicModule) {
-				templateConfigs[TemplateType.Basic] = {
-					name: basicModule.name || "基础模板",
-					description: basicModule.description || "简单的React应用，适合入门学习",
-					files: basicModule.createTemplate(),
-				};
-				console.log("加载了Basic模板");
-			}
-		} catch (basicError) {
-			console.warn("加载Basic模板失败:", basicError);
-		}
+		// 获取所有可用的模板目录
+		const templateTypes = Object.values(TemplateType);
 
-		// 动态加载Hooks模板
-		try {
-			const hooksModule = await import("./templates/hooks/index");
-			if (hooksModule) {
-				templateConfigs[TemplateType.Hooks] = {
-					name: hooksModule.name || "React Hooks",
-					description: hooksModule.description || "展示React Hooks基本用法的Todo应用",
-					files: hooksModule.createTemplate(),
-				};
-				console.log("加载了Hooks模板");
-			}
-		} catch (hookError) {
-			console.warn("加载Hooks模板失败:", hookError);
-		}
+		// 遍历所有模板类型，尝试动态加载
+		for (const type of templateTypes) {
+			try {
+				console.log(`尝试加载模板: ${type}`);
+				// 动态导入模板
+				const templateModule = await import(`@/components/Playground/templates/${type}/index`).catch((e) => {
+					console.warn(`模板 ${type} 导入失败:`, e);
+					return null;
+				});
 
-		// 动态加载Redux模板
-		try {
-			const reduxModule = await import("./templates/redux/index");
-			if (reduxModule) {
-				templateConfigs[TemplateType.Redux] = {
-					name: reduxModule.name || "Redux状态管理",
-					description: reduxModule.description || "使用Redux进行状态管理的Todo应用",
-					files: reduxModule.createTemplate(),
-				};
-				console.log("加载了Redux模板");
-			}
-		} catch (reduxError) {
-			console.warn("加载Redux模板失败:", reduxError);
-		}
+				// 如果成功加载模板
+				if (templateModule && templateModule.createTemplate) {
+					const templateFiles = templateModule.createTemplate();
+					// 确保返回的文件对象有效
+					if (templateFiles && Object.keys(templateFiles).length > 0) {
+						templateConfigs[type] = {
+							name: templateModule.name || templateConfigs[type].name,
+							description: templateModule.description || templateConfigs[type].description,
+							files: templateFiles,
+						};
+						console.log(`成功加载模板: ${type}, 文件数量: ${Object.keys(templateFiles).length}`);
+					} else {
+						console.warn(`模板 ${type} 没有返回有效的文件`);
 
-		// 动态加载Router模板
-		try {
-			const routerModule = await import("./templates/router/index");
-			if (routerModule) {
-				templateConfigs[TemplateType.Router] = {
-					name: routerModule.name || "React Router",
-					description: routerModule.description || "使用React Router的多页面应用示例",
-					files: routerModule.createTemplate(),
-				};
-				console.log("加载了Router模板");
+						// 如果是基础模板且加载失败，使用备用模板
+						if (type === TemplateType.Basic) {
+							templateConfigs[type].files = createFallbackTemplate();
+							console.log("使用备用基础模板");
+						}
+					}
+				} else {
+					console.warn(`模板 ${type} 加载失败或没有 createTemplate 方法`);
+
+					// 如果是基础模板且加载失败，使用备用模板
+					if (type === TemplateType.Basic) {
+						templateConfigs[type].files = createFallbackTemplate();
+						console.log("使用备用基础模板");
+					}
+				}
+			} catch (error) {
+				console.warn(`加载模板 ${type} 时出错:`, error);
+
+				// 如果是基础模板且加载失败，使用备用模板
+				if (type === TemplateType.Basic) {
+					templateConfigs[type].files = createFallbackTemplate();
+					console.log("加载失败，使用备用基础模板");
+				}
 			}
-		} catch (routerError) {
-			console.warn("加载Router模板失败:", routerError);
 		}
 
 		// 更新全局模板配置
-		Object.assign(templates, templateConfigs);
+		templates = { ...templateConfigs };
 
 		// 更新初始文件为基础模板
 		if (Object.keys(templateConfigs[TemplateType.Basic].files).length > 0) {
-			Object.assign(initFiles, templateConfigs[TemplateType.Basic].files);
+			initFiles = { ...templateConfigs[TemplateType.Basic].files };
+			console.log("初始文件设置为基础模板，文件数量:", Object.keys(initFiles).length);
+		} else {
+			// 如果基础模板加载失败，使用备用模板
+			initFiles = createFallbackTemplate();
+			console.log("基础模板加载失败，使用备用模板");
 		}
 	} catch (error) {
 		console.error("加载模板出错:", error);
+
+		// 加载出错时，确保至少有基础模板
+		const fallbackTemplate = createFallbackTemplate();
+		templateConfigs[TemplateType.Basic] = {
+			name: getDefaultTemplateName(TemplateType.Basic),
+			description: getDefaultTemplateDescription(TemplateType.Basic),
+			files: fallbackTemplate,
+		};
+		templates = { ...templateConfigs };
+		initFiles = { ...fallbackTemplate };
 	}
 
 	return templateConfigs;
+}
+
+/**
+ * 获取默认模板名称
+ * @param type 模板类型
+ * @returns 默认模板名称
+ */
+function getDefaultTemplateName(type: TemplateType): string {
+	switch (type) {
+		case TemplateType.Basic:
+			return "基础模板";
+		case TemplateType.Hooks:
+			return "React Hooks";
+		case TemplateType.Redux:
+			return "Redux状态管理";
+		case TemplateType.Router:
+			return "React Router";
+		default:
+			return "未知模板";
+	}
+}
+
+/**
+ * 获取默认模板描述
+ * @param type 模板类型
+ * @returns 默认模板描述
+ */
+function getDefaultTemplateDescription(type: TemplateType): string {
+	switch (type) {
+		case TemplateType.Basic:
+			return "简单的React应用，适合入门学习";
+		case TemplateType.Hooks:
+			return "展示React Hooks基本用法的Todo应用";
+		case TemplateType.Redux:
+			return "使用Redux进行状态管理的Todo应用";
+		case TemplateType.Router:
+			return "使用React Router的多页面应用示例";
+		default:
+			return "";
+	}
 }
 
 /**
@@ -207,23 +186,52 @@ export async function getTemplates(): Promise<Record<TemplateType, TemplateConfi
  */
 export async function initializeApp() {
 	try {
-		console.log('开始初始化应用...');
-		console.log('当前初始文件状态:', Object.keys(initFiles).length > 0 ? '有效' : '为空');
-		
+		console.log("开始初始化应用...");
+		console.log("初始状态: 文件数量 =", Object.keys(initFiles).length);
+
 		// 加载模板
-		const loadedTemplates = await getTemplates();
-		console.log('模板加载完成，获取到的模板:', Object.keys(loadedTemplates).join(', '));
-		
-		// 如果基础模板加载成功，使用它作为初始文件
-		if (Object.keys(loadedTemplates[TemplateType.Basic].files).length > 0) {
-			console.log('使用新加载的基础模板更新初始文件');
-			Object.assign(initFiles, loadedTemplates[TemplateType.Basic].files);
-			console.log('初始文件加载完成，文件数量:', Object.keys(initFiles).length);
-		} else {
-			console.warn('基础模板加载失败，但应用仍将使用默认模板继续工作');
+		const loadedTemplates = await loadTemplates();
+		console.log("模板加载完成，获取到的模板:", Object.keys(loadedTemplates).join(", "));
+
+		// 确保有可用的基础模板
+		if (Object.keys(loadedTemplates[TemplateType.Basic].files).length === 0) {
+			console.warn("基础模板加载失败，使用备用模板");
+			// 使用备用模板
+			const fallbackTemplate = createFallbackTemplate();
+			loadedTemplates[TemplateType.Basic].files = fallbackTemplate;
+			templates[TemplateType.Basic].files = fallbackTemplate;
+			initFiles = { ...fallbackTemplate };
 		}
+
+		console.log("初始化完成，可用的文件数量:", Object.keys(initFiles).length);
 	} catch (error) {
-		console.error('应用初始化失败:', error);
-		console.log('将继续使用默认模板');
+		console.error("应用初始化失败:", error);
+		console.log("将使用备用基础模板");
+
+		// 确保即使失败也有基础模板
+		const fallbackTemplate = createFallbackTemplate();
+		templates = {
+			[TemplateType.Basic]: {
+				name: getDefaultTemplateName(TemplateType.Basic),
+				description: getDefaultTemplateDescription(TemplateType.Basic),
+				files: fallbackTemplate,
+			},
+			[TemplateType.Hooks]: {
+				name: getDefaultTemplateName(TemplateType.Hooks),
+				description: getDefaultTemplateDescription(TemplateType.Hooks),
+				files: {},
+			},
+			[TemplateType.Redux]: {
+				name: getDefaultTemplateName(TemplateType.Redux),
+				description: getDefaultTemplateDescription(TemplateType.Redux),
+				files: {},
+			},
+			[TemplateType.Router]: {
+				name: getDefaultTemplateName(TemplateType.Router),
+				description: getDefaultTemplateDescription(TemplateType.Router),
+				files: {},
+			},
+		};
+		initFiles = { ...fallbackTemplate };
 	}
 }

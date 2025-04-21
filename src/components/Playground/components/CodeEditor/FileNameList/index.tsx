@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from "react";
 /**
  * 导入Playground上下文
  */
-import { PlaygroundContext } from "../../../PlaygroundContext.tsx";
+import { PlaygroundContext } from "@/components/Playground/PlaygroundContext.tsx";
 
 /**
  * 导入文件名项组件
