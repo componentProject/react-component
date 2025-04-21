@@ -1,7 +1,7 @@
 /**
  * 导入文件类型
  */
-import { Files, TemplateWrapper } from "@/components/Playground/files";
+import { TemplateWrapper } from "@/components/Playground/files";
 /**
  * 导入文件名到语言的转换函数
  */

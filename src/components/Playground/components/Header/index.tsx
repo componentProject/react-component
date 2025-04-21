@@ -42,7 +42,7 @@ import { downloadFiles } from "@/components/Playground/utils";
 /**
  * 导入模板定义
  */
-import { templates, loadTemplates, TemplateId } from "@/components/Playground/files";
+import { loadTemplates, TemplateId } from "@/components/Playground/files";
 
 /**
  * Header组件
