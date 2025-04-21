@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- 文档字符集 -->
+  <meta charset="UTF-8"/>
+  <!-- 响应式视口设置 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <!-- 页面标题 -->
+  <title>Preview</title>
+</head>
+<body>
+<!-- 错误处理脚本，将错误信息发送给父窗口 -->
+<script>
+    window.addEventListener('error', (e) => {
+        window.parent.postMessage({type: 'ERROR', message: e.message})
+    })
+</script>
+<!-- 导入映射，将被动态替换 -->
+<script type="importmap"></script>
+<!-- 应用源码，将被动态替换 -->
+<script type="module" id="appSrc"></script>
+<!-- React应用挂载点 -->
+<div id="root"></div>
+</body>
+</html>

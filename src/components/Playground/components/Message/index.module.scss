@@ -1,0 +1,81 @@
+.msg {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    width: auto;
+    max-width: 80%;
+    max-height: 70vh;
+    padding: 12px 16px;
+    overflow: auto;
+    color: white;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: 'Consolas', 'Monaco', 'Menlo', monospace;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    animation: slideIn 0.3s ease-out;
+    z-index: 1000;
+
+    pre {
+        margin: 0;
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-family: inherit;
+    }
+
+    code {
+        background-color: rgba(255, 255, 255, 0.1);
+        padding: 2px 4px;
+        border-radius: 2px;
+        font-weight: bold;
+    }
+
+    .error-line-highlight {
+        color: #ffcf00;
+        font-weight: bold;
+    }
+
+    .error-file-highlight {
+        color: #66e0ff;
+        font-weight: bold;
+    }
+
+    .dismiss {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 16px;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+        transition: color 0.2s;
+
+        &:hover {
+            color: white;
+        }
+    }
+}
+
+.error {
+    background-color: rgba(255, 77, 79, 0.95);
+    border-left: 4px solid #ff1a1a;
+}
+
+.warn {
+    background-color: rgba(250, 173, 20, 0.95);
+    border-left: 4px solid #ffa41e;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+  
