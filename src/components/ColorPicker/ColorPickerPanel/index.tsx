@@ -24,7 +24,7 @@ import { useControllableValue } from "ahooks";
  * @property {React.CSSProperties} [style] - 自定义样式
  * @property {(color: Color) => void} [onChange] - 颜色变化时的回调函数
  */
-function ColorPickerPanel(props: propsType) {
+function Index(props: propsType) {
 	/** 解构props获取className、style和onChange */
 	const { className, style, onChange } = props;
 
@@ -58,4 +58,4 @@ function ColorPickerPanel(props: propsType) {
 	);
 }
 
-export default ColorPickerPanel;
+export default Index;

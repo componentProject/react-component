@@ -33,7 +33,6 @@ const Palette: FC<{
 	 * containerRef.current是容器的dom
 	 */
 	const containerRef = useRef<HTMLDivElement>(null);
-
 	/**
 	 *  useColorDrag  hook
 	 *  offset是当前选择的颜色对应的偏移量
@@ -59,15 +58,10 @@ const Palette: FC<{
 		 *  offsetValue是当前选择的颜色对应的偏移量
 		 */
 		onDragChange: (offsetValue) => {
-			/**
-			 * calculateColor是计算颜色的工具函数
-			 * offsetValue是当前选择的颜色对应的偏移量
-			 * containerRef.current是容器的dom
-			 */
 			const newColor = calculateColor({
 				offset: offsetValue,
-				containerRef: containerRef.current,
-				targetRef: transformRef.current,
+				containerRef,
+				targetRef: transformRef,
 				color,
 			});
 			/**
@@ -76,26 +70,17 @@ const Palette: FC<{
 			 */
 			onChange?.(newColor);
 		},
+		calculate: () => {
+			return calculateOffset(containerRef, transformRef, color);
+		},
 	});
-
-	/**
-	 * calculateOffset是计算偏移量的工具函数
-	 * color是当前选择的颜色
-	 * containerRef.current是容器的dom
-	 * transformRef.current是Transform组件的dom
-	 */
-	const offsetValue = calculateOffset(containerRef.current, transformRef.current, color);
-
 	/**
 	 * Palette的渲染
 	 */
 	return (
-		/**
-		 * 渲染颜色选择器容器
-		 */
 		<div
 			/**
-			 * ref是容器的ref对象
+			 * 渲染颜色选择器容器
 			 */
 			ref={containerRef}
 			/**
@@ -108,7 +93,7 @@ const Palette: FC<{
 			 */
 			onMouseDown={dragStartHandle}
 		>
-			/** * 渲染Transform组件 */
+			{/** * 渲染Transform组件 */}
 			<Transform
 				/**
 				 * ref是Transform组件的ref对象
@@ -117,9 +102,9 @@ const Palette: FC<{
 				/**
 				 * offset是当前选择的颜色对应的偏移量
 				 */
-				offset={offset}
+				offset={{ x: offset.x, y: offset.y }}
 			>
-				/** * 渲染Handler组件 */
+				{/** * 渲染Handler组件 */}
 				<Handler color={color.toRgbString()} />
 			</Transform>
 			<div
