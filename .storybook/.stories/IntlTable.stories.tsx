@@ -17,7 +17,7 @@ import enUS from "@/locales/en-US";
 import { LanguageProvider, useLanguage } from "@/locales/LanguageContext";
 
 const meta: Meta<any> = {
-	title: "",
+	title: "IntlTable",
 	component: IntlTable,
 	args: {},
 	argTypes: {},
@@ -73,11 +73,3 @@ export const IntlTableWrapper: StoryFn = () => {
 	);
 };
 IntlTableWrapper.args = {};
-// export const IntlTableDemo: StoryFn = () => {
-// 	return (
-// 		<LanguageProvider>
-// 			<IntlTableWrapper />
-// 		</LanguageProvider>
-// 	);
-// };
-// IntlTableDemo.args = {};
