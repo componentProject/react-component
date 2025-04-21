@@ -123,7 +123,11 @@ function MonthCalendar(props: MonthCalendarProps) {
 			rows.push(row); /** 将每一行加入到rows中 */
 		}
 		/** 返回所有行的渲染结果 */
-		return rows.map((row) => <div className="calendar-month-body-row">{row}</div>);
+		return rows.map((row, index) => (
+			<div className="calendar-month-body-row" key={`row-${index}`}>
+				{row}
+			</div>
+		));
 	}
 
 	/** 返回整个组件的渲染结果 */
