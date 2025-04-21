@@ -1,313 +1,177 @@
-/**
- * 导入React相关依赖
- */
 import {
-	useEffect,
-	useMemo,
-	useState,
+  useEffect,
+  useMemo,
+  useState,
 } from 'react';
-/**
- * 导入React DOM Portal工具
- */
 import { createPortal } from 'react-dom';
-/**
- * 导入组件状态存储和组件查询工具
- */
-import { Component, getComponentById, useComponetsStore } from '../../stores/components';
-/**
- * 导入Ant Design组件
- */
+import { getComponentById, useComponetsStore } from '../../stores/components';
 import { Dropdown, Popconfirm, Space } from 'antd';
-/**
- * 导入Ant Design图标
- */
-import { DeleteOutlined, DragOutlined } from '@ant-design/icons';
-/**
- * 导入React DnD拖拽功能
- */
-import { useDrag } from 'react-dnd';
+import { DeleteOutlined } from '@ant-design/icons';
 
-/**
- * 选中遮罩组件的属性接口
- * @interface SelectedMaskProps
- */
 interface SelectedMaskProps {
-	/** Portal容器的类名 */
-	portalWrapperClassName: string;
-	/** 编辑区容器的类名 */
-	containerClassName: string;
-	/** 当前选中的组件ID */
-	componentId: number;
+  portalWrapperClassName: string
+  containerClassName: string
+  componentId: number;
 }
 
-/**
- * 选中遮罩组件
- *
- * 当组件被选中时，显示一个遮罩层来突出显示该组件
- * 并提供组件操作功能，如删除和选择父组件
- *
- * @param {SelectedMaskProps} props 组件属性
- * @returns {JSX.Element} 渲染的遮罩层
- */
 function SelectedMask({ containerClassName, portalWrapperClassName, componentId }: SelectedMaskProps) {
-	/**
-	 * 遮罩层的位置状态
-	 */
-	const [position, setPosition] = useState({
-		left: 0,
-		top: 0,
-		width: 0,
-		height: 0,
-		labelTop: 0,
-		labelLeft: 0,
-	});
 
-	/**
-	 * 从组件状态存储中获取组件列表和操作方法
-	 */
-	const { components, curComponentId, curComponent, deleteComponent, setCurComponentId } = useComponetsStore();
+  const [position, setPosition] = useState({
+    left: 0,
+    top: 0,
+    width: 0,
+    height: 0,
+    labelTop: 0,
+    labelLeft: 0,
+  });
 
-	/**
-	 * 拖拽状态
-	 */
-	const [isDragging, setIsDragging] = useState(false);
+  const { components, curComponentId, curComponent, deleteComponent, setCurComponentId } = useComponetsStore();
 
-	/**
-	 * 配置拖拽功能
-	 */
-	const [{ opacity }, drag] = useDrag({
-		type: curComponent?.name || '',
-		item: () => {
-			setIsDragging(true);
-			return {
-				type: curComponent?.name,
-				dragType: 'move',
-				id: curComponentId
-			};
-		},
-		end: () => {
-			setIsDragging(false);
-		},
-		collect: (monitor) => ({
-			opacity: monitor.isDragging() ? 0.4 : 1,
-		}),
-		canDrag: () => curComponentId !== 1, // 根组件不能拖拽
-	});
+  useEffect(() => {
+    updatePosition();
+  }, [componentId]);
 
-	/**
-	 * 当组件ID变化时更新位置
-	 */
-	useEffect(() => {
-		updatePosition();
-	}, [componentId]);
+  useEffect(() => {
+    setTimeout(() => {
+      updatePosition();
+    }, 200);
+  }, [components]);
 
-	/**
-	 * 当组件列表变化时更新位置
-	 * 添加延时确保DOM已更新
-	 */
-	useEffect(() => {
-		setTimeout(() => {
-			updatePosition();
-		}, 200);
-	}, [components]);
+  useEffect(() => {
+    const resizeHandler = () => {
+      updatePosition();
+    }
+    window.addEventListener('resize', resizeHandler)
+    return () => {
+      window.removeEventListener('resize', resizeHandler)
+    }
+  }, []);
 
-	/**
-	 * 监听窗口大小变化，更新遮罩位置
-	 */
-	useEffect(() => {
-		const resizeHandler = () => {
-			updatePosition();
-		};
-		window.addEventListener('resize', resizeHandler);
-		return () => {
-			window.removeEventListener('resize', resizeHandler);
-		};
-	}, []);
+  function updatePosition() {
+    if (!componentId) return;
 
-	/**
-	 * 更新遮罩层位置
-	 * 根据当前选中组件的DOM位置计算遮罩层的位置
-	 */
-	function updatePosition() {
-		if (!componentId) return;
+    const container = document.querySelector(`.${containerClassName}`);
+    if (!container) return;
 
-		const container = document.querySelector(`.${containerClassName}`);
-		if (!container) return;
+    const node = document.querySelector(`[data-component-id="${componentId}"]`);
+    if (!node) return;
 
-		const node = document.querySelector(`[data-component-id="${componentId}"]`);
-		if (!node) return;
+    const { top, left, width, height } = node.getBoundingClientRect();
+    const { top: containerTop, left: containerLeft } = container.getBoundingClientRect();
 
-		const { top, left, width, height } = node.getBoundingClientRect();
-		const { top: containerTop, left: containerLeft } = container.getBoundingClientRect();
+    let labelTop = top - containerTop + container.scrollTop;
+    let labelLeft = left - containerLeft + width;
 
-		let labelTop = top - containerTop + container.scrollTop;
-		const labelLeft = left - containerLeft + width;
+    if (labelTop <= 0) {
+      labelTop -= -20;
+    }
+  
+    setPosition({
+      top: top - containerTop + container.scrollTop,
+      left: left - containerLeft + container.scrollTop,
+      width,
+      height,
+      labelTop,
+      labelLeft,
+    });
+  }
 
-		if (labelTop <= 0) {
-			labelTop -= -20;
-		}
+  const el = useMemo(() => {
+      return document.querySelector(`.${portalWrapperClassName}`)!
+  }, []);
 
-		setPosition({
-			top: top - containerTop + container.scrollTop,
-			left: left - containerLeft + container.scrollTop,
-			width,
-			height,
-			labelTop,
-			labelLeft,
-		});
-	}
+  const curSelectedComponent = useMemo(() => {
+    return getComponentById(componentId, components);
+  }, [componentId]);
 
-	/**
-	 * 获取Portal容器元素
-	 */
-	const el = useMemo(() => {
-		const portalElement = document.querySelector(`.${portalWrapperClassName}`);
-		if (!portalElement) {
-			console.error(`Portal element with class ${portalWrapperClassName} not found`);
-			return document.body; // 使用body作为后备
-		}
-		return portalElement;
-	}, [portalWrapperClassName]);
+  function handleDelete() {
+    deleteComponent(curComponentId!);
+    setCurComponentId(null);
+  }
 
-	/**
-	 * 获取当前选中的组件对象
-	 */
-	const curSelectedComponent = useMemo(() => {
-		return getComponentById(componentId, components);
-	}, [componentId]);
+  const parentComponents = useMemo(() => {
+    const parentComponents = [];
+    let component = curComponent;
 
-	/**
-	 * 处理删除组件的事件
-	 * 删除当前选中的组件并清除选中状态
-	 */
-	function handleDelete() {
-		deleteComponent(curComponentId!);
-		setCurComponentId(null);
-	}
+    while (component?.parentId) {
+      component = getComponentById(component.parentId, components)!;
+      parentComponents.push(component);
+    }
 
-	/**
-	 * 获取当前组件的所有父组件列表
-	 * 用于在下拉菜单中显示可选择的父组件
-	 */
-	const parentComponents = useMemo<Component[]>(() => {
-		const parentComponents: Component[] = [];
-		let component = curComponent;
+    return parentComponents;
 
-		while (component?.parentId) {
-			const parentComponent = getComponentById(component.parentId, components);
-			if (parentComponent) {
-				parentComponents.push(parentComponent);
-			}
-			component = parentComponent;
-		}
+  }, [curComponent]);
 
-		return parentComponents;
-
-	}, [curComponent, components]);
-
-	/**
-	 * 通过Portal渲染选中遮罩层和操作菜单
-	 */
-	return createPortal(
-		<>
-			{/* 组件选中遮罩 */}
-			<div
-				style={{
-					position: "absolute",
-					left: position.left,
-					top: position.top,
-					backgroundColor: "rgba(0, 0, 255, 0.1)",
-					border: "1px dashed blue",
-					pointerEvents: "none",
-					width: position.width,
-					height: position.height,
-					zIndex: 12,
-					borderRadius: 4,
-					boxSizing: 'border-box',
-				}}
-			/>
-			{/* 拖拽手柄 - 仅当不是根组件时显示 */}
-			{curComponentId !== 1 && (
-				<div
-					ref={drag}
-					style={{
-						position: "absolute",
-						left: position.left + 4,
-						top: position.top + 4,
-						backgroundColor: "blue",
-						color: "white",
-						width: 24,
-						height: 24,
-						borderRadius: "50%",
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						cursor: "move",
-						zIndex: 13,
-						opacity: isDragging ? 0.5 : 1,
-						boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-					}}
-				>
-					<DragOutlined />
-				</div>
-			)}
-			{/* 组件操作菜单 */}
-			<div
-				style={{
-					position: "absolute",
-					left: position.labelLeft,
-					top: position.labelTop,
-					fontSize: "14px",
-					zIndex: 13,
-					display: (!position.width || position.width < 10) ? "none" : "inline",
-					transform: 'translate(-100%, -100%)',
-				}}
-			>
-				<Space>
-					{/* 父组件选择下拉菜单 */}
-					<Dropdown
-						menu={{
-							items: parentComponents.map(item => ({
-								key: item.id,
-								label: item.desc,
-							})),
-							onClick: ({ key }) => {
-								setCurComponentId(+key);
-							}
-						}}
-						disabled={parentComponents.length === 0}
-					>
-						<div
-							style={{
-								padding: '0 8px',
-								backgroundColor: 'blue',
-								borderRadius: 4,
-								color: '#fff',
-								cursor: "pointer",
-								whiteSpace: 'nowrap',
-							}}
-						>
-							{curSelectedComponent?.desc}
-						</div>
-					</Dropdown>
-					{/* 组件删除按钮，对根组件不显示 */}
-					{curComponentId !== 1 && (
-						<div style={{ padding: '0 8px', backgroundColor: 'blue' }}>
-							<Popconfirm
-								title="确认删除？"
-								okText={'确认'}
-								cancelText={'取消'}
-								onConfirm={handleDelete}
-							>
-								<DeleteOutlined style={{ color: '#fff' }}/>
-							</Popconfirm>
-						</div>
-					)}
-				</Space>
-			</div>
-		</>,
-		el,
-	);
+  return createPortal((
+    <>
+      <div
+        style={{
+          position: "absolute",
+          left: position.left,
+          top: position.top,
+          backgroundColor: "rgba(0, 0, 255, 0.1)",
+          border: "1px dashed blue",
+          pointerEvents: "none",
+          width: position.width,
+          height: position.height,
+          zIndex: 12,
+          borderRadius: 4,
+          boxSizing: 'border-box',
+        }}
+      />
+      <div
+          style={{
+            position: "absolute",
+            left: position.labelLeft,
+            top: position.labelTop,
+            fontSize: "14px",
+            zIndex: 13,
+            display: (!position.width || position.width < 10) ? "none" : "inline",
+            transform: 'translate(-100%, -100%)',
+          }}
+        >
+          <Space>
+            <Dropdown
+              menu={{
+                items: parentComponents.map(item => ({
+                  key: item.id,
+                  label: item.desc,
+                })),
+                onClick: ({ key }) => {
+                  setCurComponentId(+key);
+                }
+              }}
+              disabled={parentComponents.length === 0}
+            >
+              <div
+                style={{
+                  padding: '0 8px',
+                  backgroundColor: 'blue',
+                  borderRadius: 4,
+                  color: '#fff',
+                  cursor: "pointer",
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {curSelectedComponent?.desc}
+              </div>
+            </Dropdown>
+            {curComponentId !== 1 && (
+              <div style={{ padding: '0 8px', backgroundColor: 'blue' }}>
+                <Popconfirm
+                  title="确认删除？"
+                  okText={'确认'}
+                  cancelText={'取消'}
+                  onConfirm={handleDelete}
+                >
+                  <DeleteOutlined style={{ color: '#fff' }}/>
+                </Popconfirm>
+              </div>
+            )}
+          </Space>
+        </div>
+    </>
+  ), el)
 }
 
 export default SelectedMask;
