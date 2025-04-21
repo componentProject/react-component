@@ -97,7 +97,7 @@ export function Item(props: ItemProps) {
 				setEditing(true);
 			}}
 		>
-			/** * @description 复选框，用于标记待办事项状态 */
+			{/*@description 复选框，用于标记待办事项状态*/}
 			<input
 				type="checkbox"
 				className="w-40 h-40 mr-10"

@@ -40,7 +40,13 @@ import { List } from "./List";
  */
 export const TodoList: FC = () => {
 	return (
-		<div className={classNames("w-1000 h-600 m-auto mt-100 p-10", "border-2 border-black", "flex justify-between items-start")}>
+		<div
+			className={classNames(
+				"w-full h-300 overflow-auto m-auto mt-100 p-10",
+				"border-2 border-black",
+				"flex justify-between items-start",
+			)}
+		>
 			{/* 左侧列表区域 */}
 			<div className="flex-2 h-full mr-10 overflow-auto">
 				<List />
