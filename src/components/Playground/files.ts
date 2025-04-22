@@ -3,6 +3,8 @@
  */
 import { Files } from "@/components/Playground/PlaygroundContext.tsx";
 
+import templateModules from "./templates";
+
 // 文件名常量
 export const APP_COMPONENT_FILE_NAME = "App.tsx";
 export const ENTRY_FILE_NAME = "main.tsx";
@@ -31,11 +33,6 @@ export interface TemplateWrapper {
 	description: string;
 	files: Files;
 }
-
-/**
- * 默认的模板配置记录
- */
-export let templates: Record<string, TemplateConfig> = {};
 
 /**
  * 基础模板回退
@@ -89,16 +86,15 @@ ReactDOM.createRoot(document.getElementById('root')).render(<App />);`,
 		},
 	};
 }
+/**
+ * 默认的模板配置记录
+ */
+export let templates: Record<string, TemplateConfig> = {};
 
 /**
  * 初始化文件集合 - 注意：这是默认值，组件应该使用这个值作为初始状态，而不是直接引用
  */
 export const initFiles: Files = createFallbackTemplate().files;
-
-/**
- * 已知的模板ID列表 - 用于尝试加载，但不限制只加载这些模板
- */
-const KNOWN_TEMPLATE_IDS = ["basic", "hooks", "redux", "router"];
 
 /**
  * 模板的默认信息配置
@@ -157,15 +153,11 @@ export async function loadTemplates(): Promise<{
 
 	try {
 		// 尝试加载已知的模板ID
-		for (const id of KNOWN_TEMPLATE_IDS) {
+		for (const id of Object.keys(templateModules)) {
 			try {
 				console.log(`尝试加载模板: ${id}`);
-				// 动态导入模板
-				const templateModule = await import(`./templates/${id}/index`).catch((e) => {
-					console.warn(`模板 ${id} 导入失败:`, e);
-					return null;
-				});
 
+				const templateModule = templateModules[id];
 				// 如果成功加载模板
 				if (templateModule && templateModule.createTemplate) {
 					// 调用createTemplate获取模板包装对象
