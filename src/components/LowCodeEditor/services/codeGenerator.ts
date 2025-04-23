@@ -301,12 +301,115 @@ ReactDOM.createRoot(document.getElementById('root')${isTypeScript ? " as HTMLEle
  * @returns {string} 组件代码
  */
 function generateVueComponent(components: Component[], componentName: string, options: CodeGeneratorOptions): string {
-	// 暂简单实现，实际应根据Vue组件结构生成代码
+	// 生成导入代码
+	let importCode = "";
+	const imports = new Map<string, Set<string>>();
+
+	// 递归收集所有组件的导入
+	function collectImports(comps: Component[]) {
+		comps.forEach((comp) => {
+			const importInfo = componentImportMap[comp.name];
+			if (importInfo && importInfo.package) {
+				if (!imports.has(importInfo.package)) {
+					imports.set(importInfo.package, new Set());
+				}
+				imports.get(importInfo.package)?.add(importInfo.component);
+			}
+
+			// 处理子组件
+			if (comp.children && comp.children.length > 0) {
+				collectImports(comp.children);
+			}
+		});
+	}
+
+	// 只有在需要导入时才收集
+	if (options.includeImports) {
+		collectImports(components);
+
+		// 生成导入代码
+		imports.forEach((components, packageName) => {
+			importCode += `import { ${Array.from(components).join(", ")} } from '${packageName}';\n`;
+		});
+	}
+
+	// 生成Vue组件模板代码
+	function generateVueTemplate(comps: Component[], indentLevel = 1): string {
+		const indent = "  ".repeat(indentLevel);
+		let template = "";
+
+		comps.forEach((comp) => {
+			const componentConfig = useComponentConfigStore.getState().componentConfig[comp.name];
+
+			if (!componentConfig) {
+				template += `${indent}<!-- 未找到组件配置: ${comp.name} -->\n`;
+				return;
+			}
+
+			// 获取组件映射信息
+			const importInfo = componentImportMap[comp.name];
+			const tagName = importInfo ? importInfo.component.toLowerCase() : comp.name.toLowerCase();
+
+			// 合并默认属性和用户配置的属性
+			const props = { ...componentConfig.defaultProps, ...comp.props };
+
+			// 生成属性字符串
+			let propsString = "";
+			Object.entries(props).forEach(([key, value]) => {
+				// 跳过children和内部使用的属性
+				if (key === "children" || key === "id" || key === "name" || key === "desc") return;
+
+				// 处理不同类型的值
+				if (typeof value === "string") {
+					propsString += ` ${key}="${value}"`;
+				} else if (typeof value === "number" || typeof value === "boolean") {
+					propsString += ` :${key}="${value}"`;
+				} else if (value !== null && typeof value === "object") {
+					propsString += ` :${key}='${JSON.stringify(value)}'`;
+				}
+			});
+
+			// 添加样式类名
+			const className = `${comp.name.toLowerCase()}-${comp.id}`;
+			propsString += ` class="${className}"`;
+
+			// 生成内联样式
+			if (comp.styles) {
+				const styleObj = JSON.stringify(comp.styles).replace(/"/g, "'").replace(/,/g, ", ");
+				propsString += ` :style="${styleObj}"`;
+			}
+
+			// 处理子组件
+			if (comp.children && comp.children.length > 0) {
+				const childrenTemplate = generateVueTemplate(comp.children, indentLevel + 1);
+				template += `${indent}<${tagName}${propsString}>\n${childrenTemplate}${indent}</${tagName}>\n`;
+			} else if (props.text) {
+				// 处理文本内容
+				template += `${indent}<${tagName}${propsString}>${props.text}</${tagName}>\n`;
+			} else {
+				// 返回自闭合组件
+				template += `${indent}<${tagName}${propsString} />\n`;
+			}
+		});
+
+		return template;
+	}
+
+	// 生成样式代码
+	const stylesCode = generateStyles(components, options);
+
+	// 生成Vue模板
+	const template = generateVueTemplate(components);
+
+	// 确定script类型
+	const scriptType = options.fileType === "tsx" ? 'lang="ts"' : "";
+
+	// 返回完整的Vue单文件组件
 	return `<template>
-  <!-- TODO: Implement Vue template generation -->
+${template}
 </template>
 
-<script>
+<script ${scriptType}>
 export default {
   name: '${componentName}',
   data() {
@@ -316,7 +419,7 @@ export default {
 </script>
 
 <style>
-  /* TODO: Implement Vue styles generation */
+${stylesCode}
 </style>`;
 }
 
