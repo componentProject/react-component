@@ -5,7 +5,7 @@ import { Button, Modal, Form, Input, Select, Switch, Tabs, Spin, message } from 
 /**
  * 导入React Hooks
  */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 /**
  * 导入代码生成器服务
  */
@@ -69,7 +69,13 @@ export function CodeGeneratorDialog({ visible, onClose }: CodeGeneratorProps) {
 		styleType: "css",
 		generatePackageJson: true,
 		generateProjectFiles: true,
+		componentLibrary: "antd",
 	});
+
+	/**
+	 * 当前选择的框架
+	 */
+	const [selectedFramework, setSelectedFramework] = useState("react");
 
 	/**
 	 * 生成的代码
@@ -119,6 +125,7 @@ export function CodeGeneratorDialog({ visible, onClose }: CodeGeneratorProps) {
 				includeImports: values.includeImports,
 				generatePackageJson: values.generatePackageJson,
 				generateProjectFiles: values.generateProjectFiles,
+				componentLibrary: values.componentLibrary,
 			};
 
 			setOptions(newOptions);
@@ -162,6 +169,26 @@ export function CodeGeneratorDialog({ visible, onClose }: CodeGeneratorProps) {
 	};
 
 	/**
+	 * 初始化表单值
+	 */
+	useEffect(() => {
+		if (visible) {
+			setSelectedFramework(options.framework || "react");
+			form.setFieldsValue({
+				componentName: "GeneratedApp",
+				framework: options.framework,
+				fileType: options.fileType,
+				styleType: options.styleType,
+				generateCSS: options.generateCSS,
+				includeImports: options.includeImports,
+				generatePackageJson: options.generatePackageJson,
+				generateProjectFiles: options.generateProjectFiles,
+				componentLibrary: options.componentLibrary,
+			});
+		}
+	}, [visible, form, options]);
+
+	/**
 	 * 渲染代码生成器对话框
 	 */
 	return (
@@ -184,29 +211,45 @@ export function CodeGeneratorDialog({ visible, onClose }: CodeGeneratorProps) {
 		>
 			<Tabs activeKey={activeTab} onChange={setActiveTab}>
 				<Tabs.TabPane tab="配置" key="1">
-					<Form
-						form={form}
-						layout="vertical"
-						initialValues={{
-							componentName: "GeneratedApp",
-							framework: options.framework,
-							fileType: options.fileType,
-							styleType: options.styleType,
-							generateCSS: options.generateCSS,
-							includeImports: options.includeImports,
-							generatePackageJson: options.generatePackageJson,
-							generateProjectFiles: options.generateProjectFiles,
-						}}
-					>
-						<Form.Item name="componentName" label="组件名称" rules={[{ required: true, message: "请输入组件名称" }]}>
-							<Input placeholder="输入要生成的组件名称" />
-						</Form.Item>
-
+					<Form form={form} layout="vertical">
 						<Form.Item name="framework" label="目标框架">
-							<Select>
+							<Select
+								onChange={(value) => {
+									// 当框架改变时，自动选择默认组件库并更新当前框架状态
+									setSelectedFramework(value);
+									if (value === "react") {
+										form.setFieldsValue({ componentLibrary: "antd" });
+									} else if (value === "vue") {
+										form.setFieldsValue({ componentLibrary: "element-plus" });
+									}
+								}}
+							>
 								<Select.Option value="react">React</Select.Option>
 								<Select.Option value="vue">Vue</Select.Option>
 							</Select>
+						</Form.Item>
+
+						<Form.Item name="componentLibrary" label="组件库">
+							<Select>
+								{selectedFramework === "react" ? (
+									<>
+										<Select.Option value="antd">Ant Design</Select.Option>
+										<Select.Option value="mui">Material UI</Select.Option>
+										<Select.Option value="shadcn">Shadcn UI</Select.Option>
+									</>
+								) : (
+									<>
+										<Select.Option value="element-plus">Element Plus</Select.Option>
+										<Select.Option value="antdv">Ant Design Vue</Select.Option>
+										<Select.Option value="vuetify">Vuetify</Select.Option>
+										<Select.Option value="shadcn-vue">Shadcn Vue</Select.Option>
+									</>
+								)}
+							</Select>
+						</Form.Item>
+
+						<Form.Item name="componentName" label="组件名称" rules={[{ required: true, message: "请输入组件名称" }]}>
+							<Input placeholder="输入要生成的组件名称" />
 						</Form.Item>
 
 						<Form.Item name="fileType" label="文件类型">
@@ -311,6 +354,20 @@ export function CodeGeneratorDialog({ visible, onClose }: CodeGeneratorProps) {
 										customStyle={{ maxHeight: "200px", overflow: "auto" }}
 									>
 										{generatedCode.viteConfig}
+									</SyntaxHighlighter>
+								</>
+							)}
+
+							{generatedCode.mainFile && (
+								<>
+									<h3>main.{options.fileType === "tsx" ? "ts" : "js"}</h3>
+									<SyntaxHighlighter
+										language={options.fileType === "tsx" ? "typescript" : "javascript"}
+										style={docco}
+										showLineNumbers
+										customStyle={{ maxHeight: "200px", overflow: "auto" }}
+									>
+										{generatedCode.mainFile}
 									</SyntaxHighlighter>
 								</>
 							)}

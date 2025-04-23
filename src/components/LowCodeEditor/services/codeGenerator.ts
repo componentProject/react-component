@@ -26,6 +26,8 @@ export interface CodeGeneratorOptions {
 	generatePackageJson?: boolean;
 	/** 是否生成项目配置文件 */
 	generateProjectFiles?: boolean;
+	/** 组件库 */
+	componentLibrary?: "antd" | "shadcn" | "mui" | "element-plus" | "antdv" | "vuetify" | "shadcn-vue";
 }
 
 /**
@@ -81,6 +83,81 @@ const elementPlusComponentMap: Record<string, { component: string }> = {
 };
 
 /**
+ * Ant Design Vue组件映射表
+ */
+const antDesignVueComponentMap: Record<string, { component: string }> = {
+	Button: { component: "a-button" },
+	Form: { component: "a-form" },
+	FormItem: { component: "a-form-item" },
+	Input: { component: "a-input" },
+	DatePicker: { component: "a-date-picker" },
+	Container: { component: "a-layout" },
+	Table: { component: "a-table" },
+	Modal: { component: "a-modal" },
+	Page: { component: "div" },
+};
+
+/**
+ * Vuetify组件映射表
+ */
+const vuetifyComponentMap: Record<string, { component: string }> = {
+	Button: { component: "v-btn" },
+	Form: { component: "v-form" },
+	FormItem: { component: "v-text-field" },
+	Input: { component: "v-text-field" },
+	DatePicker: { component: "v-date-picker" },
+	Container: { component: "v-container" },
+	Table: { component: "v-data-table" },
+	Modal: { component: "v-dialog" },
+	Page: { component: "div" },
+};
+
+/**
+ * Material-UI (MUI) 组件映射表
+ */
+const muiComponentMap: Record<string, { package: string; component: string }> = {
+	Button: { package: "@mui/material", component: "Button" },
+	Form: { package: "@mui/material", component: "Box" },
+	FormItem: { package: "@mui/material", component: "FormControl" },
+	Input: { package: "@mui/material", component: "TextField" },
+	DatePicker: { package: "@mui/x-date-pickers", component: "DatePicker" },
+	Container: { package: "@mui/material", component: "Container" },
+	Table: { package: "@mui/material", component: "Table" },
+	Modal: { package: "@mui/material", component: "Modal" },
+	Page: { package: "@mui/material", component: "Box" },
+};
+
+/**
+ * Shadcn UI 组件映射表
+ */
+const shadcnComponentMap: Record<string, { importPath: string; component: string }> = {
+	Button: { importPath: "@/components/ui/button", component: "Button" },
+	Form: { importPath: "@/components/ui/form", component: "Form" },
+	FormItem: { importPath: "@/components/ui/form", component: "FormItem" },
+	Input: { importPath: "@/components/ui/input", component: "Input" },
+	DatePicker: { importPath: "@/components/ui/date-picker", component: "DatePicker" },
+	Container: { importPath: "", component: "div" },
+	Table: { importPath: "@/components/ui/table", component: "Table" },
+	Modal: { importPath: "@/components/ui/dialog", component: "Dialog" },
+	Page: { importPath: "", component: "div" },
+};
+
+/**
+ * Shadcn Vue 组件映射表
+ */
+const shadcnVueComponentMap: Record<string, { component: string }> = {
+	Button: { component: "SButton" },
+	Form: { component: "SForm" },
+	FormItem: { component: "SFormItem" },
+	Input: { component: "SInput" },
+	DatePicker: { component: "SDatePicker" },
+	Container: { component: "div" },
+	Table: { component: "STable" },
+	Modal: { component: "SDialog" },
+	Page: { component: "div" },
+};
+
+/**
  * 默认代码生成器选项
  */
 const defaultOptions: CodeGeneratorOptions = {
@@ -91,6 +168,7 @@ const defaultOptions: CodeGeneratorOptions = {
 	styleType: "css",
 	generatePackageJson: true,
 	generateProjectFiles: true,
+	componentLibrary: "antd", // 默认使用 Ant Design
 };
 
 /**
@@ -112,16 +190,33 @@ function generateImports(components: Component[], options: CodeGeneratorOptions)
 	if (!options.includeImports) return "";
 
 	const imports = new Map<string, Set<string>>();
+	const shadcnImports = new Set<string>();
 
 	// 递归收集所有组件的导入
 	function collectImports(comps: Component[]) {
 		comps.forEach((comp) => {
-			const importInfo = componentImportMap[comp.name];
-			if (importInfo && importInfo.package) {
-				if (!imports.has(importInfo.package)) {
-					imports.set(importInfo.package, new Set());
+			if (options.componentLibrary === "shadcn") {
+				const importInfo = shadcnComponentMap[comp.name];
+				if (importInfo && importInfo.importPath) {
+					shadcnImports.add(importInfo.importPath);
 				}
-				imports.get(importInfo.package)?.add(importInfo.component);
+			} else if (options.componentLibrary === "mui") {
+				const importInfo = muiComponentMap[comp.name];
+				if (importInfo && importInfo.package) {
+					if (!imports.has(importInfo.package)) {
+						imports.set(importInfo.package, new Set());
+					}
+					imports.get(importInfo.package)?.add(importInfo.component);
+				}
+			} else {
+				// 默认使用antd
+				const importInfo = componentImportMap[comp.name];
+				if (importInfo && importInfo.package) {
+					if (!imports.has(importInfo.package)) {
+						imports.set(importInfo.package, new Set());
+					}
+					imports.get(importInfo.package)?.add(importInfo.component);
+				}
 			}
 
 			// 处理子组件
@@ -136,9 +231,33 @@ function generateImports(components: Component[], options: CodeGeneratorOptions)
 	// 生成导入代码
 	let importCode = "import React from 'react';\n";
 
-	imports.forEach((components, packageName) => {
-		importCode += `import { ${Array.from(components).join(", ")} } from '${packageName}';\n`;
-	});
+	// 根据组件库生成不同的导入语句
+	if (options.componentLibrary === "shadcn") {
+		// Shadcn UI 导入 - 每个组件从单独的文件导入
+		shadcnImports.forEach((importPath) => {
+			if (importPath) {
+				importCode += `import { ${
+					shadcnComponentMap[
+						Object.keys(shadcnComponentMap).find((key) => shadcnComponentMap[key].importPath === importPath) || ""
+					].component
+				} } from '${importPath}';\n`;
+			}
+		});
+	} else if (options.componentLibrary === "mui") {
+		// MUI 导入
+		imports.forEach((components, packageName) => {
+			importCode += `import { ${Array.from(components).join(", ")} } from '${packageName}';\n`;
+		});
+
+		// 导入 MUI 主题和样式
+		importCode += "import { ThemeProvider, createTheme } from '@mui/material/styles';\n";
+		importCode += "import CssBaseline from '@mui/material/CssBaseline';\n";
+	} else {
+		// Ant Design 或默认导入
+		imports.forEach((components, packageName) => {
+			importCode += `import { ${Array.from(components).join(", ")} } from '${packageName}';\n`;
+		});
+	}
 
 	// 如果使用样式导入
 	if (options.generateCSS && options.styleType === "css") {
@@ -197,9 +316,10 @@ function generateStyles(components: Component[], options: CodeGeneratorOptions):
  * 生成组件JSX代码
  * @param {Component} component - 组件
  * @param {number} indentLevel - 缩进级别
+ * @param {CodeGeneratorOptions} options - 生成选项
  * @returns {string} JSX代码
  */
-function generateComponentJSX(component: Component, indentLevel = 0): string {
+function generateComponentJSX(component: Component, indentLevel = 0, options: CodeGeneratorOptions): string {
 	const indent = "  ".repeat(indentLevel);
 	const componentConfig = useComponentConfigStore.getState().componentConfig[component.name];
 
@@ -208,8 +328,19 @@ function generateComponentJSX(component: Component, indentLevel = 0): string {
 	}
 
 	// 获取组件映射信息
-	const importInfo = componentImportMap[component.name];
-	const ComponentName = importInfo ? importInfo.component : component.name;
+	let ComponentName = "";
+
+	if (options.componentLibrary === "shadcn") {
+		const importInfo = shadcnComponentMap[component.name];
+		ComponentName = importInfo ? importInfo.component : component.name;
+	} else if (options.componentLibrary === "mui") {
+		const importInfo = muiComponentMap[component.name];
+		ComponentName = importInfo ? importInfo.component : component.name;
+	} else {
+		// 默认使用 antd
+		const importInfo = componentImportMap[component.name];
+		ComponentName = importInfo ? importInfo.component : component.name;
+	}
 
 	// 合并默认属性和用户配置的属性
 	const props = { ...componentConfig.defaultProps, ...component.props };
@@ -220,30 +351,67 @@ function generateComponentJSX(component: Component, indentLevel = 0): string {
 		// 跳过children和内部使用的属性
 		if (key === "children" || key === "id" || key === "name" || key === "desc") return;
 
-		// 处理不同类型的值
-		if (typeof value === "string") {
-			propsString += ` ${key}="${value}"`;
-		} else if (typeof value === "number" || typeof value === "boolean") {
-			propsString += ` ${key}={${value}}`;
-		} else if (value !== null && typeof value === "object") {
-			propsString += ` ${key}={${JSON.stringify(value)}}`;
+		// 根据不同组件库处理属性
+		if (options.componentLibrary === "shadcn") {
+			// Shadcn 使用标准的 React 属性格式
+			if (typeof value === "string") {
+				propsString += ` ${key}="${value}"`;
+			} else if (typeof value === "number" || typeof value === "boolean") {
+				propsString += ` ${key}={${value}}`;
+			} else if (value !== null && typeof value === "object") {
+				propsString += ` ${key}={${JSON.stringify(value)}}`;
+			}
+		} else if (options.componentLibrary === "mui") {
+			// MUI 可能使用特殊的属性名称
+			const muiKey = key === "text" ? "label" : key; // 例如，将text属性映射为label
+			if (typeof value === "string") {
+				propsString += ` ${muiKey}="${value}"`;
+			} else if (typeof value === "number" || typeof value === "boolean") {
+				propsString += ` ${muiKey}={${value}}`;
+			} else if (value !== null && typeof value === "object") {
+				propsString += ` ${muiKey}={${JSON.stringify(value)}}`;
+			}
+		} else {
+			// Ant Design 或默认的处理方式
+			if (typeof value === "string") {
+				propsString += ` ${key}="${value}"`;
+			} else if (typeof value === "number" || typeof value === "boolean") {
+				propsString += ` ${key}={${value}}`;
+			} else if (value !== null && typeof value === "object") {
+				propsString += ` ${key}={${JSON.stringify(value)}}`;
+			}
 		}
 	});
 
 	// 添加样式类名
 	const className = `${component.name.toLowerCase()}-${component.id}`;
-	propsString += ` className="${className}"`;
+
+	// 根据组件库调整类名
+	if (options.componentLibrary === "mui") {
+		propsString += ` className="${className}"`;
+	} else if (options.componentLibrary === "shadcn") {
+		// shadcn 通常使用 className 属性带有预设的类名
+		propsString += ` className="${className}"`;
+	} else {
+		propsString += ` className="${className}"`;
+	}
 
 	// 生成内联样式
 	if (component.styles) {
 		const styleObj = JSON.stringify(component.styles).replace(/"/g, "'").replace(/,/g, ", ");
-		propsString += ` style={${styleObj}}`;
+
+		if (options.componentLibrary === "mui") {
+			// MUI 可以使用 sx 属性
+			propsString += ` sx={${styleObj}}`;
+		} else {
+			propsString += ` style={${styleObj}}`;
+		}
 	}
 
 	// 处理子组件
 	let childrenJSX = "";
 	if (component.children && component.children.length > 0) {
-		childrenJSX = component.children.map((child) => generateComponentJSX(child, indentLevel + 1)).join("\n");
+		childrenJSX = component.children.map((child) => generateComponentJSX(child, indentLevel + 1, options)).join("\n");
 
 		// 返回带有子组件的JSX
 		return `${indent}<${ComponentName}${propsString}>\n${childrenJSX}\n${indent}</${ComponentName}>`;
@@ -251,7 +419,15 @@ function generateComponentJSX(component: Component, indentLevel = 0): string {
 
 	// 处理文本内容
 	if (props.text) {
-		return `${indent}<${ComponentName}${propsString}>${props.text}</${ComponentName}>`;
+		// 不同组件库处理文本的方式可能不同
+		if (options.componentLibrary === "mui" && ["Button", "TextField"].includes(component.name)) {
+			// MUI 的某些组件使用 children 或特殊属性来显示文本
+			return `${indent}<${ComponentName}${propsString}>${props.text}</${ComponentName}>`;
+		} else if (options.componentLibrary === "shadcn") {
+			return `${indent}<${ComponentName}${propsString}>${props.text}</${ComponentName}>`;
+		} else {
+			return `${indent}<${ComponentName}${propsString}>${props.text}</${ComponentName}>`;
+		}
 	}
 
 	// 返回自闭合组件
@@ -270,12 +446,34 @@ function generateReactComponent(components: Component[], componentName: string, 
 
 	let jsxCode = "";
 	components.forEach((component) => {
-		jsxCode += generateComponentJSX(component);
+		jsxCode += generateComponentJSX(component, 0, options);
 	});
 
 	const isTypeScript = options.fileType === "tsx";
 
-	return `${imports}
+	// 根据组件库生成不同的包装代码
+	if (options.componentLibrary === "mui") {
+		return `${imports}
+${isTypeScript ? `interface ${componentName}Props {}\n` : ""}
+function ${componentName}(${isTypeScript ? "props: " + componentName + "Props" : "props"}) {
+  const theme = createTheme({
+    palette: {
+      mode: 'light',
+    },
+  });
+
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+${jsxCode}
+    </ThemeProvider>
+  );
+}
+
+export default ${componentName};
+`;
+	} else {
+		return `${imports}
 ${isTypeScript ? `interface ${componentName}Props {}\n` : ""}
 function ${componentName}(${isTypeScript ? "props: " + componentName + "Props" : "props"}) {
   return (
@@ -285,6 +483,7 @@ ${jsxCode}
 
 export default ${componentName};
 `;
+	}
 }
 
 /**
@@ -321,10 +520,37 @@ function generateVueComponent(components: Component[], componentName: string, op
 	// 生成导入代码
 	let importCode = "";
 
-	// 添加Element Plus组件库导入
-	importCode += "import { createApp } from 'vue';\n";
-	importCode += "import ElementPlus from 'element-plus';\n";
-	importCode += "import 'element-plus/dist/index.css';\n";
+	// 根据选择的库生成导入语句
+	if (options.componentLibrary === "element-plus") {
+		importCode += "import { createApp } from 'vue';\n";
+		importCode += "import ElementPlus from 'element-plus';\n";
+		importCode += "import 'element-plus/dist/index.css';\n";
+	} else if (options.componentLibrary === "antdv") {
+		importCode += "import { createApp } from 'vue';\n";
+		importCode += "import Antd from 'ant-design-vue';\n";
+		importCode += "import 'ant-design-vue/dist/antd.css';\n";
+	} else if (options.componentLibrary === "vuetify") {
+		importCode += "import { createApp } from 'vue';\n";
+		importCode += "import { createVuetify } from 'vuetify';\n";
+		importCode += "import 'vuetify/styles';\n";
+	} else if (options.componentLibrary === "shadcn-vue") {
+		importCode += "import { createApp } from 'vue';\n";
+		importCode += "// 导入Shadcn Vue组件\n";
+		importCode += "import { SButton, SInput, SForm, SFormItem } from '@shadcn/vue';\n";
+		importCode += "import '@shadcn/vue/styles.css';\n";
+	}
+
+	// 选择合适的组件映射表
+	const componentMap =
+		options.componentLibrary === "element-plus"
+			? elementPlusComponentMap
+			: options.componentLibrary === "antdv"
+				? antDesignVueComponentMap
+				: options.componentLibrary === "vuetify"
+					? vuetifyComponentMap
+					: options.componentLibrary === "shadcn-vue"
+						? shadcnVueComponentMap
+						: elementPlusComponentMap; // 默认使用 Element Plus
 
 	// 生成Vue组件模板代码
 	function generateVueTemplate(comps: Component[], indentLevel = 1): string {
@@ -339,8 +565,8 @@ function generateVueComponent(components: Component[], componentName: string, op
 				return;
 			}
 
-			// 使用Element Plus组件
-			const elementTag = elementPlusComponentMap[comp.name]?.component || comp.name.toLowerCase();
+			// 使用选定的组件库组件
+			const elementTag = componentMap[comp.name]?.component || comp.name.toLowerCase();
 
 			// 合并默认属性和用户配置的属性
 			const props = { ...componentConfig.defaultProps, ...comp.props };
@@ -396,13 +622,11 @@ function generateVueComponent(components: Component[], componentName: string, op
 	// 确定script类型
 	const scriptType = options.fileType === "tsx" ? 'lang="ts"' : "";
 
-	// Vue 3 选项式API
-	return `<template>
-${template}
-</template>
+	// 生成合适的脚本内容
+	let scriptContent = "";
 
-<script ${scriptType} setup>
-import { ref, onMounted } from 'vue'
+	if (options.componentLibrary === "element-plus") {
+		scriptContent = `import { ref, onMounted } from 'vue'
 // 导入Element Plus相关组件
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
@@ -416,7 +640,86 @@ const data = ref({})
 // 组件挂载后执行
 onMounted(() => {
   console.log('${componentName} 组件已挂载')
-})
+})`;
+	} else if (options.componentLibrary === "antdv") {
+		scriptContent = `import { ref, onMounted } from 'vue'
+// 导入Ant Design Vue相关组件
+import { ${components
+			.map((c) => antDesignVueComponentMap[c.name]?.component.replace("a-", "") || "")
+			.filter(Boolean)
+			.join(", ")} } from 'ant-design-vue'
+import 'ant-design-vue/dist/antd.css'
+
+// 组件名称
+const componentName = '${componentName}'
+
+// 组件数据
+const data = ref({})
+
+// 组件挂载后执行
+onMounted(() => {
+  console.log('${componentName} 组件已挂载')
+})`;
+	} else if (options.componentLibrary === "vuetify") {
+		scriptContent = `import { ref, onMounted } from 'vue'
+// 导入Vuetify相关组件
+import { createVuetify } from 'vuetify'
+import 'vuetify/styles'
+
+// 组件名称
+const componentName = '${componentName}'
+
+// 组件数据
+const data = ref({})
+
+// 创建Vuetify实例
+const vuetify = createVuetify()
+
+// 组件挂载后执行
+onMounted(() => {
+  console.log('${componentName} 组件已挂载')
+})`;
+	} else if (options.componentLibrary === "shadcn-vue") {
+		scriptContent = `import { ref, onMounted } from 'vue'
+// 导入Shadcn Vue相关组件
+import { SButton, SInput, SForm, SFormItem } from '@shadcn/vue'
+
+// 组件名称
+const componentName = '${componentName}'
+
+// 组件数据
+const data = ref({})
+
+// 组件挂载后执行
+onMounted(() => {
+  console.log('${componentName} 组件已挂载')
+})`;
+	} else {
+		// 默认 Element Plus
+		scriptContent = `import { ref, onMounted } from 'vue'
+// 导入Element Plus相关组件
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+
+// 组件名称
+const componentName = '${componentName}'
+
+// 组件数据
+const data = ref({})
+
+// 组件挂载后执行
+onMounted(() => {
+  console.log('${componentName} 组件已挂载')
+})`;
+	}
+
+	// 返回完整的Vue单文件组件
+	return `<template>
+${template}
+</template>
+
+<script ${scriptType} setup>
+${scriptContent}
 </script>
 
 <style scoped>
@@ -452,26 +755,65 @@ function generatePackageJson(components: Component[], options: CodeGeneratorOpti
 		delete devDependencies["@types/react"];
 		delete devDependencies["@types/react-dom"];
 
-		// 添加Vue依赖
+		// 添加Vue基础依赖
 		dependencies.vue = "^3.3.4";
-		dependencies["element-plus"] = "^2.3.8";
 		devDependencies["@vitejs/plugin-vue"] = "^4.2.3";
+
+		// 添加选择的Vue组件库
+		if (options.componentLibrary === "element-plus") {
+			dependencies["element-plus"] = "^2.3.8";
+		} else if (options.componentLibrary === "antdv") {
+			dependencies["ant-design-vue"] = "^4.0.0";
+		} else if (options.componentLibrary === "vuetify") {
+			dependencies.vuetify = "^3.3.0";
+		} else if (options.componentLibrary === "shadcn-vue") {
+			dependencies["@shadcn/vue"] = "^0.1.0"; // 假设的包名和版本
+			dependencies.tailwindcss = "^3.3.3";
+			devDependencies.autoprefixer = "^10.4.14";
+			devDependencies.postcss = "^8.4.27";
+		} else {
+			// 默认使用Element Plus
+			dependencies["element-plus"] = "^2.3.8";
+		}
 
 		// 如果是TypeScript项目
 		if (options.fileType === "tsx") {
 			devDependencies["vue-tsc"] = "^1.8.5";
 		}
-	} else if (options.fileType === "tsx") {
+	} else {
+		// React项目，根据组件库添加依赖
+		if (options.componentLibrary === "antd") {
+			dependencies.antd = "^5.8.0";
+		} else if (options.componentLibrary === "mui") {
+			dependencies["@mui/material"] = "^5.14.0";
+			dependencies["@mui/icons-material"] = "^5.14.0";
+			dependencies["@emotion/react"] = "^11.11.1";
+			dependencies["@emotion/styled"] = "^11.11.0";
+			if (options.fileType === "tsx") {
+				devDependencies["@types/react"] = "^18.2.15";
+			}
+		} else if (options.componentLibrary === "shadcn") {
+			dependencies["class-variance-authority"] = "^0.7.0";
+			dependencies.clsx = "^2.0.0";
+			dependencies["tailwind-merge"] = "^1.14.0";
+			dependencies["tailwindcss-animate"] = "^1.0.6";
+			devDependencies.tailwindcss = "^3.3.3";
+			devDependencies.autoprefixer = "^10.4.14";
+			devDependencies.postcss = "^8.4.27";
+		}
+
 		// React TypeScript项目
-		devDependencies["typescript"] = "^5.0.2";
-		devDependencies["@typescript-eslint/eslint-plugin"] = "^6.0.0";
-		devDependencies["@typescript-eslint/parser"] = "^6.0.0";
+		if (options.fileType === "tsx") {
+			devDependencies.typescript = "^5.0.2";
+			devDependencies["@typescript-eslint/eslint-plugin"] = "^6.0.0";
+			devDependencies["@typescript-eslint/parser"] = "^6.0.0";
+		}
 	}
 
 	// 递归收集所有组件的依赖
 	function collectDependencies(comps: Component[]) {
 		comps.forEach((comp) => {
-			if (options.framework === "react") {
+			if (options.framework === "react" && options.componentLibrary !== "mui" && options.componentLibrary !== "shadcn") {
 				const importInfo = componentImportMap[comp.name];
 				if (importInfo && importInfo.package && importInfo.package !== "") {
 					dependencies[importInfo.package] = "*"; // 实际项目中应指定具体版本
@@ -489,9 +831,9 @@ function generatePackageJson(components: Component[], options: CodeGeneratorOpti
 
 	// 根据样式类型添加相应依赖
 	if (options.styleType === "scss") {
-		devDependencies["sass"] = "^1.63.6";
+		devDependencies.sass = "^1.63.6";
 	} else if (options.styleType === "less") {
-		devDependencies["less"] = "^4.1.3";
+		devDependencies.less = "^4.1.3";
 	} else if (options.styleType === "styled-components" && options.framework === "react") {
 		dependencies["styled-components"] = "^6.0.5";
 		if (options.fileType === "tsx") {
@@ -569,7 +911,8 @@ function generateVueMainFile(componentName: string, options: CodeGeneratorOption
 	const extension = isTypeScript ? ".vue" : ".vue";
 	const mainExt = isTypeScript ? ".ts" : ".js";
 
-	return `import { createApp } from 'vue'
+	if (options.componentLibrary === "element-plus") {
+		return `import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import App from './${componentName}${extension}'
@@ -579,6 +922,54 @@ const app = createApp(App)
 app.use(ElementPlus)
 app.mount('#app')
 `;
+	} else if (options.componentLibrary === "antdv") {
+		return `import { createApp } from 'vue'
+import Antd from 'ant-design-vue'
+import 'ant-design-vue/dist/antd.css'
+import App from './${componentName}${extension}'
+
+const app = createApp(App)
+
+app.use(Antd)
+app.mount('#app')
+`;
+	} else if (options.componentLibrary === "vuetify") {
+		return `import { createApp } from 'vue'
+import { createVuetify } from 'vuetify'
+import 'vuetify/styles'
+import App from './${componentName}${extension}'
+
+const vuetify = createVuetify()
+const app = createApp(App)
+
+app.use(vuetify)
+app.mount('#app')
+`;
+	} else if (options.componentLibrary === "shadcn-vue") {
+		return `import { createApp } from 'vue'
+import { createShadcn } from '@shadcn/vue'
+import '@shadcn/vue/styles.css'
+import App from './${componentName}${extension}'
+
+const app = createApp(App)
+const shadcn = createShadcn()
+
+app.use(shadcn)
+app.mount('#app')
+`;
+	} else {
+		// 默认使用 Element Plus
+		return `import { createApp } from 'vue'
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+import App from './${componentName}${extension}'
+
+const app = createApp(App)
+
+app.use(ElementPlus)
+app.mount('#app')
+`;
+	}
 }
 
 /**
