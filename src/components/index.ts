@@ -14,3 +14,4 @@ try {
 	components = {};
 }
 export default components;
+export { default as NewLowCodeEditor } from "./NewLowCodeEditor";
