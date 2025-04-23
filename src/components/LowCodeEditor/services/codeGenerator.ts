@@ -45,6 +45,8 @@ export interface GeneratedCode {
 	indexHtml?: string;
 	/** vite.config.ts内容 */
 	viteConfig?: string;
+	/** main文件内容 */
+	mainFile?: string;
 }
 
 /**
@@ -61,6 +63,21 @@ const componentImportMap: Record<string, { package: string; component: string }>
 	Table: { package: "antd", component: "Table" },
 	Modal: { package: "antd", component: "Modal" },
 	Page: { package: "", component: "div" },
+};
+
+/**
+ * Element Plus组件映射表
+ */
+const elementPlusComponentMap: Record<string, { component: string }> = {
+	Button: { component: "el-button" },
+	Form: { component: "el-form" },
+	FormItem: { component: "el-form-item" },
+	Input: { component: "el-input" },
+	DatePicker: { component: "el-date-picker" },
+	Container: { component: "el-container" },
+	Table: { component: "el-table" },
+	Modal: { component: "el-dialog" },
+	Page: { component: "div" },
 };
 
 /**
@@ -303,35 +320,11 @@ ReactDOM.createRoot(document.getElementById('root')${isTypeScript ? " as HTMLEle
 function generateVueComponent(components: Component[], componentName: string, options: CodeGeneratorOptions): string {
 	// 生成导入代码
 	let importCode = "";
-	const imports = new Map<string, Set<string>>();
 
-	// 递归收集所有组件的导入
-	function collectImports(comps: Component[]) {
-		comps.forEach((comp) => {
-			const importInfo = componentImportMap[comp.name];
-			if (importInfo && importInfo.package) {
-				if (!imports.has(importInfo.package)) {
-					imports.set(importInfo.package, new Set());
-				}
-				imports.get(importInfo.package)?.add(importInfo.component);
-			}
-
-			// 处理子组件
-			if (comp.children && comp.children.length > 0) {
-				collectImports(comp.children);
-			}
-		});
-	}
-
-	// 只有在需要导入时才收集
-	if (options.includeImports) {
-		collectImports(components);
-
-		// 生成导入代码
-		imports.forEach((components, packageName) => {
-			importCode += `import { ${Array.from(components).join(", ")} } from '${packageName}';\n`;
-		});
-	}
+	// 添加Element Plus组件库导入
+	importCode += "import { createApp } from 'vue';\n";
+	importCode += "import ElementPlus from 'element-plus';\n";
+	importCode += "import 'element-plus/dist/index.css';\n";
 
 	// 生成Vue组件模板代码
 	function generateVueTemplate(comps: Component[], indentLevel = 1): string {
@@ -346,9 +339,8 @@ function generateVueComponent(components: Component[], componentName: string, op
 				return;
 			}
 
-			// 获取组件映射信息
-			const importInfo = componentImportMap[comp.name];
-			const tagName = importInfo ? importInfo.component.toLowerCase() : comp.name.toLowerCase();
+			// 使用Element Plus组件
+			const elementTag = elementPlusComponentMap[comp.name]?.component || comp.name.toLowerCase();
 
 			// 合并默认属性和用户配置的属性
 			const props = { ...componentConfig.defaultProps, ...comp.props };
@@ -382,13 +374,13 @@ function generateVueComponent(components: Component[], componentName: string, op
 			// 处理子组件
 			if (comp.children && comp.children.length > 0) {
 				const childrenTemplate = generateVueTemplate(comp.children, indentLevel + 1);
-				template += `${indent}<${tagName}${propsString}>\n${childrenTemplate}${indent}</${tagName}>\n`;
+				template += `${indent}<${elementTag}${propsString}>\n${childrenTemplate}${indent}</${elementTag}>\n`;
 			} else if (props.text) {
 				// 处理文本内容
-				template += `${indent}<${tagName}${propsString}>${props.text}</${tagName}>\n`;
+				template += `${indent}<${elementTag}${propsString}>${props.text}</${elementTag}>\n`;
 			} else {
 				// 返回自闭合组件
-				template += `${indent}<${tagName}${propsString} />\n`;
+				template += `${indent}<${elementTag}${propsString} />\n`;
 			}
 		});
 
@@ -404,21 +396,30 @@ function generateVueComponent(components: Component[], componentName: string, op
 	// 确定script类型
 	const scriptType = options.fileType === "tsx" ? 'lang="ts"' : "";
 
-	// 返回完整的Vue单文件组件
+	// Vue 3 选项式API
 	return `<template>
 ${template}
 </template>
 
-<script ${scriptType}>
-export default {
-  name: '${componentName}',
-  data() {
-    return {};
-  }
-}
+<script ${scriptType} setup>
+import { ref, onMounted } from 'vue'
+// 导入Element Plus相关组件
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+
+// 组件名称
+const componentName = '${componentName}'
+
+// 组件数据
+const data = ref({})
+
+// 组件挂载后执行
+onMounted(() => {
+  console.log('${componentName} 组件已挂载')
+})
 </script>
 
-<style>
+<style scoped>
 ${stylesCode}
 </style>`;
 }
@@ -443,8 +444,25 @@ function generatePackageJson(components: Component[], options: CodeGeneratorOpti
 		vite: "^4.4.5",
 	};
 
-	// 如果是TypeScript项目，添加TypeScript相关依赖
-	if (options.fileType === "tsx") {
+	// 如果是Vue框架，使用Vue相关依赖
+	if (options.framework === "vue") {
+		// 清除React依赖
+		delete dependencies.react;
+		delete dependencies["react-dom"];
+		delete devDependencies["@types/react"];
+		delete devDependencies["@types/react-dom"];
+
+		// 添加Vue依赖
+		dependencies.vue = "^3.3.4";
+		dependencies["element-plus"] = "^2.3.8";
+		devDependencies["@vitejs/plugin-vue"] = "^4.2.3";
+
+		// 如果是TypeScript项目
+		if (options.fileType === "tsx") {
+			devDependencies["vue-tsc"] = "^1.8.5";
+		}
+	} else if (options.fileType === "tsx") {
+		// React TypeScript项目
 		devDependencies["typescript"] = "^5.0.2";
 		devDependencies["@typescript-eslint/eslint-plugin"] = "^6.0.0";
 		devDependencies["@typescript-eslint/parser"] = "^6.0.0";
@@ -453,9 +471,11 @@ function generatePackageJson(components: Component[], options: CodeGeneratorOpti
 	// 递归收集所有组件的依赖
 	function collectDependencies(comps: Component[]) {
 		comps.forEach((comp) => {
-			const importInfo = componentImportMap[comp.name];
-			if (importInfo && importInfo.package && importInfo.package !== "") {
-				dependencies[importInfo.package] = "*"; // 实际项目中应指定具体版本
+			if (options.framework === "react") {
+				const importInfo = componentImportMap[comp.name];
+				if (importInfo && importInfo.package && importInfo.package !== "") {
+					dependencies[importInfo.package] = "*"; // 实际项目中应指定具体版本
+				}
 			}
 
 			// 处理子组件
@@ -472,7 +492,7 @@ function generatePackageJson(components: Component[], options: CodeGeneratorOpti
 		devDependencies["sass"] = "^1.63.6";
 	} else if (options.styleType === "less") {
 		devDependencies["less"] = "^4.1.3";
-	} else if (options.styleType === "styled-components") {
+	} else if (options.styleType === "styled-components" && options.framework === "react") {
 		dependencies["styled-components"] = "^6.0.5";
 		if (options.fileType === "tsx") {
 			devDependencies["@types/styled-components"] = "^5.1.26";
@@ -503,10 +523,26 @@ function generatePackageJson(components: Component[], options: CodeGeneratorOpti
 /**
  * 生成index.html文件
  * @param {string} componentName - 组件名称
+ * @param {CodeGeneratorOptions} options - 生成选项
  * @returns {string} index.html内容
  */
-function generateIndexHtml(componentName: string): string {
-	return `<!DOCTYPE html>
+function generateIndexHtml(componentName: string, options: CodeGeneratorOptions = defaultOptions): string {
+	if (options.framework === "vue") {
+		return `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>${componentName}</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>`;
+	} else {
+		return `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -519,6 +555,30 @@ function generateIndexHtml(componentName: string): string {
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>`;
+	}
+}
+
+/**
+ * 生成Vue主入口文件代码
+ * @param {string} componentName - 组件名称
+ * @param {CodeGeneratorOptions} options - 生成选项
+ * @returns {string} main文件代码
+ */
+function generateVueMainFile(componentName: string, options: CodeGeneratorOptions): string {
+	const isTypeScript = options.fileType === "tsx";
+	const extension = isTypeScript ? ".vue" : ".vue";
+	const mainExt = isTypeScript ? ".ts" : ".js";
+
+	return `import { createApp } from 'vue'
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+import App from './${componentName}${extension}'
+
+const app = createApp(App)
+
+app.use(ElementPlus)
+app.mount('#app')
+`;
 }
 
 /**
@@ -528,8 +588,25 @@ function generateIndexHtml(componentName: string): string {
  */
 function generateViteConfig(options: CodeGeneratorOptions): string {
 	const isTypeScript = options.fileType === "tsx";
+	const extension = isTypeScript ? "ts" : "js";
 
-	return `import { defineConfig } from 'vite'
+	// 根据框架选择不同的配置
+	if (options.framework === "vue") {
+		return `import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import path from 'path'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [vue()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src')
+    }
+  }
+})`;
+	} else {
+		return `import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 
@@ -542,6 +619,7 @@ export default defineConfig({
     }
   }
 })`;
+	}
 }
 
 /**
@@ -614,7 +692,8 @@ export function generateCode(
 		mainCode = generateMainFile(componentName, mergedOptions);
 	} else if (mergedOptions.framework === "vue") {
 		componentCode = generateVueComponent(components, componentName, mergedOptions);
-		// Vue组件样式通常包含在单文件组件中
+		// Vue组件样式包含在单文件组件中
+		mainCode = generateVueMainFile(componentName, mergedOptions);
 	}
 
 	// 生成package.json
@@ -624,17 +703,18 @@ export function generateCode(
 
 	// 生成项目配置文件
 	if (mergedOptions.generateProjectFiles) {
-		indexHtml = generateIndexHtml(componentName);
+		indexHtml = generateIndexHtml(componentName, mergedOptions);
 		viteConfig = generateViteConfig(mergedOptions);
 	}
 
 	return {
 		componentCode,
-		styleCode: mergedOptions.generateCSS ? styleCode : undefined,
+		styleCode: mergedOptions.generateCSS && mergedOptions.framework !== "vue" ? styleCode : undefined,
 		isTypeScript: mergedOptions.fileType === "tsx",
 		packageJson: mergedOptions.generatePackageJson ? packageJson : undefined,
 		indexHtml: mergedOptions.generateProjectFiles ? indexHtml : undefined,
 		viteConfig: mergedOptions.generateProjectFiles ? viteConfig : undefined,
+		mainFile: mainCode,
 	};
 }
 
@@ -651,10 +731,17 @@ export function exportGeneratedCode(
 	filename: string = "GeneratedApp",
 	options: CodeGeneratorOptions = defaultOptions,
 ): void {
-	const { componentCode, styleCode, isTypeScript, packageJson, indexHtml, viteConfig } = generatedCode;
+	const { componentCode, styleCode, isTypeScript, packageJson, indexHtml, viteConfig, mainFile } = generatedCode;
+	const mergedOptions = { ...defaultOptions, ...options };
 
 	// 根据文件类型确定扩展名
-	const extension = isTypeScript ? ".tsx" : options.framework === "react" ? ".jsx" : ".vue";
+	const extension = isTypeScript
+		? mergedOptions.framework === "vue"
+			? ".vue"
+			: ".tsx"
+		: mergedOptions.framework === "vue"
+			? ".vue"
+			: ".jsx";
 
 	// 创建组件代码文件并下载
 	const componentBlob = new Blob([componentCode], { type: "text/plain" });
@@ -663,6 +750,24 @@ export function exportGeneratedCode(
 	componentLink.href = componentUrl;
 	componentLink.download = `${filename}${extension}`;
 	componentLink.click();
+
+	// 如果有主入口文件，创建主入口文件并下载
+	if (mainFile) {
+		const mainExtension = isTypeScript
+			? mergedOptions.framework === "vue"
+				? ".ts"
+				: ".tsx"
+			: mergedOptions.framework === "vue"
+				? ".js"
+				: ".jsx";
+
+		const mainBlob = new Blob([mainFile], { type: "text/plain" });
+		const mainUrl = URL.createObjectURL(mainBlob);
+		const mainLink = document.createElement("a");
+		mainLink.href = mainUrl;
+		mainLink.download = `main${mainExtension}`;
+		mainLink.click();
+	}
 
 	// 如果有样式代码，创建样式文件并下载
 	if (styleCode) {
