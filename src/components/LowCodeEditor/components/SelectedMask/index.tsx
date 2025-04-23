@@ -61,10 +61,38 @@ function SelectedMask({ containerClassName, portalWrapperClassName, componentId 
 	const { components, curComponentId, curComponent, deleteComponent, setCurComponentId } = useComponetsStore();
 
 	/**
+	 * 监听窗口大小变化，更新遮罩位置
+	 */
+	useEffect(() => {
+		const resizeHandler = () => {
+			console.log("resize");
+			updatePosition();
+		};
+		window.addEventListener("resize", resizeHandler);
+		return () => {
+			window.removeEventListener("resize", resizeHandler);
+		};
+	}, []);
+
+	/**
 	 * 当组件ID变化时更新位置
 	 */
 	useEffect(() => {
-		updatePosition();
+		if (!componentId) return;
+
+		// 创建观察器监听DOM变化
+		const observer = new MutationObserver(() => {
+			const targetNode = document.querySelector(`[data-component-id="${componentId}"]`);
+			if (targetNode) {
+				console.log("componetId resize");
+				updatePosition();
+			}
+		});
+
+		// 开始观察
+		observer.observe(document.body, { childList: true, subtree: true });
+
+		return () => observer.disconnect();
 	}, [componentId]);
 
 	/**
@@ -73,22 +101,10 @@ function SelectedMask({ containerClassName, portalWrapperClassName, componentId 
 	 */
 	useEffect(() => {
 		setTimeout(() => {
+			console.log("componets resize");
 			updatePosition();
 		}, 200);
 	}, [components]);
-
-	/**
-	 * 监听窗口大小变化，更新遮罩位置
-	 */
-	useEffect(() => {
-		const resizeHandler = () => {
-			updatePosition();
-		};
-		window.addEventListener("resize", resizeHandler);
-		return () => {
-			window.removeEventListener("resize", resizeHandler);
-		};
-	}, []);
 
 	/**
 	 * 更新遮罩层位置
