@@ -1,0 +1,60 @@
+{
+  "version": "2.0",
+  "envId": "vue-component-3g4lkb9z5f888819",
+  "$schema": "https://framework-1258016615.tcloudbaseapp.com/schema/latest.json",
+  "functionRoot": "cloudfunctions",
+  "framework": {
+    "name": "react-starter",
+    "plugins": {
+      "client": {
+        "use": "@cloudbase/framework-plugin-website",
+        "inputs": {
+          "installCommand": "pnpm install",
+          "buildCommand": "pnpm storybook:build",
+          "outputPath": "/docs/storybook",
+          "cloudPath": "/react",
+          "envVariables": {
+            "REACT_APP_ENV_ID": "{{env.ENV_ID}}"
+          }
+        },
+        "ignore": [
+          ".git",
+          ".github",
+          "node_modules",
+          "cloudbaserc.js"
+        ]
+      },
+      "server": {
+        "use": "@cloudbase/framework-plugin-function",
+        "inputs": {
+          "functionRootPath": "cloudfunctions",
+          "functions": [
+            {
+              "name": "helloworld",
+              "timeout": 5,
+              "envVariables": {},
+              "runtime": "Nodejs10.15",
+              "memory": 256,
+              "aclRule": {
+                "invoke": true
+              }
+            }
+          ]
+        }
+      },
+      "auth": {
+        "use": "@cloudbase/framework-plugin-auth",
+        "inputs": {
+          "configs": [
+            {
+              "platform": "NONLOGIN",
+              "status": "ENABLE"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "functions": [],
+  "region": "ap-shanghai"
+}
