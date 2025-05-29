@@ -13,7 +13,8 @@ import importToCDN from "vite-plugin-cdn-import";
 // 其余vite插件
 import react from "@vitejs/plugin-react";
 import { createHtmlPlugin } from "vite-plugin-html";
-import tailwindcss from "@tailwindcss/vite";
+import autoprefixer from "autoprefixer";
+import tailwindcss from "@tailwindcss/postcss";
 import path from "path";
 import { external, modules } from "./src/constants";
 // @see: https://vitejs.dev/config/
@@ -40,7 +41,6 @@ export default defineConfig((mode): UserConfig => {
 		// 插件
 		plugins: [
 			...reactPlugins,
-			tailwindcss(),
 			createHtmlPlugin({
 				inject: {
 					data: {
@@ -140,6 +140,13 @@ export default defineConfig((mode): UserConfig => {
 		},
 		// 全局样式
 		css: {
+			postcss: {
+				plugins: [
+					// 自动添加厂商前缀
+					autoprefixer(),
+					tailwindcss(),
+				],
+			},
 			preprocessorOptions: {
 				scss: { api: "modern-compiler" },
 			},
