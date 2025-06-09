@@ -204,7 +204,7 @@
     "typescript-eslint": "^8.24.1",
     "unplugin-auto-import": "^19.1.0",
     "unplugin-vue-components": "^28.4.1",
-    "vite": "npm:rolldown-vite@latest",
+    "vite": "^6.3.5",
     "vite-plugin-cdn-import": "^1.0.1",
     "vite-plugin-compression": "^0.5.1",
     "vite-plugin-html": "^3.2.2",
