@@ -17,28 +17,36 @@ export function isReportMode(): boolean {
 	return process.env.VITE_REPORT === "true";
 }
 
-// Read all environment variable configuration files to process.env
-export function wrapperEnv(envConf: Recordable): ViteEnv {
-	const ret: any = {};
+/**
+ * 将环境变量中的字符串值转换为对应的 JavaScript 数据类型
+ */
+export function wrapperEnv(env: Record<string, string>) {
+	const result: Record<string, any> = {};
 
-	for (const envName of Object.keys(envConf)) {
-		let realName: string | number | boolean | undefined = (envConf[envName] as string | undefined)?.replace(/\\n/g, "\n");
-		realName = realName === "true" ? true : realName === "false" ? false : realName;
+	for (const key in env) {
+		if (Object.prototype.hasOwnProperty.call(env, key)) {
+			const value = env[key].trim();
 
-		if (envName === "VITE_PORT") {
-			realName = Number(realName);
-		}
-		if (envName === "VITE_PROXY") {
-			try {
-				realName = JSON.parse(realName as string);
-			} catch (error) {
-				console.log(error);
+			// 处理布尔值
+			if (value === "true" || value === "false") {
+				result[key] = value === "true";
+			}
+			// 处理数值
+			else if (!isNaN(Number(value))) {
+				result[key] = Number(value);
+			}
+			// 处理空字符串
+			else if (value === "") {
+				result[key] = null;
+			}
+			// 其他情况保留原始字符串
+			else {
+				result[key] = value;
 			}
 		}
-		ret[envName] = realName;
-		process.env[envName] = realName as string;
 	}
-	return ret;
+
+	return result as ViteEnv;
 }
 
 /**

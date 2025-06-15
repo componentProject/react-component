@@ -1,35 +1,48 @@
 export const external = ["react", "react-dom", "react-router-dom", "axios", "moment", "radash"];
-const cdnModules = [
-	{
-		name: "react", // 模块名
-		var: "React", // 全局变量名
-		path: "https://unpkg.com/react@18/umd/react.development.js", // CDN 地址
-	},
-	{
-		name: "react-dom", // 模块名
-		var: "ReactDOM", // 全局变量名
-		path: "https://unpkg.com/react-dom@18/umd/react-dom.development.js", // CDN 地址
-	},
-	{
-		name: "react-router-dom", // 模块名
-		var: "ReactRouterDOM", // 全局变量名
-		path: "https://unpkg.com/react-router-dom@6/dist/react-router-dom.development.js", // CDN 地址
-	},
-	{
-		name: "axios", // 模块名
-		var: "axios", // 全局变量名
-		path: "https://unpkg.com/axios/dist/axios.min.js", // CDN 地址
-	},
-	{
-		name: "moment", // 模块名
-		var: "moment", // 全局变量名
-		path: "https://unpkg.com/moment/min/moment.min.js", // CDN 地址
-	},
-	{
-		name: "radash", // 模块名
-		var: "radash", // 全局变量名
-		path: "https://unpkg.com/radash/dist/radash.min.js", // CDN 地址
-	},
-];
 
-export const modules = cdnModules.filter((item) => external.includes(item.name));
+// CDN模块配置（默认为空）
+
+function getCamelCase(str: string): string {
+	return str
+		.replace(/[-_]+/g, " ") // 将连字符或下划线替换为空格
+		.replace(/(?:^|\s)\w/g, (match) => match.toUpperCase()) // 每个单词首字母大写
+		.replace(/\s+/g, ""); // 移除所有空格
+}
+
+interface CdnModule {
+	name: string;
+	var?: string;
+	css?: string;
+	path?: string;
+	alias?: string;
+}
+
+function getCdnModules(modules: Array<string | CdnModule>): any {
+	function getPath(str: string | undefined) {
+		if (!str) return "";
+		return str.startsWith("/") ? str : `/${str}`;
+	}
+
+	return modules
+		.map((item) => {
+			if (typeof item === "string") {
+				return {
+					name: item,
+					var: getCamelCase(item),
+					path: "",
+				};
+			} else {
+				return item;
+			}
+		})
+		.map((item) => {
+			return {
+				name: item.name,
+				var: item.var || getCamelCase(item.name),
+				path: getPath(item.path),
+				css: getPath(item.css),
+			};
+		});
+}
+
+export const modules = getCdnModules([]);
