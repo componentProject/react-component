@@ -22,9 +22,9 @@ import path from "path";
 export default defineConfig((mode): UserConfig => {
 	const env = loadEnv(mode.mode, process.cwd());
 	const viteEnv = wrapperEnv(env);
-	const systemCode = viteEnv.VITE_GLOB_APP_CODE;
 	const appTitle = viteEnv.VITE_GLOB_APP_TITLE;
 	const isDev = mode.mode === "development";
+	const systemCode = isDev ? "el" : viteEnv.VITE_GLOB_APP_CODE;
 
 	const reactPlugins = [react()].filter((i) => !!i);
 
