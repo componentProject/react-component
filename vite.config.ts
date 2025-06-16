@@ -25,7 +25,7 @@ export default defineConfig((mode): UserConfig => {
 	const appTitle = viteEnv.VITE_GLOB_APP_TITLE;
 	const isDev = mode.mode === "development";
 	const systemCode = viteEnv.VITE_GLOB_APP_CODE;
-	// const envSystemCode = isDev ? 'el' : viteEnv.VITE_GLOB_APP_CODE
+	const envSystemCode = isDev ? "el" : viteEnv.VITE_GLOB_APP_CODE;
 
 	const reactPlugins = [react()].filter((i) => !!i);
 
@@ -147,7 +147,7 @@ export default defineConfig((mode): UserConfig => {
 			},
 		},
 		define: {
-			__SYSTEM_CODE__: JSON.stringify(systemCode),
+			__SYSTEM_CODE__: JSON.stringify(envSystemCode),
 		},
 		// 路径别名
 		resolve: {
