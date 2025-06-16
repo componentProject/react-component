@@ -24,7 +24,8 @@ export default defineConfig((mode): UserConfig => {
 	const viteEnv = wrapperEnv(env);
 	const appTitle = viteEnv.VITE_GLOB_APP_TITLE;
 	const isDev = mode.mode === "development";
-	const systemCode = isDev ? "el" : viteEnv.VITE_GLOB_APP_CODE;
+	const systemCode = viteEnv.VITE_GLOB_APP_CODE;
+	// const envSystemCode = isDev ? 'el' : viteEnv.VITE_GLOB_APP_CODE
 
 	const reactPlugins = [react()].filter((i) => !!i);
 
@@ -102,7 +103,7 @@ export default defineConfig((mode): UserConfig => {
 	].filter((i) => !!i);
 
 	return {
-		base: systemCode ? `/${systemCode}` : "/",
+		base: `/${systemCode}`,
 		plugins: [...reactPlugins, ...performancePlugins, ...monitorPlugins],
 		esbuild: {
 			pure: !isDev && viteEnv.VITE_PURE_CONSOLE_AND_DEBUGGER ? ["console.log", "console.info", "console.debug"] : [],
