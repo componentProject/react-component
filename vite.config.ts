@@ -131,23 +131,7 @@ export default defineConfig((mode): UserConfig => {
 					manualChunks: (id: string) => {
 						// 优化拆分策略
 						if (id.includes("node_modules")) {
-							const moduleName = id.toString().split("node_modules/")[1].split("/")[0].toString();
-
-							if (["react", "react-dom", "react-router-dom", "react-router"].some((item) => moduleName.includes(item))) {
-								return "react-vendor";
-							}
-							if (["antd", "@ant-design"].some((item) => moduleName.includes(item))) {
-								return "antd-vendor";
-							}
-							return "vendor-" + moduleName;
-						}
-
-						if (id.includes("src/components/")) {
-							return "components";
-						}
-
-						if (id.includes("src/utils/")) {
-							return "utils";
+							return id.toString().split("node_modules/")[1].split("/")[0].toString();
 						}
 					},
 				},
