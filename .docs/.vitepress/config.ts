@@ -7,7 +7,6 @@ import type { UserConfig } from "vitepress";
 import { demoblockPlugin, demoblockVitePlugin } from "vitepress-theme-demoblock";
 // vite vue插件
 import vueJsx from "@vitejs/plugin-vue-jsx";
-import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 
@@ -43,12 +42,6 @@ async function config(): Promise<Awaited<UserConfig>> {
 			plugins: [
 				demoblockVitePlugin() as any,
 				vueJsx() as any,
-				// 自动引入
-				AutoImport({
-					imports: ["vue"],
-					resolvers: [ElementPlusResolver()],
-					dts: path.resolve(__dirname, "./typings/auto-imports.d.ts"),
-				}),
 				Components({
 					resolvers: [ElementPlusResolver()],
 					dts: path.resolve(__dirname, "./typings/components.d.ts"),

@@ -23,6 +23,8 @@
 	},
 	"include": [
 		"servers/*",
-		"vite.config.*"
+		"vite.config.*",
+		".docs/.vitepress/*",
+		"!.docs/.vitepress/cache/*",
 	]
 }

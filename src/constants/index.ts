@@ -1,7 +1,4 @@
-export const external = ["react", "react-dom", "react-router-dom", "axios", "moment", "radash"];
-
 // CDN模块配置（默认为空）
-
 function getCamelCase(str: string): string {
 	return str
 		.replace(/[-_]+/g, " ") // 将连字符或下划线替换为空格

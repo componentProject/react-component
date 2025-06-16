@@ -3,12 +3,10 @@ import type { UserConfig } from "vite";
 import { wrapperEnv } from "./src/utils";
 
 // react
-import AutoImport from "unplugin-auto-import/vite";
 // 性能优化模块
 import { visualizer } from "rollup-plugin-visualizer";
 import viteCompression from "vite-plugin-compression";
 import viteImagemin from "vite-plugin-imagemin";
-import importToCDN from "vite-plugin-cdn-import";
 
 // 其余vite插件
 import react from "@vitejs/plugin-react";
@@ -16,7 +14,9 @@ import { createHtmlPlugin } from "vite-plugin-html";
 import autoprefixer from "autoprefixer";
 import tailwindcss from "@tailwindcss/postcss";
 import path from "path";
-import { modules } from "./src/constants";
+// storybook不支持这种cdn
+// import importToCDN from "vite-plugin-cdn-import";
+// import { modules } from "./src/constants";
 
 // @see: https://vitejs.dev/config/
 export default defineConfig((mode): UserConfig => {
@@ -26,16 +26,7 @@ export default defineConfig((mode): UserConfig => {
 	const appTitle = viteEnv.VITE_GLOB_APP_TITLE;
 	const isDev = mode.mode === "development";
 
-	const reactPlugins = [
-		react(),
-		// 自动引入
-		isDev &&
-			AutoImport({
-				imports: ["react"],
-				resolvers: [],
-				dts: path.resolve(__dirname, "./src/typings/auto-imports.d.ts"),
-			}),
-	].filter((i) => !!i);
+	const reactPlugins = [react()].filter((i) => !!i);
 
 	// 性能优化插件
 	const performancePlugins = [
@@ -93,12 +84,12 @@ export default defineConfig((mode): UserConfig => {
 				},
 			}),
 		// CDN加速（默认关闭）
-		viteEnv.VITE_USE_CDN &&
-			importToCDN({
-				enableInDevMode: viteEnv.VITE_USE_CDN_IS_DEV,
-				prodUrl: `${viteEnv.VITE_CDN_BASE_URL}/{name}@{version}{path}`,
-				modules,
-			}),
+		// viteEnv.VITE_USE_CDN &&
+		// importToCDN({
+		// 	enableInDevMode: viteEnv.VITE_USE_CDN_IS_DEV,
+		// 	prodUrl: `${viteEnv.VITE_CDN_BASE_URL}/{name}@{version}{path}`,
+		// 	modules,
+		// }),
 	].filter((i) => !!i);
 
 	// 监控插件
