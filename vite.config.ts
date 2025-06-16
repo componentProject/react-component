@@ -25,7 +25,7 @@ export default defineConfig((mode): UserConfig => {
 	const appTitle = viteEnv.VITE_GLOB_APP_TITLE;
 	const isDev = mode.mode === "development";
 	const systemCode = viteEnv.VITE_GLOB_APP_CODE;
-	const envSystemCode = isDev ? "el" : viteEnv.VITE_GLOB_APP_CODE;
+	const envSystemCode = isDev ? "antd" : viteEnv.VITE_GLOB_APP_CODE;
 
 	const reactPlugins = [react()].filter((i) => !!i);
 
