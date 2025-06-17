@@ -14,9 +14,8 @@ import { createHtmlPlugin } from "vite-plugin-html";
 import autoprefixer from "autoprefixer";
 import tailwindcss from "@tailwindcss/postcss";
 import path from "path";
-// storybook不支持这种cdn
-// import importToCDN from "vite-plugin-cdn-import";
-// import { modules } from "./src/constants";
+import importToCDN from "vite-plugin-cdn-import";
+import { modules } from "./src/constants";
 
 // @see: https://vitejs.dev/config/
 export default defineConfig((mode): UserConfig => {
@@ -85,12 +84,12 @@ export default defineConfig((mode): UserConfig => {
 				},
 			}),
 		// CDN加速（默认关闭）
-		// viteEnv.VITE_USE_CDN &&
-		// importToCDN({
-		// 	enableInDevMode: viteEnv.VITE_USE_CDN_IS_DEV,
-		// 	prodUrl: `${viteEnv.VITE_CDN_BASE_URL}/{name}@{version}{path}`,
-		// 	modules,
-		// }),
+		viteEnv.VITE_USE_CDN &&
+			importToCDN({
+				enableInDevMode: viteEnv.VITE_USE_CDN_IS_DEV,
+				prodUrl: `${viteEnv.VITE_CDN_BASE_URL}/{name}@{version}{path}`,
+				modules,
+			}),
 	].filter((i) => !!i);
 
 	// 监控插件
