@@ -6,9 +6,10 @@ import mathjax3 from "markdown-it-mathjax3";
 import type { UserConfig } from "vitepress";
 import { demoblockPlugin, demoblockVitePlugin } from "vitepress-theme-demoblock";
 // vite vue插件
-import vueJsx from "@vitejs/plugin-vue-jsx";
-import Components from "unplugin-vue-components/vite";
-import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
+import {modules} from '../../src/constants'
+import importToCDN from 'vite-plugin-cdn-import'
+import vueJsx from '@vitejs/plugin-vue-jsx'
+import {visualizer} from 'rollup-plugin-visualizer'
 
 // 其余vite插件
 import autoprefixer from "autoprefixer";
@@ -42,10 +43,13 @@ async function config(): Promise<Awaited<UserConfig>> {
 			plugins: [
 				demoblockVitePlugin() as any,
 				vueJsx() as any,
-				Components({
-					resolvers: [ElementPlusResolver()],
-					dts: path.resolve(__dirname, "./typings/components.d.ts"),
+				importToCDN({
+					prodUrl: `https://unpkg.com/{name}@{version}{path}`,
+					modules,
 				}),
+				visualizer({
+					open: true,
+				})
 			],
 			css: {
 				postcss: {
