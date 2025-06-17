@@ -24,7 +24,5 @@
 	"include": [
 		"servers/*",
 		"vite.config.*",
-		".docs/.vitepress/*",
-		"!.docs/.vitepress/cache/*",
 	]
 }
