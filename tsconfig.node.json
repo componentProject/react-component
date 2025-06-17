@@ -24,5 +24,15 @@
 	"include": [
 		"servers/*",
 		"vite.config.*",
+		".storybook/**/*",
+		"src/constants/*",
+		"vite.config.*",
+		"vitest.config.*",
+		"cypress.config.*",
+		"nightwatch.conf.*",
+		"playwright.config.*",
+		".docs/.vitepress/config.*",
+		".docs/.vitepress/utils/*",
+		"plugins/*"
 	]
 }

@@ -1,5 +1,5 @@
 import { getComponents } from "./utils/serverUtils";
-import { buildBlogRSS } from "./theme/rss";
+import { buildBlogRSS } from "./utils/rss.ts";
 import { transformerTwoslash } from "@shikijs/vitepress-twoslash";
 import mathjax3 from "markdown-it-mathjax3";
 
