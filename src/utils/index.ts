@@ -1,6 +1,9 @@
-import { wrapperEnv } from "./getEnv";
+export * from "./modules/is";
+export * from "./modules/echarts";
+export * from "./modules/getEnv";
 
 let count = 99;
+
 export function getId(messageProps: { id?: number } = {}) {
 	if (messageProps.id) {
 		return messageProps.id;
@@ -69,7 +72,3 @@ export function cloneDeep(obj: any, map = new WeakMap()): any {
 
 	return clone;
 }
-
-export * from "./is";
-export * from "./echarts";
-export { wrapperEnv };

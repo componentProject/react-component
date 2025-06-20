@@ -3,6 +3,8 @@
 .vitepress
 /src/locales_bak
 
+src/typings
+
 # 日志文件
 *.log
 *-debug.log*
