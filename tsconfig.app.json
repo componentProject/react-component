@@ -33,7 +33,6 @@
 		"allowSyntheticDefaultImports": true
 	},
 	"include": [
-		"env.d.ts",
 		"src/**/*",
 		".storybook/.stories/*",
 		".storybook/.stories/**/*"
