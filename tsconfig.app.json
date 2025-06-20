@@ -34,8 +34,8 @@
 	},
 	"include": [
 		"src/**/*",
-		".storybook/.stories/*",
-		".storybook/.stories/**/*"
+		".storybook/.stories/**/*",
+		".storybook/.stories/**/*.tsx"
 	],
 	"exclude": [
 		".storybook/main.ts",
