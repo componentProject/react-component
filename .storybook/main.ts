@@ -10,12 +10,15 @@ const config: StorybookConfig = {
 	core: {
 		builder: "@storybook/builder-vite",
 	},
-	async viteFinal(config, { configType }) {
-		config.server.proxy = {
-			"/translate": {
-				target: "https://fanyi-api.baidu.com/api/trans/vip/translate",
-				changeOrigin: true,
-				rewrite: (path) => path.replace(/^\/translate/, ""),
+	async viteFinal(config) {
+		config.server = {
+			...config.server,
+			proxy: {
+				"/translate": {
+					target: "https://fanyi-api.baidu.com/api/trans/vip/translate",
+					changeOrigin: true,
+					rewrite: (path) => path.replace(/^\/translate/, ""),
+				},
 			},
 		};
 		return config;
