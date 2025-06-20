@@ -39,7 +39,6 @@
 		"env.d.ts"
 	],
 	"exclude": [
-		"src/utils/*",
 		".storybook/main.ts",
 		"./servers/*",
 		"src/**/__tests__/*"
