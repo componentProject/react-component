@@ -46,7 +46,7 @@ export function wrapperEnv(env: Record<string, string>) {
 		}
 	}
 
-	return result;
+	return result as ViteEnv;
 }
 
 /**
