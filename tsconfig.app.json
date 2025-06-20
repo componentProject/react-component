@@ -38,6 +38,7 @@
 		".storybook/.stories/**/*.tsx"
 	],
 	"exclude": [
+		"src/utils/*",
 		".storybook/main.ts",
 		"./servers/*",
 		"src/**/__tests__/*"
