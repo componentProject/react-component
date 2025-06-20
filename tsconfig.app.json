@@ -35,7 +35,8 @@
 	"include": [
 		"src/**/*",
 		".storybook/.stories/**/*",
-		".storybook/.stories/**/*.tsx"
+		".storybook/.stories/**/*.tsx",
+		"env.d.ts"
 	],
 	"exclude": [
 		"src/utils/*",
