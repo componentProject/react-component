@@ -22,7 +22,7 @@ import path from "path";
 import { defineConfig, loadEnv } from "vite";
 import type { Plugin } from "postcss";
 import { createHtmlPlugin } from "vite-plugin-html";
-import { wrapperEnv } from "./src/utils";
+import { wrapperEnv } from "./src/utils/modules/getEnv";
 
 export default defineConfig(({ mode }) => {
 	const env = loadEnv(mode, process.cwd());

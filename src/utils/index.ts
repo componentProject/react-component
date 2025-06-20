@@ -1,6 +1,5 @@
 export * from "./modules/is";
 export * from "./modules/echarts";
-export * from "./modules/getEnv";
 
 let count = 99;
 
