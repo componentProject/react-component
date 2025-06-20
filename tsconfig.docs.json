@@ -17,6 +17,8 @@
 	],
 	"exclude": [
 		"src/**/__tests__/*",
+		".docs/.vitepress/config.*",
+		".docs/.vitepress/utils/*",
 		".docs/.vitepress/cache/**/*"
 	]
 }

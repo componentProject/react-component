@@ -35,11 +35,11 @@
 	"include": [
 		"env.d.ts",
 		"src/**/*",
-		".storybook/preview.tsx",
 		".storybook/.stories/*",
 		".storybook/.stories/**/*"
 	],
 	"exclude": [
+		".storybook/main.ts",
 		"./servers/*",
 		"src/**/__tests__/*"
 	]

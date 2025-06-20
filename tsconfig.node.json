@@ -24,7 +24,7 @@
 	"include": [
 		"servers/*",
 		"vite.config.*",
-		".storybook/**/*",
+		".storybook/main.ts",
 		"src/constants/*",
 		"vite.config.*",
 		"vitest.config.*",
