@@ -1,6 +1,6 @@
 let components: any;
 try {
-	const componentFiles = import.meta.glob("./**/index.tsx", { eager: true });
+	const componentFiles = import.meta.glob(["./**/index.tsx", "!./**/components/*"], { eager: true });
 	components = Object.keys(componentFiles).reduce((pre, templateFile) => {
 		const module = componentFiles[templateFile];
 		const name = templateFile.split("/").at(-2);
