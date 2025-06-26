@@ -1,7 +1,7 @@
 /**
  * 导入React相关钩子和类型
  */
-import { PropsWithChildren, createContext, useEffect, useState } from "react";
+import { createContext, PropsWithChildren, useEffect, useState } from "react";
 /**
  * 导入工具函数
  */
@@ -9,7 +9,7 @@ import { compress, fileName2Language, uncompress } from "./utils";
 /**
  * 导入初始文件
  */
-import { initFiles, initializeApp, APP_COMPONENT_FILE_NAME } from "./files";
+import { APP_COMPONENT_FILE_NAME, initFiles, initializeApp } from "./files";
 
 /**
  * 快照接口定义
@@ -190,7 +190,7 @@ export const PlaygroundProvider = (props: PropsWithChildren) => {
 			}
 		};
 
-		initialize();
+		initialize().then((r) => console.log("r", r));
 	}, []);
 
 	/**
@@ -281,8 +281,7 @@ export const PlaygroundProvider = (props: PropsWithChildren) => {
 	 * 当文件变化时，将文件列表保存到URL哈希
 	 */
 	useEffect(() => {
-		const hash = compress(JSON.stringify(files));
-		window.location.hash = hash;
+		window.location.hash = compress(JSON.stringify(files));
 	}, [files]);
 
 	/**

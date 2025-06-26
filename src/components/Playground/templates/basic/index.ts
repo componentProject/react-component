@@ -34,7 +34,7 @@ export function createTemplate(): TemplateWrapper {
 			[APP_COMPONENT_FILE_NAME]: {
 				name: APP_COMPONENT_FILE_NAME,
 				language: fileName2Language(APP_COMPONENT_FILE_NAME),
-				value: `import React, { useState } from 'react';
+				value: `import { useState } from 'react';
 import './App.css';
 
 export default function App() {
