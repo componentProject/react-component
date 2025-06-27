@@ -1,7 +1,7 @@
 import { InboxOutlined } from "@ant-design/icons";
 // import {Button} from 'antd';
 import Upload from "@/components/Upload";
-import type { UploadProps } from "@/components/Upload";
+import type { propsType } from "@/components/Upload/types";
 const meta = {
 	title: "Upload",
 	component: null,
@@ -85,7 +85,7 @@ export default meta;
 /**
  * 需要启动本地server中的uploadFile服务
  */
-export const upload = (props: UploadProps) => (
+export const upload = (props: propsType) => (
 	<Upload {...props}>
 		{/* <Button icon={<UploadOutlined />}>Click to Upload</Button> */}
 		<p>
@@ -94,7 +94,7 @@ export const upload = (props: UploadProps) => (
 		<p>点击或者拖拽文件到此处</p>
 	</Upload>
 );
-const props: UploadProps = {
+const props: propsType = {
 	drag: true,
 	name: "file",
 	action: "http://localhost:3333/upload",

@@ -1,10 +1,25 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.docs.json" },
-    { "path": "./tsconfig.node.json" }
-  ],
+	"files": [],
+	"references": [
+		{
+			"path": "./tsconfig.app.json"
+		},
+		{
+			"path": "./tsconfig.node.json"
+		},
+		{
+			"path": "./tsconfig.docs.app.json"
+		},
+		{
+			"path": "./tsconfig.docs.node.json"
+		},
+		{
+			"path": "./tsconfig.storybook.app.json"
+		},
+		{
+			"path": "./tsconfig.storybook.node.json"
+		}
+	],
 	"compilerOptions": {
 		"baseUrl": ".",
 		"paths": {

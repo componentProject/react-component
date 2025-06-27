@@ -1,0 +1,18 @@
+{
+  "extends": "@tsconfig/node22/tsconfig.json",
+  "include": [".docs/.vitepress/**/*"],
+  "exclude": [".docs/.vitepress/theme/**/*"],
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "jsx": "preserve",
+    "module": "nodenext",
+    "composite": true,
+    "noEmit": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}

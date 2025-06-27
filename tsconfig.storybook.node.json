@@ -22,19 +22,6 @@
 		"noFallthroughCasesInSwitch": true
 	},
 	"include": [
-		"servers/*",
-		"vite.config.*",
-		".docs/.vitepress/config.*",
-		".docs/.vitepress/utils/*",
-
-		"src/constants/*",
-		"vite.config.*",
-		"vitest.config.*",
-		"cypress.config.*",
-		"nightwatch.conf.*",
-		"playwright.config.*",
-		"plugins/*",
-		"src/utils/*",
-		"env.d.ts"
+		".storybook/main.ts"
 	]
 }

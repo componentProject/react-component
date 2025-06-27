@@ -33,12 +33,10 @@
 		"allowSyntheticDefaultImports": true
 	},
 	"include": [
-		"src/**/*",
-		"env.d.ts"
+		".storybook/.stories/**/*",
+		".storybook/.stories/**/*.tsx"
 	],
 	"exclude": [
-		".storybook/main.ts",
-		"./servers/*",
-		"src/**/__tests__/*"
+		".storybook/main.ts"
 	]
 }
